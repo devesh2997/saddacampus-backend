@@ -1,0 +1,32 @@
+{
+  "name": "saddacampus-backend",
+  "version": "0.0.1",
+  "description": "Backend of the Saddacampus platform.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm-run-all --parallel security-check start:server lint:watch test:watch",
+    "test": "mocha --reporter progress \"*.spec.js\"",
+    "test:watch": "npm run test -- --watch",
+    "start:server": "node app.js",
+    "security-check": "nsp check",
+    "lint": "esw app.js --color",
+    "lint:watch": "npm run lint -- --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.6.0",
+    "chalk": "^2.4.1",
+    "express": "^4.16.3",
+    "mysql": "^2.15.0",
+    "path": "^0.12.7",
+    "uniqid": "^4.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-watch": "^3.1.4",
+    "mocha": "^5.1.1",
+    "npm-run-all": "^4.1.3"
+  }
+}
