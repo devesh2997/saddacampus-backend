@@ -1,8 +1,10 @@
 var mysql = require('mysql')
-  , async = require('async');
+  , async = require('async')
+  , db_config = require('./db_config');
+  
 
-var PRODUCTION_DB = 'sadda_prod_database'
-  , TEST_DB = 'sadda_test_database';
+var PRODUCTION_DB = db_config.PROD_DATABASE
+  , TEST_DB = db_config.TEST_DATABASE;
 
 exports.MODE_TEST = 'mode_test';
 exports.MODE_PRODUCTION = 'mode_production';
@@ -14,9 +16,9 @@ var state = {
 
 exports.connect = function(mode, done) {
   state.pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'devdas23',
+    host: db_config.HOST,
+    user: db_config.USER,
+    password: db_config.PASSWORD,
     database: mode === exports.MODE_PRODUCTION ? PRODUCTION_DB : TEST_DB
   });
 

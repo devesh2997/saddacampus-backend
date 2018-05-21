@@ -2,14 +2,10 @@ var express = require('express');
 var chalk = require('chalk');
 var mysql = require('mysql');
 
-var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'devdas23',
-    database : 'my_db'
-  });
-var app = express();
+var membership = require('./membership');
 
+var app = express();
+ 
 var port = process.env.PORT ||  3000;
 
 var userRouter = express.Router();
@@ -21,6 +17,8 @@ userRouter.route('/Users')
     });
 
 app.use('/api', userRouter);
+
+app.use('/membership', membership.router);
 
 app.get('/', function(req,res){
     res.send("Welcome to my api");
