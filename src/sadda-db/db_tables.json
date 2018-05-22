@@ -1,0 +1,6 @@
+{
+    "users": {
+        "name": "users",
+        "fields": ["user_id", "country_code", "number", "username", "profilepic", "status"]
+    }
+}

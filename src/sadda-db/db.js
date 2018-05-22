@@ -1,6 +1,7 @@
 var mysql = require('mysql')
   , async = require('async')
-  , db_config = require('./db_config');
+  , db_config = require('./db_config')
+  , db_tables = require('./db_tables');
   
 
 var PRODUCTION_DB = db_config.PROD_DATABASE
@@ -50,6 +51,16 @@ exports.drop = function(tables, done) {
   if (!pool) return done(new Error('Missing database connection.'));
 
   async.each(tables, function(name, cb) {
-    pool.query('DELETE * FROM ' + name, cb);
+    pool.query('DELETE FROM ' + name, cb);
   }, done);
 }
+
+exports.dropTable = function(table, done){
+  var pool = state.pool;
+  pool.query('DELETE FROM '+table, function(error){
+    if(error)
+      console.log(error);
+  });
+}
+
+exports.tables = db_tables;

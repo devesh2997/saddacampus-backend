@@ -1,5 +1,10 @@
+var uniqid = require('uniqid');
 var MobileNumber = require('../../../models/mobile_number');
 var error_messages = require('../../../config/error_messages');
+var db = require('../../../../sadda-db');
+var db_tables = db.tables;
+var db_utils = require('../../../../db-utils');
+
 
 
 /**
@@ -12,6 +17,7 @@ var error_messages = require('../../../config/error_messages');
  */
 
 var User = function(args){
+    var context = this;
     this.mobile = new MobileNumber({country_code: args.country_code, number: args.number});
     this.username = args.username;
 
@@ -37,7 +43,25 @@ var User = function(args){
         }
     }
 
-    
+    //generate unique user id.
+    this.generateUserId = function(){
+        context.user_id = uniqid(context.mobile.number.substr(0,4));
+    }
+
+    //store new user in database.
+    this.store = function(done){
+        var args = {}
+        args.table_name = db_tables.users.name;
+        args.fields = db_tables.users.fields;
+        args.values = [this.user_id, this.mobile.country_code, this.mobile.number, this.username, "", 'verified'];
+
+        var query = db_utils.query_creator.insert(args);
+  
+        db.get().query(query, args.values, function(err, result) {
+            if (err) return done(err)
+            done(null, result.insertId)
+        });
+    }    
 };
 
 module.exports = User;
