@@ -1,29 +1,28 @@
 var express = require('express');
-var chalk = require('chalk');
-var mysql = require('mysql');
 
-var membership = require('./membership');
+var Membership = require('./src/membership');
+var db = require('./src/sadda-db');
+
 
 var app = express();
  
 var port = process.env.PORT ||  3000;
 
-var userRouter = express.Router();
-
-userRouter.route('/Users')
-    .get(function(req,res){
-        var responseJson = {hello: "This is my api"};
-        res.json(responseJson);
-    });
-
-app.use('/api', userRouter);
+var membership = new Membership();
 
 app.use('/membership', membership.router);
 
 app.get('/', function(req,res){
-    res.send("Welcome to my api");
+    res.redirect('/membership');
 });
 
-app.listen(port, function(){
-    console.log(chalk.green('Running on PORT: '+port));
+db.connect(db.MODE_PRODUCTION, function(err) {
+    if (err) {
+      console.log('Unable to connect to MySQL.');
+      process.exit(1);
+    } else {
+      app.listen(port, function() {
+        console.log('Listening on port 3000...');
+      });
+    }
 });
