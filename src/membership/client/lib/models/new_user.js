@@ -49,7 +49,7 @@ var User = function(args){
     }
 
     //store new user in database.
-    this.store = function(done){
+    this.store = function(callback){
         var args = {}
         args.table_name = db_tables.users.name;
         args.fields = db_tables.users.fields;
@@ -57,11 +57,25 @@ var User = function(args){
 
         var query = db_utils.query_creator.insert(args);
   
-        db.get().query(query, args.values, function(err, result) {
-            if (err) return done(err)
-            done(null, result.insertId)
+        db.get().query(query, args.values, function(err, result){
+            if (err) return callback(err);
+            callback(null, result.insertId);
         });
     }    
+
+    //checking for duplicate entries
+    //check for duplicate user_id OR country_code+number OR username
+    this.hasDuplicate = function(callback){
+        var query = "SELECT * from " + db.tables.users.name + " WHERE user_id = '" + this.user_id + "' OR (country_code = '" + this.mobile.country_code + "' AND number = '" + this.mobile.number + "') OR username = '"+ this.username + "'";
+        db.get().query(query, function(err, result){
+            if (err) {
+                return callback(err);
+            }
+            if(result.length) return callback(null,true);
+            else return callback(null, false);
+        });
+
+    }
 };
 
 module.exports = User;

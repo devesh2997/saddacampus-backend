@@ -54,7 +54,8 @@ describe('New User',function(){
     describe('Store user',function(){
         var validUser;
         before(function(){
-            validUser = new NewUser({country_code:'91', number:'7541833368',username:'ananddevesh22'});            
+            validUser = new NewUser({country_code:'91', number:'7541833368',username:'ananddevesh22'}); 
+            validUser.generateUserId();           
             db.connect(db.MODE_TEST,function(err) {
                 if (err) {
                   console.log('Unable to connect to MySQL.');
@@ -64,19 +65,87 @@ describe('New User',function(){
             db.drop([db.tables.users.name], function(){});
         });
 
-        it('should create a new entry in database', function(){
-            validUser.generateUserId();
+        it('should store user without error', function(done){
             validUser.store(function(err, results){
-                if(err){
-                    console.log(err);
-                }else{
-                    console.log(results);
+                if (err) done(err);
+                else done();
+            });
+        });
+
+        it('stored user has verified status');
+
+        after(function(){
+            db.drop([db.tables.users.name], function(){});   
+        });
+    });
+
+    describe('Check for duplicates', function(){
+        var validUser;
+        var user_id;
+        before(function(){
+            validUser = new NewUser({country_code:'91', number:'7541833368',username:'ananddevesh22'}); 
+            validUser.generateUserId();
+            user_id = validUser.user_id;           
+            db.connect(db.MODE_TEST,function(err) {
+                if (err) {
+                  console.log('Unable to connect to MySQL.');
+                  process.exit(1);
                 }
+                validUser.store(function(err, results){
+                });
+            });
+        });
+
+        it('should return with no error',function(done){
+            validUser.hasDuplicate(function(err, hasDuplicate){
+                assert.ok(!err);
+                done();
+            });
+        });
+        it('should return true if duplicate user_id found', function(done){
+            var newUser = new NewUser({country_code:'91', number:'1234567890',username:'devd'}); 
+            newUser.user_id = user_id;
+            newUser.hasDuplicate(function(err, hasDuplicate){
+                assert.ok(hasDuplicate);
+                done();  
+            })
+        });
+        it('should return true if duplicate username found', function(done){
+            var newUser = new NewUser({country_code:'91', number:'9874563210',username:'ananddevesh22'}); 
+            newUser.generateUserId();
+            newUser.hasDuplicate(function(err, hasDuplicate){
+                assert.ok(hasDuplicate);
+                done();  
+            });            
+        });
+        it('should return true if duplicate (country_code + number) found', function(done){
+            var newUser = new NewUser({country_code:'91', number:'7541833368',username:'test'}); 
+            newUser.generateUserId();
+            newUser.hasDuplicate(function(err, hasDuplicate){
+                assert.ok(hasDuplicate);
+                done();  
+            });
+            
+        });
+        it('should return false if only duplicate number found', function(done){
+            var newUser = new NewUser({country_code:'81', number:'7541833368',username:'qwerty'}); 
+            newUser.generateUserId();
+            newUser.hasDuplicate(function(err, hasDuplicate){
+                assert.ok(!hasDuplicate);
+                done();  
+            });            
+        });
+        it('should return false if no duplicate found',function(done){
+            var newUser = new NewUser({country_code:'81', number:'1239874560',username:'qwerty'}); 
+            newUser.generateUserId();
+            newUser.hasDuplicate(function(err, hasDuplicate){
+                assert.ok(!hasDuplicate);
+                done();  
             });
         });
 
         after(function(){
-            db.drop([db.tables.users.name], function(){});            
+            db.drop([db.tables.users.name], function(){});   
         });
     })
 });

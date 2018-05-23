@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm-run-all --parallel lint:watch test:watch",
-    "test": "mocha --reporter spec ",
+    "test": "mocha --reporter spec --exit test/ client/test admin/test merchant/test",
     "test:watch": "npm run test -- --watch",
     "security-check": "nsp check",
     "lint": "esw app.js --color",
