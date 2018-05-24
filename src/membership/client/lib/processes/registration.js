@@ -11,13 +11,13 @@ var NewUser = require('../models/new_user');
 
 var Registration = function(args, next){
 
-    this.callback = next;
+    var callback = next;
 
     this.new_user = new NewUser(args);
 
     /**validate the arguments*/
     if(!this.new_user.isValid()){
-        this.callback(new Error(this.mobile_number.validationMessage));
+        callback(new Error(this.mobile_number.validationMessage));
     }
 
     //check for existing user_id, mobile or username -> return failure if mobile, username exists
