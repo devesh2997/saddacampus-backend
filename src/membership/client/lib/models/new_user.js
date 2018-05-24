@@ -4,6 +4,7 @@ var error_messages = require('../../../config/error_messages');
 var db = require('../../../../sadda-db');
 var db_tables = db.tables;
 var db_utils = require('../../../../db-utils');
+var Log = require('../../../../log');
 
 
 
@@ -54,11 +55,12 @@ var User = function(args){
         args.table_name = db_tables.users.name;
         args.fields = db_tables.users.fields;
         args.values = [this.user_id, this.mobile.country_code, this.mobile.number, this.username, "", 'verified'];
-
-        var query = db_utils.query_creator.insert(args);
-  
+        var query = db_utils.query_creator.insert(args);  
         db.get().query(query, args.values, function(err, result){
-            if (err) return callback(err);
+            if (err){
+                Log.e(err);
+                return callback(new Error(error_messages.UNKNOWN_ERROR));
+            } 
             callback(null, result.insertId);
         });
     }    
@@ -69,9 +71,13 @@ var User = function(args){
         var query = "SELECT * from " + db.tables.users.name + " WHERE user_id = '" + this.user_id + "' OR (country_code = '" + this.mobile.country_code + "' AND number = '" + this.mobile.number + "') OR username = '"+ this.username + "'";
         db.get().query(query, function(err, result){
             if (err) {
-                return callback(err);
+                Log.e(err);
+                return callback(new Error(error_messages.UNKNOWN_ERROR));
             }
-            if(result.length) return callback(null,true);
+            if(result.length){
+                context.error_message = error_messages.DUPLICATE_USER;
+                return callback(null,true);
+            }
             else return callback(null, false);
         });
 

@@ -143,6 +143,14 @@ describe('New User',function(){
                 done();  
             });
         });
+        it('should set error_message in case of duplicate found', function(done){
+            var newUser = new NewUser({country_code:'81', number:'7541833368',username:'qwerty'}); 
+            newUser.generateUserId();
+            newUser.hasDuplicate(function(err, hasDuplicate){
+                assert.ok(newUser.error_message);
+                done();  
+            });   
+        })
 
         after(function(){
             db.drop([db.tables.users.name], function(){});   

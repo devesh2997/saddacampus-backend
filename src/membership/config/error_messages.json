@@ -1,5 +1,8 @@
 {
+    "UNKNOWN_ERROR": "Some unknown error occured, try again later",
+    "DATABASE_ERROR": "db.get.query() returns err",
     "INVALID_COUNTRY_CODE": "Invalid country-code",
     "INVALID_MOBILE_NUMBER": "Invalid mobile-number",
-    "INVALID_USERNAME": "Invalid username"
+    "INVALID_USERNAME": "Invalid username",
+    "DUPLICATE_USER": "User already exists"
 }

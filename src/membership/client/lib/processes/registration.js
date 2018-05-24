@@ -20,7 +20,12 @@ var Registration = function(args, next){
         this.callback(new Error(this.mobile_number.validationMessage));
     }
 
-    //check for existing mobile or username -> return failure if mobile, username exists
+    //check for existing user_id, mobile or username -> return failure if mobile, username exists
+    this.new_user.hasDuplicate(function(err, hasDuplicate){
+        if(hasDuplicate){
+            callback(new Error(this.new_user.error_message));
+        }
+    })
     //create uid
     //store user in database
     //return success or failure
