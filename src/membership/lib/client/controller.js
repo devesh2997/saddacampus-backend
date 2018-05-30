@@ -1,14 +1,26 @@
 var Registration = require('./processes/registration');
+var otp = require('../../../app/lib/otp');
 
 
 // Send otp for authentication
 exports.send_otp = function(req,res){
-    res.send('Not implemented: send otp');
+    otp.sendOTP({
+        country_code: req.params.country_code,
+        number: req.params.number
+    }).send(function(err, result){
+        res.json(result);
+    });
 };
 
 //Verify otp sent
 exports.verify_otp = function(req,res){
-    res.send('Not implemented: verify otp');
+    otp.verifyOTP({
+        country_code: req.body.country_code,
+        number: req.body.number,
+        otp: req.body.otp
+    }).verify(function(err, result){
+        res.json(result);
+    });
 };
 
 //Create new user.

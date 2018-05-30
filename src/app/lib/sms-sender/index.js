@@ -1,7 +1,7 @@
 var assert = require('assert');
 var http = require("http");
+var config = require('./config');
 
-var config = require('./config.json');
 
 /**
  * sends message provided to the given number.

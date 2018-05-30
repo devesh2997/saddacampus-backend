@@ -1,10 +1,10 @@
 var uniqid = require('uniqid');
-var MobileNumber = require('../../../models/mobile_number');
-var error_messages = require('../../../config/error_messages');
-var db = require('../../../../app/sadda-db');
+var MobileNumber = require('../../../../app/models/mobile_number');
+var error_messages = require('../../../../app/config/error_messages');
+var db = require('../../../../app/lib/sadda-db');
 var db_tables = db.tables;
-var db_utils = require('../../../../app/db-utils');
-var Log = require('../../../../app/log');
+var db_utils = require('../../../../app/lib/db-utils');
+var Log = require('../../../../app/lib/log');
 
 
 

@@ -1,4 +1,4 @@
-var Router = require('./client/lib/router');
+var Router = require('./lib/client/router');
 
 
 var Membership = function(){

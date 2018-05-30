@@ -14,7 +14,7 @@ var error_messages = require('../../../config/error_messages');
  * @param {String} args.number
  */
 
-var OTP = function(args){
+var OTP_Create = function(args){
     assert(args.country_code && args.number);
     var context = this;
 
@@ -83,31 +83,8 @@ var OTP = function(args){
         });
     }
 
-    /**
-     * verify otp
-     */
-
-    this.verifyOTP = function(callback){
-        var query = "SELECT * FROM "+ db_tables.otp.name + " WHERE (country_code = "+ args.country_code + " AND number = "+args.number + " )";
-        db.get().query(query, args.values, function(err, result){
-            if (err){
-                Log.e(err.toString());
-                callback(new Error(error_messages.UNKNOWN_ERROR));
-            } 
-            if(result.length){
-                if(result[0].otp == context.otp){
-                    callback(null, true);
-                }else{
-                    callback(null,false);
-                }
-            }else{
-                callback(null,false);
-            }
-        });
-    }
-
 }
 
-module.exports = OTP;
+module.exports = OTP_Create;
 
 

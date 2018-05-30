@@ -1,6 +1,6 @@
 var NewUser = require('../models/new_user');
 var async = require('async');
-var error_messages = require('../../../config/error_messages');
+var error_messages = require('../../../../app/config/error_messages');
 
 
 
@@ -46,7 +46,7 @@ var Registration = function(args){
             else if(result)
                 next(null,new_user.user_id);
         });
-    }
+    }   
 
     //store user in database
     this.storeUser = function(next){
