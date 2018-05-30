@@ -24,9 +24,9 @@ exports.e = function(error_message,user_id){
         });
     }
 
-    db.get().query(query,values,function(err,result){
+    db.get().query(query,values,function(err){
         if(err){
-            console.log(err);
+            console.log(err); // eslint-disable-line no-console
         }
     });
 }

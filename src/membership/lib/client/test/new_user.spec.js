@@ -1,23 +1,17 @@
 var NewUser = require('../lib/models/new_user');
 var assert = require('assert');
 var error_messages = require('../../config/error_messages');
-var db = require('../../../sadda-db');
+var db = require('../../../app/sadda-db');
 
 
-describe('New User',function(){
-    describe('Valid mobile number and username', function(){
+describe('New User Registration',function(){
+    describe('Resgistration valid when ..', function(){
         var validUser;
         before(function(){
             validUser = new NewUser({country_code:'91', number:'7541833368',username:'ananddevesh22'});
         });
-        it('is valid',function(){
+        it('mobile number and username is valid',function(){
             assert.ok(validUser.isValid());
-        });
-        it('has mobile number is valid',function(){
-            assert.ok(validUser.validateMobileNumber());
-        });
-        it('has valid username',function(){
-            assert.ok(validUser.validateUsername());
         });
         it('generates valid user_id',function(){
             validUser.generateUserId();
@@ -26,13 +20,21 @@ describe('New User',function(){
     });
 
     describe('Invalid if...', function(){
-        it('invalid mobile number',function(){
-            var invalidUser = new NewUser({country_code: 'a',number:'gsd'});
-            assert.ok(!invalidUser.validateMobileNumber());
+        it('length of mobile number is less than 10',function(){
+            var invalidUser = new NewUser({country_code: 'a',number:'123456789'});
+            assert.ok(!invalidUser.mobileIsValid());
+        });
+        it('length of mobile number is greater than 10',function(){
+            var invalidUser = new NewUser({country_code: 'a',number:'12345678901'});
+            assert.ok(!invalidUser.mobileIsValid());
+        });
+        it('length of mobile number is less than 10',function(){
+            var invalidUser = new NewUser({country_code: 'a',number:'123456789'});
+            assert.ok(!invalidUser.mobileIsValid());
         });
         it('invalid username',function(){
             var invalidUser = new NewUser({username: "fsd"});
-            assert.ok(!invalidUser.validateUsername());
+            assert.ok(!invalidUser.usernameIsValid());
         });
     });
 
@@ -66,7 +68,7 @@ describe('New User',function(){
         });
 
         it('should store user without error', function(done){
-            validUser.store(function(err, results){
+            validUser.store(function(err){
                 if (err) done(err);
                 else done();
             });
@@ -91,13 +93,13 @@ describe('New User',function(){
                   console.log('Unable to connect to MySQL.');
                   process.exit(1);
                 }
-                validUser.store(function(err, results){
+                validUser.store(function(){
                 });
             });
         });
 
         it('should return with no error',function(done){
-            validUser.hasDuplicate(function(err, hasDuplicate){
+            validUser.hasDuplicate(function(err){
                 assert.ok(!err);
                 done();
             });
@@ -144,9 +146,9 @@ describe('New User',function(){
             });
         });
         it('should set error_message in case of duplicate found', function(done){
-            var newUser = new NewUser({country_code:'81', number:'7541833368',username:'qwerty'}); 
+            var newUser = new NewUser({country_code:'91', number:'7541833368',username:'qwerty'}); 
             newUser.generateUserId();
-            newUser.hasDuplicate(function(err, hasDuplicate){
+            newUser.hasDuplicate(function(){
                 assert.ok(newUser.error_message);
                 done();  
             });   

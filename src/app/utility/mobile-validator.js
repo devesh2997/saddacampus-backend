@@ -12,7 +12,7 @@ var error_messages = require('../config/error_messages');
 var NumberValidator = function(args){
 
     var mobileReg = /^[0-9]+$/;
-    var countryCodeReg = /^[0-9-]+$/;
+    var countryCodeReg = /^[0-9-+]+$/;
 
     this.country_code = args.country_code;
     this.number = args.number;

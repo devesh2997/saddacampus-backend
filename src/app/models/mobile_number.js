@@ -1,5 +1,4 @@
 var MobileValidator = require('../utility/mobile-validator');
-var assert = require('assert');
 
 /**
  * Model for mobile number

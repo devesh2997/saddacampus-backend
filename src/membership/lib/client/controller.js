@@ -1,3 +1,6 @@
+var Registration = require('./processes/registration');
+
+
 // Send otp for authentication
 exports.send_otp = function(req,res){
     res.send('Not implemented: send otp');
@@ -10,7 +13,17 @@ exports.verify_otp = function(req,res){
 
 //Create new user.
 exports.create_user = function(req,res){
-    res.send('Not implemented: create user');
+    var requestBody = req.body;
+    res.json(requestBody);
+    var args = {
+        country_code: requestBody.country_code,
+        number: requestBody.number,
+        username: requestBody.username
+    }
+    var reg = new Registration(args);
+    reg.processRegistration(function(err, result){
+        res.json(result);
+    });
 };
 
 //Update username.

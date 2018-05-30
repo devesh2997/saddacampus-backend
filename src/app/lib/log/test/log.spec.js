@@ -14,7 +14,6 @@ describe('Log',function(){
     describe('.e',function(){
         it('should only pass error_message to query given to db.query()',function(){
             var error_message = 'test';
-
             Log.e(error_message);
         });
     });

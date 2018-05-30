@@ -1,10 +1,10 @@
 var uniqid = require('uniqid');
 var MobileNumber = require('../../../models/mobile_number');
 var error_messages = require('../../../config/error_messages');
-var db = require('../../../../sadda-db');
+var db = require('../../../../app/sadda-db');
 var db_tables = db.tables;
-var db_utils = require('../../../../db-utils');
-var Log = require('../../../../log');
+var db_utils = require('../../../../app/db-utils');
+var Log = require('../../../../app/log');
 
 
 
@@ -24,29 +24,33 @@ var User = function(args){
 
     //validate username
     //length of username should be > 5 and < 25
-    this.validateUsername = function(){
+    this.usernameIsValid = function(){
         return this.username && this.username.length > 5 && this.username.length < 25;
     }
     //validate mobile number
-    this.validateMobileNumber = function(){
+    this.mobileIsValid = function(){
         return this.mobile.isValid();
     };
 
     this.isValid = function(){
-        return this.validateUsername() && this.validateMobileNumber();
+        return this.usernameIsValid() && this.mobileIsValid();
     }
 
     this.validationMessage = function(){
-        if(!this.validateMobileNumber()){
+        if(!this.mobileIsValid()){
             return this.mobile.validationMessage();
-        }else if(!this.validateUsername()){
+        }else if(!this.usernameIsValid()){
             return error_messages.INVALID_USERNAME;
         }
     }
 
     //generate unique user id.
-    this.generateUserId = function(){
+    this.generateUserId = function(callback){
         context.user_id = uniqid(context.mobile.number.substr(0,4));
+        if(context.user_id)
+            callback(null, true);
+        else
+            callback(new Error(error_messages.UNKNOWN_ERROR));
     }
 
     //store new user in database.
@@ -58,7 +62,7 @@ var User = function(args){
         var query = db_utils.query_creator.insert(args);  
         db.get().query(query, args.values, function(err, result){
             if (err){
-                Log.e(err);
+                Log.e(err.toString());
                 return callback(new Error(error_messages.UNKNOWN_ERROR));
             } 
             callback(null, result.insertId);
@@ -71,7 +75,7 @@ var User = function(args){
         var query = "SELECT * from " + db.tables.users.name + " WHERE user_id = '" + this.user_id + "' OR (country_code = '" + this.mobile.country_code + "' AND number = '" + this.mobile.number + "') OR username = '"+ this.username + "'";
         db.get().query(query, function(err, result){
             if (err) {
-                Log.e(err);
+                Log.e(err.toString());
                 return callback(new Error(error_messages.UNKNOWN_ERROR));
             }
             if(result.length){

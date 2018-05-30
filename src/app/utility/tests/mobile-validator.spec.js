@@ -7,7 +7,7 @@ describe('mobile-validator', function(){
     var validNumber ; 
 
     before(function(){
-        validNumber = new NumberValidator({country_code: '1-34', number:'7541833368'});
+        validNumber = new NumberValidator({country_code: '1-34+', number:'7541833368'});
     });
 
     describe('Using correct country code and mobile number', function(){
