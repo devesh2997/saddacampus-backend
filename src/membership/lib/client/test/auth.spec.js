@@ -119,7 +119,7 @@ describe('Authentication',function(){
             assert.ok(response.token);
         });
         it('generated jwt token decodeds to user_id', function(done){
-            jwt.verify(response.token, '12345', function(err, decoded){
+            jwt.verify(response.token, process.env.JWT_SECRET || 'mynameissaddacampus', function(err, decoded){
                 assert.ok(decoded.user_id == response.User.user_id);
                 done();
             });
@@ -152,7 +152,7 @@ describe('Authentication',function(){
             assert.ok(response.token);
         });
         it('generated jwt token decodeds to mobile object', function(done){
-            jwt.verify(response.token, '12345', function(err, decoded){
+            jwt.verify(response.token, process.env.JWT_SECRET || 'mynameissaddacampus', function(err, decoded){
                 assert.ok(decoded.country_code == '91' && decoded.number == '7541833368');
                 done();
             });

@@ -42,7 +42,7 @@ describe('Registration',function(){
             assert.ok(response.token);
         });
         it('generated jwt token decodes to correct user_id', function(done){
-            jwt.verify(response.token, '12345', function(err, decoded){
+            jwt.verify(response.token, process.env.JWT_SECRET || 'mynameissaddacampus', function(err, decoded){
                 assert.ok(decoded.user_id == response.User.user_id);
                 done();
             });

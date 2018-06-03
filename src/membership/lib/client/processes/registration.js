@@ -30,7 +30,7 @@ var Registration = function(args){
     this.createToken = function(next){
         var user_id_token = jwt.sign({
             user_id: user.user_id
-        },'12345');
+        },process.env.JWT_SECRET || 'mynameissaddacampus');
         next(null, user_id_token);
     }
 

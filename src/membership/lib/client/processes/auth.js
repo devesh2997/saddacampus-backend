@@ -44,7 +44,7 @@ var Auth = function(args){
                 var mobile_token = jwt.sign({
                     country_code: args.country_code,
                     number: args.number
-                },'12345');
+                },process.env.JWT_SECRET || 'mynameissaddacampus');
 
                 next(null, {
                     success: true,
@@ -56,7 +56,7 @@ var Auth = function(args){
                 //generate jwt token with user_id
                 var user_id_token = jwt.sign({
                     user_id: User.user_id
-                },'12345');
+                },process.env.JWT_SECRET || 'mynameissaddacampus');
 
                 next(null, {
                     success: true,
