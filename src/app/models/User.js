@@ -5,7 +5,6 @@ var db_utils = require('../lib/db-utils');
 var uniqid = require('uniqid');
 var Log = require('../lib/log');
 var MobileNumber = require('../models/mobile_number');
-var assert = require('assert');
 
 
 //checking for duplicate entries
@@ -24,6 +23,12 @@ var hasDuplicate = function(args, callback){
     });
 }
 
+//validate username
+//length of username should be > 5 and < 25
+var usernameIsValid = function(username){
+    return username && username.length >= 5 && username.length <= 25;
+}
+
 /**
  * validates user before inserting in database
  * @param {Object} args
@@ -39,7 +44,7 @@ var userValidator = function(args, callback){
 
     //validate username
     //length of username should be > 5 and < 25
-    if(!args.username || args.username.length < 5 || args.username.length > 25)
+    if(!usernameIsValid(args.username))
         callback(new Error(error_messages.INVALID_USERNAME));
   
     //validate mobile number
@@ -131,6 +136,29 @@ exports.findByMobile = function(args, callback){
     }
 }
 
-//find user by user_id
+/**
+ * find user by user_id
+ * @param {Object} args 
+ * @param {String} args.user_id
+ */
+exports.findByUserID = function(args, callback){
+    if(!args.user_id){
+        callback(new Error(error_messages.MISSING_PARAMETERS));
+    }else{
+        var query = "SELECT * FROM "+db_tables.users.name+" WHERE user_id = '"+args.user_id+"'";
+        db.get().query(query, function(err,result){
+            if(err){
+                Log.e(err);
+                callback(new Error(error_messages.UNKNOWN_ERROR));
+            }else if(!result.length){
+                callback(new Error(error_messages.USER_DOES_NOT_EXIST));
+            }else{
+                callback(null, {
+                    User: result[0]
+                });
+            }
+        });
+    }
+}
 
 

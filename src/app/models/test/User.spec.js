@@ -1,7 +1,6 @@
 var assert = require('assert');
 var db = require('../../../app/lib/sadda-db');
 var User = require('../User');
-var sinon = require('sinon');
 var error_messages = require('../../config/error_messages');
 
 
@@ -254,6 +253,87 @@ describe('User-Model', function(){
                     User.findByMobile({
                         country_code: '91',
                         number: '7541833368'
+                    }, function(err){
+                        assert.ok(err && err.message == error_messages.USER_DOES_NOT_EXIST);
+                        done();
+                    })
+                });   
+                
+            });
+        });
+
+        after(function(done){
+            db.drop([db.tables.users.name], function(){done()});   
+        });
+    });
+
+    describe('Find User by user_id', function(){
+        var user_id;
+        describe('Valid user_id is provided and user exists', function(){
+            var args ;
+            var response;
+            var error;
+            before(function(done){
+                args = {
+                    country_code: '91',
+                    number: '7541833368',
+                    username: 'ananddevesh22',
+                    profilepic: ''
+                }
+                User.create(args, function(err, result){
+                    if(err)
+                        throw err;
+                    user_id = result.User.user_id;
+                    User.findByUserID({
+                        user_id: user_id
+                    }, function(err, result){
+                        error = err;
+                        response = result;
+                        done();
+                    });
+                }); 
+            });
+            it('callback returns with no error', function(){
+                assert.ok(!error);
+            });
+            it('callback returns with User object', function(){
+                assert.ok(response.User);
+            });
+            it('User object contains user_id',function(){
+                assert.ok(response.User.user_id);
+            });
+            it('User object contains username',function(){
+                assert.ok(response.User.username);
+            });
+            it('User object contains country_code',function(){
+                assert.ok(response.User.country_code);
+            });
+            it('User object contains number',function(){
+                assert.ok(response.User.number);
+            });
+            it.skip('User object contains profilepic',function(){
+                assert.ok(response.User.profilepic);
+            });
+            it('User object contains status',function(){
+                assert.ok(response.User.status);
+            });
+            it('User object contains created_at',function(){
+                assert.ok(response.User.created_at);
+            });
+        });
+
+        describe('callback returns with error when ...', function(){
+            it('user_id is missing', function(done){
+                User.findByUserID({
+                }, function(err){
+                    assert.ok(err && err.message == error_messages.MISSING_PARAMETERS);
+                    done();
+                });
+            });
+            it('user does not exist',function(done){
+                db.drop([db.tables.users.name], function(){
+                    User.findByUserID({
+                        user_id: user_id
                     }, function(err){
                         assert.ok(err && err.message == error_messages.USER_DOES_NOT_EXIST);
                         done();
