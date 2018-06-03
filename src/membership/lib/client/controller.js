@@ -1,5 +1,8 @@
 var Registration = require('./processes/registration');
 var otp = require('../../../app/lib/otp');
+var jwt = require('jsonwebtoken');
+var Auth = require('./processes/auth');
+
 
 
 // Send otp for authentication
@@ -13,29 +16,42 @@ exports.send_otp = function(req,res){
 };
 
 //Verify otp sent
-exports.verify_otp = function(req,res){
-    otp.verifyOTP({
-        country_code: req.body.country_code,
-        number: req.body.number,
-        otp: req.body.otp
-    }).verify(function(err, result){
-        res.json(result);
-    });
+exports.auth = function(req,res){
+    var requestBody = req.body;
+    var args = {
+        country_code: requestBody.country_code,
+        number: requestBody.number,
+        otp: requestBody.otp
+    }
+    var auth = new Auth(args);
+    auth.authenticate(function(err, result){
+        res.send(result);
+    })
 };
 
 //Create new user.
 exports.create_user = function(req,res){
     var requestBody = req.body;
-    res.json(requestBody);
-    var args = {
-        country_code: requestBody.country_code,
-        number: requestBody.number,
-        username: requestBody.username
-    }
-    var reg = new Registration(args);
-    reg.processRegistration(function(err, result){
-        res.json(result);
+    var token = req.headers['x-access-token'];
+    if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+    jwt.verify(token, '12345', function(err, decoded){
+        if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        if(decoded.country_code !== requestBody.country_code || decoded.number !== requestBody.number){
+            return res.status(500).send({ auth: false, message: 'Invalid authentication token.' });
+        }else{
+            var args = {
+                country_code: requestBody.country_code,
+                number: requestBody.number,
+                username: requestBody.username,
+                profilepic: requestBody.profilepic
+            }
+            var reg = new Registration(args);
+            reg.register(function(err, result){
+                res.json(result);
+            });
+        }
     });
+    
 };
 
 //Update username.

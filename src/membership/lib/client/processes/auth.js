@@ -1,10 +1,7 @@
-var db = require('../../../../app/lib/sadda-db');
 var otp = require('../../../../app/lib/otp');
-var db_utils = require('../../../../app/lib/db-utils');
 var MOBILE_NUMBER = require('../../../../app/models/mobile_number');
 var async = require('async');
 var User = require('../../../../app/models/User');
-var error_messages = require('../../../../app/config/error_messages');
 var jwt = require('jsonwebtoken');
 
 /**

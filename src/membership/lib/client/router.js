@@ -3,7 +3,7 @@ var router = express.Router();
 
 var controller = require('./controller');
 
-router.post('/verify',controller.verify_otp);
+router.post('/auth',controller.auth);
 
 router.post('/create',controller.create_user);
 

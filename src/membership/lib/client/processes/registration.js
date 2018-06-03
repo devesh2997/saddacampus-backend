@@ -1,8 +1,6 @@
-var NewUser = require('../models/new_user');
 var async = require('async');
-var error_messages = require('../../../../app/config/error_messages');
-
-
+var User = require('../../../../app/models/User');
+var jwt = require('jsonwebtoken');
 
 /**
  * Processes membership application (creates new user.)
@@ -15,48 +13,25 @@ var error_messages = require('../../../../app/config/error_messages');
 
 var Registration = function(args){
 
-    var new_user = new NewUser(args);
+    var user;
 
-    /**validate the arguments*/
-    this.validateUserCredentials = function(next){
-        if(new_user.isValid()){
-            next(null, true);
-        }else{
-            next(new_user.validationMessage());
-        }
-    }
-
-    //check for existing user_id, mobile or username -> return failure if mobile, username exists
-    this.checkForDuplicateUsers = function(next){
-        new_user.hasDuplicate(function(err, hasDuplicate){
-            if(!err){
-                if(hasDuplicate)
-                    next(error_messages.DUPLICATE_USER,hasDuplicate);
-                else
-                    next(null, hasDuplicate);
-            }
-        });
-    }
-
-    //create uid
-    this.createUserId = function(next){
-        new_user.generateUserId(function(err, result){
+    //create user
+    this.createUser = function(next){
+        User.create(args,function(err, result){
             if(err)
                 next(err);
-            else if(result)
-                next(null,new_user.user_id);
+            else{
+                user = result.User;
+                next(null,result.User);
+            } 
         });
-    }   
-
-    //store user in database
-    this.storeUser = function(next){
-        new_user.store(function(err, result){
-            if(err)
-                next(err);
-            else
-                if(result)
-                    next(null, true);
-        });
+    }
+    //generate jwt token with user_id
+    this.createToken = function(next){
+        var user_id_token = jwt.sign({
+            user_id: user.user_id
+        },'12345');
+        next(null, user_id_token);
     }
 
     this.finishRegistration = function(next){
@@ -64,18 +39,17 @@ var Registration = function(args){
     }
 
 
-    this.processRegistration = function(next){
+    this.register = function(next){
         async.series({
-            validated: this.validateUserCredentials,
-            hasDuplicate: this.checkForDuplicateUsers,
-            user_id: this.createUserId,
-            userStored: this.storeUser,
+            User: this.createUser,
+            token: this.createToken,
             success: this.finishRegistration
         }, function(err,result){
             if(err){
-                result.success = false;
-                result.message = err;
-                next(null,result);
+                var response = {};
+                response.success = false;
+                response.message = err.message;
+                next(null,response);
             }else{
                 result.message = 'Registration successfull. Welcome to the Saddacampus experience.';
                 next(null,result);
