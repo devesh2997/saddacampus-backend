@@ -4,5 +4,8 @@
     "INVALID_COUNTRY_CODE": "Invalid country-code",
     "INVALID_MOBILE_NUMBER": "Invalid mobile-number",
     "INVALID_USERNAME": "Invalid username",
-    "DUPLICATE_USER": "User already exists"
+    "DUPLICATE_USER": "User already exists",
+    "INCORRECT_OTP": "Incorrect OTP provided.",
+    "MISSING_PARAMETERS": "Required parameter/s is/are missing.",
+    "USER_DOES_NOT_EXIST": "The resource you are looking for does not exist"
 }

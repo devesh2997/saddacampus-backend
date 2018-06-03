@@ -11,8 +11,14 @@ var config = require('./config');
  * @param {String} args.message
  * @param {function} callback 
  */
-exports.send = function(args, callback){
+exports.send = function(args, callback){            
     assert(args.country_code, args.number, args.message);
+
+    if(process.env.MODE == 'TEST'){
+        callback(null, true);
+        return;
+    }  
+
     var mobile_number = args.country_code + args.number;
 
     

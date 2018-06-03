@@ -58,7 +58,7 @@ var User = function(args){
         var args = {}
         args.table_name = db_tables.users.name;
         args.fields = db_tables.users.fields;
-        args.values = [this.user_id, this.mobile.country_code, this.mobile.number, this.username, "", 'verified'];
+        args.values = [this.user_id, this.mobile.country_code, this.mobile.number, this.username, "", 'verified', new Date().toLocaleString()];
         var query = db_utils.query_creator.insert(args);  
         db.get().query(query, args.values, function(err, result){
             if (err){
@@ -84,7 +84,6 @@ var User = function(args){
             }
             else return callback(null, false);
         });
-
     }
 };
 

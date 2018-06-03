@@ -1,6 +1,6 @@
 var assert = require('assert');
-var NumberValidator = require('../utility/mobile-validator');
-var error_messages = require('../config/error_messages');
+var NumberValidator = require('../mobile-validator');
+var error_messages = require('../../config/error_messages');
 
 
 describe('mobile-validator', function(){

@@ -31,7 +31,7 @@ var OTP_Verify = function(args){
             } 
             if(result.length){
                 context.correct_otp = result[0].otp;
-                context.expiry = result[0].expiry;
+                context.expiry = result[0].expiry.toLocaleString();
                 callback(null,true);
             }else{
                 callback(new Error(error_messages.UNKNOWN_ERROR));
@@ -43,7 +43,7 @@ var OTP_Verify = function(args){
      * verify expiry
      */
     this.verifyExpiry = function(){
-        var currentTime = new Date().toLocaleString;
+        var currentTime = new Date().toLocaleString();
         if(currentTime <= context.expiry){
             return true;
         }else{
@@ -61,8 +61,8 @@ var OTP_Verify = function(args){
     }
 
 
-    this.verify = function(callback){
-        return callback(null, this.verifyExpiry() && this.verifyOTP());
+    this.verify = function(){
+        return this.verifyExpiry() && this.verifyOTP();
     }   
 
 }

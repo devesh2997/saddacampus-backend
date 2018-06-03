@@ -1,6 +1,7 @@
 var OTP = require('../models/OTP-verify');
 var MOBILE_NUMBER = require('../../../models/mobile_number');
 var async = require('async');
+var error_messages = require('../../../../app/config/error_messages');
 
 
 /**
@@ -35,13 +36,11 @@ var verifyOTP = function(args){
 
     //verify otp
     this.verifyOTP = function(next){
-        otp.verify(function(err, result){
-            if(err)
-                next(err);
-            else{
-                next(null,result);
-            }
-        })
+        if(otp.verify()){
+            next(null,true);
+        }else{
+            next(error_messages.INCORRECT_OTP);
+        }
     }
 
     //
@@ -53,19 +52,18 @@ var verifyOTP = function(args){
     this.verify = function(next){
         async.series({
             mobile_validated: this.verifyNumber,
+            retrive_otp: this.retrieveOTP,
             otp_verified: this.verifyOTP,
             success: this.finishVerifying
-        },function(err,result){
+        },function(err){
+            var response = {}
             if(err){
-                result.success = false;
-                result.message = err;
-                next(null,result);
+                response.success = false;
+                response.message = err;
+                next(null,response);
             }else{
-                if(result.otp_verified)
-                    result.message = 'OTP successfully verified.';
-                else
-                    result.message = 'Incorrect OTP provided.'
-                next(null,result);
+                response.success = true;
+                next(null,response);
             }
         });
     }
