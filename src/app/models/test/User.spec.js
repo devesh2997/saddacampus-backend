@@ -248,17 +248,20 @@ describe('User-Model', function(){
                     done();
                 });
             });
-            it('user does not exist',function(done){
-                db.drop([db.tables.users.name], function(){
-                    User.findByMobile({
-                        country_code: '91',
-                        number: '7541833368'
-                    }, function(err){
-                        assert.ok(err && err.message == error_messages.USER_DOES_NOT_EXIST);
-                        done();
-                    })
-                });   
-                
+        });
+
+        describe('When user does not exist', function(){
+            before(function(done){
+                db.drop([db.tables.users.name], function(){done()});
+            });
+            it('empty User object is returned', function(done){
+                User.findByMobile({
+                    country_code: '91',
+                    number: '7541833368'
+                }, function(err, result){
+                    assert.ok(!result.User);
+                    done();
+                });
             });
         });
 
@@ -330,16 +333,19 @@ describe('User-Model', function(){
                     done();
                 });
             });
-            it('user does not exist',function(done){
-                db.drop([db.tables.users.name], function(){
-                    User.findByUserID({
-                        user_id: user_id
-                    }, function(err){
-                        assert.ok(err && err.message == error_messages.USER_DOES_NOT_EXIST);
-                        done();
-                    })
-                });   
-                
+        });
+
+        describe('When user does not exist', function(){
+            before(function(done){
+                db.drop([db.tables.users.name], function(){done()});
+            });
+            it('empty User object is returned', function(done){
+                User.findByUserID({
+                    user_id: user_id
+                }, function(err, result){
+                    assert.ok(!result.User);
+                    done();
+                });
             });
         });
 

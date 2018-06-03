@@ -4,16 +4,31 @@ var Auth = require('../processes/auth');
 var error_messages = require('../../../../app/config/error_messages');
 var db = require('../../../../app/lib/sadda-db');
 var otp = require('../../../../app/lib/otp');
+var User = require('../../../../app/models/User');
+var jwt = require('jsonwebtoken');
 
 
 describe('Authentication',function(){
+    var correct_otp;
     before(function(done){
         process.env.MODE = 'TEST';
         db.connect(db.MODE_TEST,function(err){
-            if(err)
+            if(err){
                 console.log(err);
-            else
                 done();
+            }else
+            db.drop([db.tables.users.name, db.tables.otp.name], function(){
+                var SEND_OTP = otp.sendOTP({country_code:'91', number:'7541833368'});
+                SEND_OTP.send(function(err, result){
+                    if(result.success){       
+                        var query = "SELECT * FROM "+ db.tables.otp.name + " WHERE (country_code = '91' AND number = '7541833368' )";
+                        db.get().query(query, function(err, result){                            
+                            correct_otp = result[0].otp;
+                            done();
+                        });            
+                    }
+                });
+            });   
         });
     });
     describe('When invalid mobile number is provided', function(){
@@ -44,14 +59,8 @@ describe('Authentication',function(){
     });
     describe('When invalid otp is provided',function(){
         var auth;
-        before(function(done){
-            var SEND_OTP = otp.sendOTP({country_code:'91', number:'7541833368'});
-            SEND_OTP.send(function(err, result){
-                if(result.success){
-                    auth = new Auth({country_code:'91', number:'7541833368', otp:'654321'});       
-                    done();             
-                }
-            });
+        before(function(){
+            auth = new Auth({country_code:'91', number:'7541833368', otp:'654321'});
         });
         it('should verify otp',function(done){
             var validateOTPSpy = sinon.spy(auth,'validateOTP');
@@ -75,16 +84,83 @@ describe('Authentication',function(){
         });
     });
 
-    describe('When user exists',function(){        
-        it('retrieves user information from database');
-        it('generates jwt token with user_id');
-        it('sends back success = true,token, mobile number and username');        
+    describe('When user exists',function(){  
+        var auth; 
+        var response; 
+        before(function(done){
+            var args = {
+                country_code: '91',
+                number: '7541833368',
+                username: 'ananddevesh22',
+                profilepic: ''
+            }
+            User.create(args, function(){
+                auth = new Auth({
+                    country_code: '91',
+                    number: '7541833368',
+                    otp: correct_otp
+                });
+                auth.authenticate(function(err, result){
+                    response = result;
+                    done();
+                });
+            });
+        });
+        it('returns success = true', function(){
+            assert.ok(response.success);
+        });
+        it('return user_exists = true', function(){
+            assert.ok(response.user_exists);
+        });
+        it('retrieves user information from database', function(){
+            assert.ok(response.User);
+        });
+        it('returns callback with token', function(){
+            assert.ok(response.token);
+        });
+        it('generated jwt token decodeds to user_id', function(done){
+            jwt.verify(response.token, '12345', function(err, decoded){
+                assert.ok(decoded.user_id == response.User.user_id);
+                done();
+            });
+        });       
     });
 
     describe('When user does not exist', function(){
-        it('generates jwt token with mobile number');
-        it('should return success = true');
-        it('sends back the token generated');   
+        var auth;
+        var response;
+        before(function(done){
+            db.drop([db.tables.users.name], function(){
+                auth = new Auth({
+                    country_code: '91',
+                    number: '7541833368',
+                    otp: correct_otp
+                });
+                auth.authenticate(function(err, result){
+                    response = result;
+                    done();
+                });
+            });
+        });
+        it('return success = true', function(){
+            assert.ok(response.success === true);
+        });
+        it('return user_exists = false', function(){
+            assert.ok(response.user_exists === false);
+        });
+        it('returns callback with token', function(){
+            assert.ok(response.token);
+        });
+        it('generated jwt token decodeds to mobile object', function(done){
+            jwt.verify(response.token, '12345', function(err, decoded){
+                assert.ok(decoded.country_code == '91' && decoded.number == '7541833368');
+                done();
+            });
+        });  
+    });
+
+    after(function(done){
+        db.drop([db.tables.users.name, db.tables.otp.name], function(){done()});   
     });
     
     

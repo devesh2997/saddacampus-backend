@@ -24,7 +24,7 @@ var OTP_Verify = function(args){
 
     this.retrieveOTP = function(callback){
         var query = "SELECT * FROM "+ db_tables.otp.name + " WHERE (country_code = "+ args.country_code + " AND number = "+args.number + " )";
-        db.get().query(query, args.values, function(err, result){
+        db.get().query(query, function(err, result){
             if (err){
                 Log.e(err.toString());
                 callback(new Error(error_messages.UNKNOWN_ERROR));

@@ -61,8 +61,7 @@ var userValidator = function(args, callback){
             else
                 callback(null);
         });
-    }  
-    
+    }    
 }
 
 /**
@@ -125,8 +124,6 @@ exports.findByMobile = function(args, callback){
             if(err){
                 Log.e(err);
                 callback(new Error(error_messages.UNKNOWN_ERROR));
-            }else if(!result.length){
-                callback(new Error(error_messages.USER_DOES_NOT_EXIST));
             }else{
                 callback(null, {
                     User: result[0]
@@ -150,8 +147,6 @@ exports.findByUserID = function(args, callback){
             if(err){
                 Log.e(err);
                 callback(new Error(error_messages.UNKNOWN_ERROR));
-            }else if(!result.length){
-                callback(new Error(error_messages.USER_DOES_NOT_EXIST));
             }else{
                 callback(null, {
                     User: result[0]
