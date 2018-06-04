@@ -1,7 +1,8 @@
 var email_validator = require('email-validator');
 
+
 exports.emailIsValid = function(email){
-    return email_validator.validate(email);
+    return email && email_validator.validate(email);
 }
 
 exports.usernameIsValid = function(username){
@@ -9,5 +10,5 @@ exports.usernameIsValid = function(username){
 }
 
 exports.adminRoleIsValid = function(role){
-    return role == 'super' || role == 'core' || role == 'support' || role == 'maintainer'
+    return role == 'super' || role == 'core' || role == 'support' || role == 'maintainer';
 }

@@ -6,5 +6,9 @@
     "otp": {
         "name": "otp",
         "fields": ["country_code", "number", "otp", "generation_time", "expiry"]
+    },
+    "admins":{
+        "name": "admins",
+        "fields": ["admin_id", "username", "email", "encrypted_password", "role"]
     }
 }

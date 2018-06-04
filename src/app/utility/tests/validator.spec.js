@@ -50,8 +50,8 @@ describe('Arguments validator', function(){
             });
         });
         describe('Returns false when something other is provided ...', function(){
-            it('testrole', function(){
-                assert.ok(!validator.adminRoleIsValid('testrole'));
+            it('qwerty', function(){
+                assert.ok(!validator.adminRoleIsValid('qwerty'));
             });
         });
     });
