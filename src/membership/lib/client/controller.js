@@ -34,7 +34,7 @@ exports.create_user = function(req,res){
     var requestBody = req.body;
     var token = req.headers['x-access-token'];
     if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
-    jwt.verify(token, '12345', function(err, decoded){
+    jwt.verify(token, process.env.JWT_SECRET || 'mynameissaddacampus', function(err, decoded){
         if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
         if(decoded.country_code !== requestBody.country_code || decoded.number !== requestBody.number){
             return res.status(500).send({ auth: false, message: 'Invalid authentication token.' });

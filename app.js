@@ -1,8 +1,8 @@
 require('dotenv').config();
 var express = require('express');
 var bodyParser = require('body-parser');
-var Membership = require('./src/membership');
 var db = require('./src/app/lib/sadda-db');
+var version_router = require('./version_router');
 
 var app = express();
  
@@ -13,8 +13,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 })); 
 
-var membership = new Membership();
-app.use('/membership', membership.router);
+app.use('/v1', version_router.v1);
 
 
 
