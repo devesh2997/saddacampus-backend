@@ -5,6 +5,7 @@ var db_utils = require('../lib/db-utils');
 var uniqid = require('uniqid');
 var Log = require('../lib/log');
 var MobileNumber = require('../models/mobile_number');
+var validator = require('../utility/validator');
 
 
 //checking for duplicate entries
@@ -23,11 +24,6 @@ var hasDuplicate = function(args, callback){
     });
 }
 
-//validate username
-//length of username should be > 5 and < 25
-var usernameIsValid = function(username){
-    return username && username.length >= 5 && username.length <= 25;
-}
 
 /**
  * validates user before inserting in database
@@ -44,7 +40,7 @@ var userValidator = function(args, callback){
 
     //validate username
     //length of username should be > 5 and < 25
-    if(!usernameIsValid(args.username))
+    if(!validator.usernameIsValid(args.username))
         callback(new Error(error_messages.INVALID_USERNAME));
   
     //validate mobile number
