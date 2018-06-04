@@ -7,7 +7,7 @@
     "start": "npm-run-all --parallel security-check start:server lint:watch test:watch",
     "test": "mocha --reporter progress \"*.spec.js\"",
     "test:all": "mocha \"src/**/*.spec.js\" --reporter progress --exit",
-    "test:watch": "npm run test -- --watch",
+    "test:watch": "npm run test:all -- --watch",
     "start:server": "node app.js",
     "security-check": "nsp check",
     "lint": "esw app.js --color",
