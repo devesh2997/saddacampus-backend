@@ -31,7 +31,7 @@ exports.get = function() {
   return state.pool;
 }
 
-exports.fixtures = function(data) {
+exports.fixtures = function(data,done) {
   var pool = state.pool;
   if (!pool) return done(new Error('Missing database connection.'));
 
@@ -58,8 +58,11 @@ exports.drop = function(tables, done) {
 exports.dropTable = function(table, done){
   var pool = state.pool;
   pool.query('DELETE FROM '+table, function(error){
-    if(error)
+    if(error){
       console.log(error);
+    }else{
+      done();
+    }
   });
 }
 
