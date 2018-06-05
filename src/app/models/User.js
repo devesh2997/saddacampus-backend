@@ -152,4 +152,27 @@ exports.findByUserID = function(args, callback){
     }
 }
 
+/**
+ * find user by username
+ * @param {Object} args 
+ * @param {String} args.username
+ */
+exports.findByUsername = function(args, callback){
+    if(!args.username){
+        callback(new Error(error_messages.MISSING_PARAMETERS));
+    }else{
+        var query = "SELECT * FROM "+db_tables.users.name+" WHERE username = '"+args.username+"'";
+        db.get().query(query, function(err,result){
+            if(err){
+                Log.e(err);
+                callback(new Error(error_messages.UNKNOWN_ERROR));
+            }else{
+                callback(null, {
+                    User: result[0]
+                });
+            }
+        });
+    }
+}
+
 

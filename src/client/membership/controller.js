@@ -2,6 +2,7 @@ var Registration = require('./processes/registration');
 var otp = require('../../app/lib/otp');
 var jwt = require('jsonwebtoken');
 var Auth = require('./processes/auth');
+var UsernameAvailability = require('./processes/username-availability');
 
 
 
@@ -28,6 +29,21 @@ exports.auth = function(req,res){
         res.send(result);
     })
 };
+
+//check username availability
+exports.check_username_availability = function(req, res){
+    UsernameAvailability.isUsernameAvailable(req.params.username, function(err, isAvailable){
+        var response = {};
+        if(err){
+            response.success = false;
+            response.message = err.message;
+        }else{
+            response.success = true;
+            response.isAvailable = isAvailable;
+        }
+        res.send(response);
+    });
+}
 
 //Create new user.
 exports.create_user = function(req,res){

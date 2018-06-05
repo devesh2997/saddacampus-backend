@@ -354,6 +354,90 @@ describe('User-Model', function(){
         });
     });
 
+    describe('Find User by username', function(){
+        var user_id;
+        describe('Valid username is provided and user exists', function(){
+            var args ;
+            var response;
+            var error;
+            before(function(done){
+                args = {
+                    country_code: '91',
+                    number: '7541833368',
+                    username: 'ananddevesh22',
+                    profilepic: ''
+                }
+                User.create(args, function(err, result){
+                    if(err)
+                        throw err;
+                    username = result.User.username;
+                    User.findByUsername({
+                        username: username
+                    }, function(err, result){
+                        error = err;
+                        response = result;
+                        done();
+                    });
+                }); 
+            });
+            it('callback returns with no error', function(){
+                assert.ok(!error);
+            });
+            it('callback returns with User object', function(){                
+                assert.ok(response.User);
+            });
+            it('User object contains user_id',function(){
+                assert.ok(response.User.user_id);
+            });
+            it('User object contains username',function(){
+                assert.ok(response.User.username);
+            });
+            it('User object contains country_code',function(){
+                assert.ok(response.User.country_code);
+            });
+            it('User object contains number',function(){
+                assert.ok(response.User.number);
+            });
+            it.skip('User object contains profilepic',function(){
+                assert.ok(response.User.profilepic);
+            });
+            it('User object contains status',function(){
+                assert.ok(response.User.status);
+            });
+            it('User object contains created_at',function(){
+                assert.ok(response.User.created_at);
+            });
+        });
+
+        describe('callback returns with error when ...', function(){
+            it('username is missing', function(done){
+                User.findByUsername({
+                }, function(err){
+                    assert.ok(err && err.message == error_messages.MISSING_PARAMETERS);
+                    done();
+                });
+            });
+        });
+
+        describe('When user does not exist', function(){
+            before(function(done){
+                db.drop([db.tables.users.name], function(){done()});
+            });
+            it('empty User object is returned', function(done){
+                User.findByUsername({
+                    username: username
+                }, function(err, result){
+                    assert.ok(!result.User);
+                    done();
+                });
+            });
+        });
+
+        after(function(done){
+            db.drop([db.tables.users.name], function(){done()});   
+        });
+    });
+
     after(function(done){
         db.drop([db.tables.users.name, db.tables.otp.name], function(){
             db.end();

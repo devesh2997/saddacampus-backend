@@ -7,7 +7,9 @@ router.post('/auth',controller.auth);
 
 router.post('/create',controller.create_user);
 
-router.get('/:country_code/:number', controller.send_otp);
+router.get('/otp/:country_code/:number', controller.send_otp);
+
+router.get('/available/:username', controller.check_username_availability);
 
 router.post('/update/username',controller.update_username);
 
