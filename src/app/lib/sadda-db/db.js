@@ -27,6 +27,10 @@ exports.connect = function(mode, done) {
   done();
 }
 
+exports.end = function(){
+  state.pool.end();
+}
+
 exports.get = function() {
   return state.pool;
 }

@@ -14,7 +14,6 @@ describe('Authentication',function(){
         process.env.MODE = 'TEST';
         db.connect(db.MODE_TEST,function(err){
             if(err){
-                console.log(err);
                 done();
             }else
             db.drop([db.tables.users.name, db.tables.otp.name], function(){
@@ -160,7 +159,10 @@ describe('Authentication',function(){
     });
 
     after(function(done){
-        db.drop([db.tables.users.name, db.tables.otp.name], function(){done()});   
+        db.drop([db.tables.users.name, db.tables.otp.name], function(){
+            db.end();
+            done()
+        });   
     });
     
     

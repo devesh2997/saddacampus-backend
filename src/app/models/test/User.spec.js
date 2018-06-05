@@ -354,5 +354,12 @@ describe('User-Model', function(){
         });
     });
 
+    after(function(done){
+        db.drop([db.tables.users.name, db.tables.otp.name], function(){
+            db.end();
+            done()
+        });   
+    });
+
 });
 
