@@ -64,7 +64,9 @@ var validateArgs = function(args, callback){
 }
 
 /**
- * create a new admin
+ * create a new admin -
+ * it validates all the arguments provided and returns appropriate error in case any validation fails.
+ * returns Admin{admin_id,username, email, role} Object 
  * @param {Object} args 
  * @param {String} args.username - Between 5 to 25 characters long
  * @param {String} args.email

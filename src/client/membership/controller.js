@@ -27,7 +27,7 @@ exports.auth = function(req,res){
     var auth = new Auth(args);
     auth.authenticate(function(err, result){
         res.send(result);
-    })
+    });
 };
 
 //check username availability

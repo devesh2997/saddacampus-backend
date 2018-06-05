@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm-run-all --parallel security-check start:server lint:watch test:watch",
-    "test": "mocha --reporter progress \"*.spec.js\"",
+    "test": "mocha \"src/**/*.spec.js\" --exit",
     "test:all": "mocha \"src/**/*.spec.js\" --reporter progress --exit",
     "test:watch": "npm run test:all -- --watch",
     "start:server": "node app.js",

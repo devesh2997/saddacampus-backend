@@ -29,9 +29,27 @@ describe('OTP-Create', function(){
     });
 
     describe('otp message generation', function(){
-        it('generate correct message.');
-        it('should call callback with no error');
-        it('should return true to callback');
+        var otp_create;
+        var error, response
+        before(function(done){
+            otp_create = new OTP_Create({country_code: '+91', number: '7541833368'});
+            otp_create.generate(function(){
+                otp_create.generateMessage(function(err, result){
+                    error = err;
+                    response = result;
+                    done();
+                });
+            });
+        });
+        it('generate correct message.', function(){
+            assert.ok(otp_create.message == 'Your OTP for mobile number verification is '+otp_create.otp+'. It is valid for 10 minutes.')
+        });
+        it('should call callback with no error', function(){
+            assert.ok(!error);
+        });
+        it('should return true to callback', function(){
+            assert.ok(response);
+        });
     });
 
     describe('delete otp from database',function(){
