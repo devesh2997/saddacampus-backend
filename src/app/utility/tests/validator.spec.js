@@ -55,5 +55,17 @@ describe('Arguments validator', function(){
             });
         });
     });
+
+    describe('Password validator', function(){
+        it('returns true when length of password is more than 5', function(){
+            assert.ok(validator.passwordIsValid('devdas23'));
+        });
+        it('returns false when password is missing', function(){
+            assert.ok(!validator.passwordIsValid());
+        });
+        it('returns false when length of password is less than 6', function(){
+            assert.ok(!validator.passwordIsValid('12345'));
+        });
+    })
 });
 

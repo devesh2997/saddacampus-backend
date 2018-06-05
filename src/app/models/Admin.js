@@ -121,15 +121,6 @@ exports.findByUsername = function(args, callback){
             if(err){
                 Log.e(err);
                 callback(new Error(error_messages.UNKNOWN_ERROR));
-            }else if(result[0]){
-                callback(null, {
-                    Admin: {
-                        admin_id: result[0].admin_id,
-                        username: result[0].username,
-                        email: result[0].email,
-                        role: result[0].role
-                    }
-                });
             }else{
                 callback(null, {
                     Admin: result[0]
@@ -153,15 +144,6 @@ exports.findByAdminID = function(args, callback){
             if(err){
                 Log.e(err);
                 callback(new Error(error_messages.UNKNOWN_ERROR));
-            }else if(result[0]){
-                callback(null, {
-                    Admin: {
-                        admin_id: result[0].admin_id,
-                        username: result[0].username,
-                        email: result[0].email,
-                        role: result[0].role
-                    }
-                });
             }else{
                 callback(null, {
                     Admin: result[0]

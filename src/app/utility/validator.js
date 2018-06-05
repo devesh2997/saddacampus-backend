@@ -10,5 +10,9 @@ exports.usernameIsValid = function(username){
 }
 
 exports.adminRoleIsValid = function(role){
-    return role == 'super' || role == 'core' || role == 'support' || role == 'maintainer';
+    return role && (role == 'super' || role == 'core' || role == 'support' || role == 'maintainer');
+}
+
+exports.passwordIsValid = function(password){
+    return password && password.length > 5;
 }
