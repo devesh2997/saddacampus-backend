@@ -88,7 +88,7 @@ var AdminAuth = function(args){
                 response.message = 'Successfully signed in';
                 next(null, response);
             }
-        })
+        });
     }
 }
 
