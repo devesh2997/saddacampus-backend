@@ -1,7 +1,7 @@
 var async = require('async');
-var Admin = require('../../../../app/models/Admin');
-var validator = require('../../../../app/utility/validator');
-var error_messages = require('../../../../app/config/error_messages');
+var Admin = require('../../../app/models/Admin');
+var validator = require('../../../app/utility/validator');
+var error_messages = require('../../../app/config/error_messages');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 

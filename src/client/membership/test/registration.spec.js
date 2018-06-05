@@ -1,9 +1,9 @@
 var assert = require('assert');
-var db = require('../../../../app/lib/sadda-db');
+var db = require('../../../app/lib/sadda-db');
 var Reg = require('../processes/registration');
-var User = require('../../../../app/models/User');
+var User = require('../../../app/models/User');
 var jwt = require('jsonwebtoken');
-var error_messages = require('../../../../app/config/error_messages');
+var error_messages = require('../../../app/config/error_messages');
 
 describe('Registration',function(){
     before(function(done){

@@ -1,10 +1,10 @@
 var sinon = require('sinon');
 var assert = require('assert');
 var Auth = require('../processes/auth');
-var error_messages = require('../../../../app/config/error_messages');
-var db = require('../../../../app/lib/sadda-db');
-var otp = require('../../../../app/lib/otp');
-var User = require('../../../../app/models/User');
+var error_messages = require('../../../app/config/error_messages');
+var db = require('../../../app/lib/sadda-db');
+var otp = require('../../../app/lib/otp');
+var User = require('../../../app/models/User');
 var jwt = require('jsonwebtoken');
 
 

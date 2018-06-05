@@ -1,5 +1,5 @@
 var async = require('async');
-var User = require('../../../../app/models/User');
+var User = require('../../../app/models/User');
 var jwt = require('jsonwebtoken');
 
 /**

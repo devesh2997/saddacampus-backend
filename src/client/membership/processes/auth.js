@@ -1,7 +1,7 @@
-var otp = require('../../../../app/lib/otp');
-var MOBILE_NUMBER = require('../../../../app/models/mobile_number');
+var otp = require('../../../app/lib/otp');
+var MOBILE_NUMBER = require('../../../app/models/mobile_number');
 var async = require('async');
-var User = require('../../../../app/models/User');
+var User = require('../../../app/models/User');
 var jwt = require('jsonwebtoken');
 
 /**
