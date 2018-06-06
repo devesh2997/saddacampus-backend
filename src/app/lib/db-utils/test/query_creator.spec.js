@@ -4,7 +4,6 @@ var QueryCreator = require('../utils/query_creator');
 describe('Query Creator', function(){
     describe('Insert query', function(){
         var args ={};
-        var query_creator;
 
         before(function(){
             args.table_name = 'test';
@@ -13,7 +12,7 @@ describe('Query Creator', function(){
         });
 
         it('should generate correct query', function(){
-            correctQuery = 'INSERT INTO test (column1, column2, column3) VALUES (?,?,?)';
+            const correctQuery = 'INSERT INTO test (column1, column2, column3) VALUES (?,?,?)';
             assert.ok(correctQuery,QueryCreator.insert(args));
         });
     });

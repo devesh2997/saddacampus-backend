@@ -17,20 +17,24 @@ var verifyToken = function(req, res, next){
                 res.status(403).send({ success: false, message: err.message });
             else if(!result.Admin)
                 res.status(403).send({ success: false, message: error_messages.UNAUTHORIZED_ACCESS });
-            else
-                next(result.Admin);
+            else{
+				req.Admin = result.Admin;
+				next();
+			}
         });
     });
-}
+};
+
+exports.verifyToken = verifyToken;
 
 exports.allowSuper = function (req, res, next) {
-    verifyToken(req, res, function(Admin){
-        if(Admin.role == Roles.SUPER)
+    verifyToken(req, res, function(){
+        if(req.Admin.role == Roles.SUPER)
             next();
         else
             res.status(403).send({ success: false, message: error_messages.UNAUTHORIZED_ACCESS });
     });
-}
+};
 
 exports.allowCore = function (req, res, next) {
     verifyToken(req, res, function(Admin){
@@ -39,7 +43,7 @@ exports.allowCore = function (req, res, next) {
         else
             res.status(403).send({ success: false, message: error_messages.UNAUTHORIZED_ACCESS });
     });
-}
+};
 
 exports.allowSupport = function (req, res, next) {
     verifyToken(req, res, function(Admin){
@@ -48,7 +52,7 @@ exports.allowSupport = function (req, res, next) {
         else
             res.status(403).send({ success: false, message: error_messages.UNAUTHORIZED_ACCESS });
     });
-}
+};
 
 exports.allowMaintainer = function (req, res, next) {
     verifyToken(req, res, function(Admin){
@@ -57,5 +61,5 @@ exports.allowMaintainer = function (req, res, next) {
         else
             res.status(403).send({ success: false, message: error_messages.UNAUTHORIZED_ACCESS });
     });
-}
+};
 

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm-run-all --parallel security-check start:server lint:watch test:watch",
     "test": "mocha \"src/**/*.spec.js\" --exit",
-    "test:all": "mocha \"src/**/*.spec.js\" --reporter progress --exit",
+    "test:all": "mocha --require babel-register \"src/**/*.spec.js\" --reporter progress --exit",
     "test:watch": "npm run test:all -- --watch",
     "start:server": "node app.js",
     "security-check": "nsp check",
@@ -31,6 +31,10 @@
     "uniqid": "^4.1.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
     "eslint": "^4.19.1",
     "eslint-plugin-import": "^2.11.0",
     "eslint-watch": "^3.1.4",
