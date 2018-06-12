@@ -26,8 +26,8 @@ describe('User-Model', function(){
                 User.create(args, function(err, result){
                     error = err;
                     response = result;
-                    done();  
-                }); 
+                    done();
+                });
             });
             it('callback returns with no error', function(){
                 assert.ok(!error);
@@ -67,8 +67,8 @@ describe('User-Model', function(){
                 }
                 User.create(args, function(err){
                     assert.ok(err && err.message == error_messages.MISSING_PARAMETERS);
-                    done();  
-                }); 
+                    done();
+                });
             });
             it('number is missing', function(done){
                 var args = {
@@ -78,8 +78,8 @@ describe('User-Model', function(){
                 }
                 User.create(args, function(err){
                     assert.ok(err && err.message == error_messages.MISSING_PARAMETERS);
-                    done();  
-                }); 
+                    done();
+                });
             });
             it('username is missing', function(done){
                 var args = {
@@ -89,8 +89,8 @@ describe('User-Model', function(){
                 }
                 User.create(args, function(err){
                     assert.ok(err && err.message == error_messages.MISSING_PARAMETERS);
-                    done();  
-                }); 
+                    done();
+                });
             });
             it('country_code is invalid', function(done){
                 var args = {
@@ -101,8 +101,8 @@ describe('User-Model', function(){
                 }
                 User.create(args, function(err){
                     assert.ok(err && err.message == error_messages.INVALID_COUNTRY_CODE);
-                    done();  
-                }); 
+                    done();
+                });
             });
             it('number is invalid', function(done){
                 var args = {
@@ -113,8 +113,8 @@ describe('User-Model', function(){
                 }
                 User.create(args, function(err){
                     assert.ok(err && err.message == error_messages.INVALID_MOBILE_NUMBER, err.message);
-                    done();  
-                }); 
+                    done();
+                });
             });
             it('length of username is less than 5', function(done){
                 var args = {
@@ -125,8 +125,8 @@ describe('User-Model', function(){
                 }
                 User.create(args, function(err){
                     assert.ok(err && err.message == error_messages.INVALID_USERNAME, err.message);
-                    done();  
-                }); 
+                    done();
+                });
             });
             it('length of username is more than 25', function(done){
                 var args = {
@@ -137,8 +137,8 @@ describe('User-Model', function(){
                 }
                 User.create(args, function(err){
                     assert.ok(err && err.message == error_messages.INVALID_USERNAME);
-                    done();  
-                }); 
+                    done();
+                });
             });
             it('duplicate user exists', function(done){
                 var args = {
@@ -149,13 +149,13 @@ describe('User-Model', function(){
                 }
                 User.create(args, function(err){
                     assert.ok(err && err.message == error_messages.DUPLICATE_USER);
-                    done();  
-                }); 
+                    done();
+                });
             });
         });
 
         after(function(done){
-            db.drop([db.tables.users.name], function(){done()});   
+            db.drop([db.tables.users.name], function(){done()});
         });
     });
 
@@ -182,7 +182,7 @@ describe('User-Model', function(){
                         response = result;
                         done();
                     });
-                }); 
+                });
             });
             it('callback returns with no error', function(){
                 assert.ok(!error);
@@ -266,7 +266,7 @@ describe('User-Model', function(){
         });
 
         after(function(done){
-            db.drop([db.tables.users.name], function(){done()});   
+            db.drop([db.tables.users.name], function(){done()});
         });
     });
 
@@ -294,7 +294,7 @@ describe('User-Model', function(){
                         response = result;
                         done();
                     });
-                }); 
+                });
             });
             it('callback returns with no error', function(){
                 assert.ok(!error);
@@ -350,12 +350,11 @@ describe('User-Model', function(){
         });
 
         after(function(done){
-            db.drop([db.tables.users.name], function(){done()});   
+            db.drop([db.tables.users.name], function(){done()});
         });
     });
 
     describe('Find User by username', function(){
-        var user_id;
         describe('Valid username is provided and user exists', function(){
             var args ;
             var response;
@@ -370,7 +369,7 @@ describe('User-Model', function(){
                 User.create(args, function(err, result){
                     if(err)
                         throw err;
-                    username = result.User.username;
+                    const username = result.User.username;
                     User.findByUsername({
                         username: username
                     }, function(err, result){
@@ -378,12 +377,12 @@ describe('User-Model', function(){
                         response = result;
                         done();
                     });
-                }); 
+                });
             });
             it('callback returns with no error', function(){
                 assert.ok(!error);
             });
-            it('callback returns with User object', function(){                
+            it('callback returns with User object', function(){
                 assert.ok(response.User);
             });
             it('User object contains user_id',function(){
@@ -425,7 +424,7 @@ describe('User-Model', function(){
             });
             it('empty User object is returned', function(done){
                 User.findByUsername({
-                    username: username
+                    username: "test"
                 }, function(err, result){
                     assert.ok(!result.User);
                     done();
@@ -434,7 +433,7 @@ describe('User-Model', function(){
         });
 
         after(function(done){
-            db.drop([db.tables.users.name], function(){done()});   
+            db.drop([db.tables.users.name], function(){done()});
         });
     });
 
@@ -442,7 +441,7 @@ describe('User-Model', function(){
         db.drop([db.tables.users.name, db.tables.otp.name], function(){
             db.end();
             done()
-        });   
+        });
     });
 
 });

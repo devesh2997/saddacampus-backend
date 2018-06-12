@@ -32,20 +32,20 @@ var hasDuplicate = function(args, callback){
  * @param {String} args.number
  * @param {String} args.username
  */
-var userValidator = function(args, callback){
+const userValidator = function(args, callback){
     if(!args.country_code || !args.number || !args.username )
         return callback(new Error(error_messages.MISSING_PARAMETERS));
 
-    this.mobile = new MobileNumber({country_code: args.country_code, number: args.number});
+    var mobile = new MobileNumber({country_code: args.country_code, number: args.number});
 
     //validate username
     //length of username should be > 5 and < 25
     if(!validator.usernameIsValid(args.username))
         callback(new Error(error_messages.INVALID_USERNAME));
-  
+
     //validate mobile number
-    else if(!this.mobile.isValid())
-        callback(new Error(this.mobile.validationMessage()));
+    else if(!mobile.isValid())
+        callback(new Error(mobile.validationMessage()));
 
     //check for duplicate user
     else{
@@ -57,12 +57,12 @@ var userValidator = function(args, callback){
             else
                 callback(null);
         });
-    }    
+    }
 }
 
 /**
  * create user
- * @param {Object} args 
+ * @param {Object} args
  * @param {String} args.country_code
  * @param {String} args.number
  * @param {String} args.username
@@ -79,7 +79,7 @@ exports.create = function(args, callback){
             args.table_name = db_tables.users.name;
             args.fields = db_tables.users.fields;
             args.values = [args.user_id, args.country_code, args.number, args.username, "", args.status, args.created_at ];
-            var query = db_utils.query_creator.insert(args);  
+            var query = db_utils.query_creator.insert(args);
             db.get().query(query, args.values, function(err){
                 if (err){
                     Log.e(err.toString());
@@ -97,16 +97,16 @@ exports.create = function(args, callback){
                         }
                     });
                 }
-                
+
             });
         }
     });
-    
+
 }
 
 /**
  * find user by mobile
- * @param {Object} args 
+ * @param {Object} args
  * @param {String} args.country_code
  * @param {String} args.number
  */
@@ -131,7 +131,7 @@ exports.findByMobile = function(args, callback){
 
 /**
  * find user by user_id
- * @param {Object} args 
+ * @param {Object} args
  * @param {String} args.user_id
  */
 exports.findByUserID = function(args, callback){
@@ -154,7 +154,7 @@ exports.findByUserID = function(args, callback){
 
 /**
  * find user by username
- * @param {Object} args 
+ * @param {Object} args
  * @param {String} args.username
  */
 exports.findByUsername = function(args, callback){

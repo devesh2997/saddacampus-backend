@@ -12,5 +12,7 @@
     "INCORRECT_OTP": "Incorrect OTP provided.",
     "MISSING_PARAMETERS": "Required parameter/s is/are missing.",
     "USER_DOES_NOT_EXIST": "The resource you are looking for does not exist",
-    "UNAUTHORIZED_ACCESS": "Unauthorized access"
+	"UNAUTHORIZED_ACCESS": "Unauthorized access",
+	"NO_TOKEN_PROVIDED": "No token provided",
+	"TOKEN_AUTHENTICATION_FAILED": "Failed to authenticate token."
 }
