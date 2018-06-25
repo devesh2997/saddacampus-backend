@@ -10,7 +10,6 @@ exports.auth = function(req,res){
         username: requestBody.username,
         password: requestBody.password
 	};
-	console.log(args);
     var auth = new Auth(args);
     auth.authenticate(function(err, result){
         res.send(result);

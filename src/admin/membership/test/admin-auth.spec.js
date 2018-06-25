@@ -10,7 +10,9 @@ var jwt = require('jsonwebtoken');
 describe('Admin authentication', function(){
     before(function(done){
         db.connect(db.MODE_TEST, function(){
-            done();
+            db.drop([db.tables.admins.name], function(){
+				done()
+			});
         });
     });
     describe('Sad path', function(){
@@ -183,7 +185,7 @@ describe('Admin authentication', function(){
         db.drop([db.tables.admins.name], function(){
             db.end();
             done()
-        });   
+        });
     });
 });
 

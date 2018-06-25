@@ -1,5 +1,8 @@
 var email_validator = require('email-validator');
 
+exports.nameIsValid = function(name){
+	return name && name.length >= 5 && name.length <= 100;
+}
 
 exports.emailIsValid = function(email){
     return email && email_validator.validate(email);

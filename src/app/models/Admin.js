@@ -25,8 +25,8 @@ var hasDuplicate = function(args, callback){
 
 
 /**
- * Validate username, email, password and role 
- * @param {Object} args 
+ * Validate username, email, password and role
+ * @param {Object} args
  * @param {String} args.username - Between 5 to 25 characters long
  * @param {String} args.email
  * @param {String} args.password - Atleast 6 characters long
@@ -41,9 +41,9 @@ var validateArgs = function(args, callback){
     //validate email
     else if(!validator.emailIsValid(args.email))
         callback(new Error(error_messages.INVALID_EMAIL));
-    
+
     //valdiate password
-    else if(args.password.length < 6)
+    else if(!validator.passwordIsValid(args.password))
         callback(new Error(error_messages.INVALID_PASSWORD));
 
     //validate admin role
@@ -60,14 +60,14 @@ var validateArgs = function(args, callback){
             else
                 callback(null);
         });
-    }   
+    }
 }
 
 /**
  * create a new admin -
  * it validates all the arguments provided and returns appropriate error in case any validation fails.
- * returns Admin{admin_id,username, email, role} Object 
- * @param {Object} args 
+ * returns Admin{admin_id,username, email, role} Object
+ * @param {Object} args
  * @param {String} args.username - Between 5 to 25 characters long
  * @param {String} args.email
  * @param {String} args.password - Atleast 6 characters long
@@ -79,7 +79,7 @@ exports.create = function(args, callback){
             callback(err);
         else{
             var saltRounds = 10;
-            args.admin_id =  uniqid(args.username.substr(0,4)); //create unique user_id
+            args.admin_id =  uniqid(args.username.substr(0,4)); //create unique admin_id
             bcrypt.hash(args.password, saltRounds, function(err, hash) { // generated encrypted_password to be stored in DB
                 args.encrypted_password = hash;
                 args.table_name = db_tables.admins.name;
@@ -88,8 +88,7 @@ exports.create = function(args, callback){
                 var query = db_utils.query_creator.insert(args);
                 db.get().query(query, args.values, function(err){
                     if (err){
-                        console.error(err.message);
-                        
+
                         Log.e(err.toString());
                         callback(new Error(error_messages.UNKNOWN_ERROR));
                     }else{
@@ -102,7 +101,7 @@ exports.create = function(args, callback){
                             }
                         });
                     }
-                    
+
                 });
             });
         }
@@ -111,7 +110,7 @@ exports.create = function(args, callback){
 
 /**
  * find admin by username
- * @param {Object} args 
+ * @param {Object} args
  * @param {String} args.username
  */
 exports.findByUsername = function(args, callback){
@@ -134,7 +133,7 @@ exports.findByUsername = function(args, callback){
 
 /**
  * find admin by admin_id
- * @param {Object} args 
+ * @param {Object} args
  * @param {String} args.admin_id
  */
 exports.findByAdminID = function(args, callback){

@@ -10,5 +10,9 @@
     "admins":{
         "name": "admins",
         "fields": ["admin_id", "username", "email", "encrypted_password", "role"]
-    }
+	},
+	"merchants":{
+		"name": "merchants",
+		"fields": ["merchant_id", "name", "email", "encrypted_password", "country_code", "number", "alternate_country_code", "alternate_number", "status"]
+	}
 }
