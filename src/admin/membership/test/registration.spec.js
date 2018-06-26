@@ -2,7 +2,7 @@ var assert = require('assert');
 var Reg = require('../processes/registration');
 var db = require('../../../app/lib/sadda-db');
 var error_messages = require('../../../app/config/error_messages');
-var Roles = require('../config/roles');
+var Roles = require('../../config/roles');
 
 describe('Admin user creation', function(){
     before(function(done){
@@ -12,13 +12,12 @@ describe('Admin user creation', function(){
     });
     describe('When valid arguments is provided', function(){
         var error, response;
-        var test;
         before(function(done){
             var reg = new Reg({
                 username: 'ananddevesh22',
                 email: 'ananddevesh22@gmail.com',
                 password: 'devdas23',
-                role: 'support'
+                role: Roles.SUPPORT
             });
             reg.register(function(err, result){
                 error = err,
@@ -45,9 +44,9 @@ describe('Admin user creation', function(){
             assert.ok(response.Admin.role);
         });
         after(function(done){
-            db.drop([db.tables.admins.name], function(){done()});   
+            db.drop([db.tables.admins.name], function(){done()});
         });
-    })
+    });
     describe('Sad path', function(){
         describe('When invalid username is provided', function(){
             var error, response;
@@ -56,24 +55,27 @@ describe('Admin user creation', function(){
                     username: 'asdf',
                     email: 'ananddevesh22@gmail.com',
                     password: 'devdas23',
-                    role: 'support'
+                    role: Roles.SUPPORT
                 });
                 reg.register(function(err, result){
                     error = err,
                     response = result;
                     done();
                 });
-            });
+			});
+			it('error should be null', function(){
+				assert.ok(error === null);
+			});
             it('returns success = false', function(){
                 assert.ok(response.success === false);
             });
             it('sets correct error message', function(){
                 assert.ok(response.message == error_messages.INVALID_USERNAME);
             });
-            
+
             after(function(done){
                 db.drop([db.tables.admins.name], function(){done()});
-            });            
+            });
         });
         describe('When invalid email is provided', function(){
             var error, response;
@@ -89,7 +91,10 @@ describe('Admin user creation', function(){
                     response = result;
                     done();
                 });
-            })
+			});
+			it('error should be null', function(){
+				assert.ok(error===null);
+			});
             it('returns success = false', function(){
                 assert.ok(response.success === false);
             });
@@ -99,7 +104,7 @@ describe('Admin user creation', function(){
 
             after(function(done){
                 db.drop([db.tables.admins.name], function(){done()});
-            });   
+            });
         });
         describe('When invalid password is provided', function(){
             var error, response;
@@ -125,7 +130,7 @@ describe('Admin user creation', function(){
 
             after(function(done){
                 db.drop([db.tables.admins.name], function(){done()});
-            });   
+            });
         });
         describe('When invalid role is provided', function(){
             var error, response;
@@ -151,7 +156,7 @@ describe('Admin user creation', function(){
 
             after(function(done){
                 db.drop([db.tables.admins.name], function(){done()});
-            });   
+            });
         });
         describe('When duplicate user is provided', function(){
             var error, response;
@@ -178,8 +183,8 @@ describe('Admin user creation', function(){
             });
 
             after(function(done){
-                db.drop([db.tables.admins.name], function(){done()});
-            });   
+                db.drop([db.tables.admins.name], function(){db.end();done()});
+            });
         });
     });
 });

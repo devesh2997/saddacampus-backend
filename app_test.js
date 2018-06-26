@@ -9,7 +9,7 @@ var app = express();
 var port = process.env.PORT ||  3000;
 
 var Admin = require('./src/app/models/Admin');
-var Roles = require('./src/admin/membership/config/roles');
+var Roles = require('./src/admin/config/roles');
 var jwt = require('jsonwebtoken');
 
 app.use(cors());

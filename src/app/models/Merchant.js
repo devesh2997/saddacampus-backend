@@ -7,7 +7,13 @@ var Log = require('../lib/log');
 var validator = require('../utility/validator');
 var bcrypt = require('bcrypt');
 var MobileNumber = require('../models/mobile_number');
-var constants = require('./config/constants');
+
+//status constants for merchant model
+var statusConstants = {}
+statusConstants.active = 'active';
+statusConstants.disabled = 'disabled';
+
+exports.status = statusConstants;
 
 //checking for duplicate entries
 //check for duplicate email, mobile number
@@ -101,7 +107,7 @@ exports.create = function(args, callback){
                 args.encrypted_password = hash;
                 args.table_name = db_tables.merchants.name;
                 args.fields = db_tables.merchants.fields;
-                args.values = [args.merchant_id, args.name, args.email, args.encrypted_password, args.country_code, args.number, args.alternate_country_code, args.alternate_number, constants.MERCHANT.status.active];
+                args.values = [args.merchant_id, args.name, args.email, args.encrypted_password, args.country_code, args.number, args.alternate_country_code, args.alternate_number, statusConstants.active];
                 var query = db_utils.query_creator.insert(args);
                 db.get().query(query, args.values, function(err){
                     if (err){
@@ -117,7 +123,7 @@ exports.create = function(args, callback){
 								number: args.number,
 								alternate_country_code: args.alternate_country_code,
 								alternate_number: args.alternate_number,
-								status: constants.MERCHANT.status.active
+								status: statusConstants.active
                             }
                         });
                     }
@@ -130,6 +136,7 @@ exports.create = function(args, callback){
 
 /**
  * find merchant by email
+ * returns Merchant{merchant_id,name, email, country_code, number, alternate_country_code, alternate_number, status} Object
  * @param {Object} args
  * @param {String} args.email
  */
@@ -146,6 +153,93 @@ exports.findByEmail = function(args,callback){
                 callback(null, {
                     Merchant: result[0]
                 });
+            }
+        });
+	}
+}
+
+/**
+ * find merchant by merchant_id
+ * returns Merchant{merchant_id,name, email, country_code, number, alternate_country_code, alternate_number, status} Object
+ * @param {Object} args
+ * @param {String} args.merchant_id
+ */
+var findByMerchantId = function(args,callback){
+	if(!args.merchant_id)
+		callback(new Error(error_messages.MISSING_PARAMETERS));
+	else{
+		var query = "SELECT * FROM "+db_tables.merchants.name+" WHERE merchant_id = '"+args.merchant_id+"'";
+        db.get().query(query, function(err,result){
+            if(err){
+                Log.e(err);
+                callback(new Error(error_messages.UNKNOWN_ERROR));
+            }else{
+                callback(null, {
+                    Merchant: result[0]
+                });
+            }
+        });
+	}
+}
+exports.findByMerchantId = findByMerchantId;
+
+/**
+ * Change merchant status to active
+ * returns Merchant{merchant_id,name, email, country_code, number, alternate_country_code, alternate_number, status} Object
+ * @param {Object} args
+ * @param {String} args.merchant_id
+ */
+exports.enable = function(args, callback){
+	if(!args.merchant_id){
+		callback(new Error(error_messages.MISSING_PARAMETERS));
+	}else{
+		var query = "UPDATE "+db.tables.merchants.name+" SET status='"+statusConstants.active+"' WHERE merchant_id='"+args.merchant_id+"'";
+		db.get().query(query, function(err, result){
+            if(err){
+                Log.e(err);
+                callback(new Error(error_messages.UNKNOWN_ERROR));
+            }else{
+				if(result.affectedRows === 1){
+					findByMerchantId({merchant_id: args.merchant_id},function(err, res){
+						if(err)
+							callback(err);
+						else
+							callback(null,res);
+					});
+				}else{
+					callback(new Error(error_messages.MERCHANT_DOES_NOT_EXIST));
+				}
+            }
+        });
+	}
+}
+
+/**
+ * Change merchant status to disabled
+ * returns Merchant{merchant_id,name, email, country_code, number, alternate_country_code, alternate_number, status} Object
+ * @param {Object} args
+ * @param {String} args.merchant_id
+ */
+exports.disable = function(args, callback){
+	if(!args.merchant_id){
+		callback(new Error(error_messages.MISSING_PARAMETERS));
+	}else{
+		var query = "UPDATE "+db.tables.merchants.name+" SET status='"+statusConstants.disabled+"' WHERE merchant_id='"+args.merchant_id+"'";
+		db.get().query(query, function(err, result){
+            if(err){
+                Log.e(err.message);
+                callback(new Error(error_messages.UNKNOWN_ERROR));
+            }else{
+				if(result.affectedRows === 1){
+					findByMerchantId({merchant_id: args.merchant_id},function(err, res){
+						if(err)
+							callback(err);
+						else
+							callback(null,res);
+					});
+				}else{
+					callback(new Error(error_messages.MERCHANT_DOES_NOT_EXIST));
+				}
             }
         });
 	}

@@ -1,6 +1,6 @@
 var jwt = require('jsonwebtoken');
-var Admin = require('../../app/models/Admin');
-var error_messages = require('../../app/config/error_messages');
+var Admin = require('../app/models/Admin');
+var error_messages = require('../app/config/error_messages');
 var Roles = require('./config/roles');
 
 var verifyToken = function(req, res, next){

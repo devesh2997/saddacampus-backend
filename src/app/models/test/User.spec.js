@@ -7,7 +7,11 @@ var error_messages = require('../../config/error_messages');
 describe('User-Model', function(){
 
     before(function(done){
-        db.connect(db.MODE_TEST, function(){done()});
+        db.connect(db.MODE_TEST, function(){
+			db.drop([db.tables.users.name, db.tables.otp.name], function(){
+				done();
+			});
+		});
     });
 
     describe('Create User', function(){

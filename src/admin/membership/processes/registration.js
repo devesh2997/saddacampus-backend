@@ -1,10 +1,8 @@
 var Admin = require('../../../app/models/Admin');
-var error_messages = require('../../../app/config/error_messages');
-var async = require('async');
 
 /**
  * creating a new admin user
- * @param {Object} args 
+ * @param {Object} args
  * @param {String} args.username
  * @param {String} args.email
  * @param {String} args.password

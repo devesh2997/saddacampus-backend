@@ -1,10 +1,10 @@
 import assert from 'assert';
-var error_messages = require('../../../app/config/error_messages');
-var VerifyToken = require('../VerifyToken');
+var error_messages = require('../app/config/error_messages');
+var VerifyToken = require('./VerifyToken');
 var sinon = require('sinon');
-import * as mock from '../../../app/utility/http-mock-objects';
-var Admin = require('../../../app/models/Admin');
-var Roles = require('../config/roles');
+var mock = require('../app/utility/http-mock-objects');
+var Admin = require('../app/models/Admin');
+var Roles = require('./config/roles');
 
 
 
