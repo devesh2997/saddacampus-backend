@@ -5,6 +5,10 @@ var VerifyToken = require('../VerifyToken');
 
 router.post('/create',VerifyToken.allowCore,controller.create);
 
+router.get('/:merchantId/enable',VerifyToken.allowCore,controller.enable);
+
+router.get('/:merchantId/disable',VerifyToken.allowCore,controller.disable);
+
 module.exports = router;
 
 

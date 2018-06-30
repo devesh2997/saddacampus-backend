@@ -11,6 +11,7 @@ var verifyToken = function(req, res, next){
         if (err)
             return res.status(500).send({ success: false, message: error_messages.TOKEN_AUTHENTICATION_FAILED });
 
+		console.log(decoded);
         Admin.findByAdminID({admin_id: decoded.admin_id}, function(err, result){
             if(err)
                 res.status(403).send({ success: false, message: err.message });

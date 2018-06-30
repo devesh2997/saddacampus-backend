@@ -36,14 +36,15 @@ db.connect(db.MODE_TEST, function(err) {
 					password: 'Campusjoy69',
 					role: Roles.SUPER
 				}, function(err, result){
-					admin_id = result.Admin.admin_id;
-					console.log(jwt.sign({admin_id: admin_id}, process.env.JWT_SECRET));
+					var admin_id_plain = result.Admin.admin_id;
+					console.log(jwt.sign({admin_id: admin_id_plain}, process.env.JWT_SECRET));
 					app.listen(port, function() {
 						console.log('Listening on port 3000...');
 					});
 				});
 			}else{
-				console.log(jwt.sign({admin_id: admin_id}, process.env.JWT_SECRET));
+				var admin_id_plain = result.Admin.admin_id;
+				console.log(jwt.sign({admin_id: admin_id_plain}, process.env.JWT_SECRET));
 				app.listen(port, function() {
 					console.log('Listening on port 3000...');
 				});
