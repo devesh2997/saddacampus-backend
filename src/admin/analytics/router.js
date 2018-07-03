@@ -3,8 +3,7 @@ var router = express.Router();
 var controller = require('./controller');
 var VerifyToken = require('../VerifyToken');
 
-router.post('/auth',controller.auth);
-router.post('/create',VerifyToken.allowCore,controller.create);
+router.get('/membership',VerifyToken.allowCore,controller.getMembershipData);
 
 module.exports = router;
 

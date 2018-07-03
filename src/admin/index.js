@@ -1,10 +1,10 @@
 var Router = require('./router');
 
 
-var Analytics = function(){
+var Admin = function(){
 
     this.router = Router;
 }
 
-module.exports = new Analytics();
+module.exports = new Admin();
 
