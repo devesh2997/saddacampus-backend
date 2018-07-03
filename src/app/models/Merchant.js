@@ -244,3 +244,22 @@ exports.disable = function(args, callback){
         });
 	}
 }
+
+
+/**
+ * Get all the merchants
+ * return an array Merchants
+ */
+exports.getAll = function(callback){
+	var query = db_utils.query_creator.selectAll({table_name: db.tables.merchants.name});
+	db.get().query(query, function(err, result){
+		if(err){
+			Log.e(err.message);
+			callback(new Error(error_messages.UNKNOWN_ERROR));
+		}else{
+			for(var i=0; i<result.length; i++)
+				delete result[i]['encrypted_password'];
+			callback(null, {Merchants: result});
+		}
+	});
+}

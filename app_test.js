@@ -27,7 +27,6 @@ db.connect(db.MODE_TEST, function(err) {
       console.log('Unable to connect to MySQL.');
       process.exit(1);
     } else {
-		var admin_id;
 		if(Admin.findByUsername({username: 'saddacampussuper'},function(err, result){
 			if(!result.Admin){
 				Admin.create({

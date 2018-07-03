@@ -501,6 +501,43 @@ describe('Merchant - model', function(){
 		});
 	});
 
+	describe('Get all merchants', function(){
+		var args = {
+			name: 'devesh',
+			email: 'ananddevesh22@gmail.com',
+			password:'123456',
+			country_code: '+91',
+			number: '7541833369',
+			alternate_country_code: '+91',
+			alternate_number: '1478523698'
+		};
+		var res;
+		var err;
+		before(function(done){
+			Merchant.create(args, function(err){
+				if(err)
+					throw err;
+				Merchant.getAll(function(error, result){
+					err = error;
+					res = result;
+					done();
+				});
+			});
+		});
+		it('error should be null', function(){
+			assert.ok(!err);
+		});
+		it('result should have Merchants object', function(){
+			assert.ok(res.Merchants);
+		});
+		it('length of Merchants object should be 1',function(){
+			assert.ok(res.Merchants.length === 1);
+		});
+		it('Merchant object in Merchants array should not have encrypted password',function(){
+			assert.ok(!res.Merchants[0].encrypted_password);
+		});
+	});
+
 
 	afterEach(function(done){
 		db.dropTable(db.tables.merchants.name, function(){

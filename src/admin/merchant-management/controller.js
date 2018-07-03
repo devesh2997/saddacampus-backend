@@ -29,16 +29,8 @@ exports.enable = function(req, res){
 			response.success = false;
 			response.message = err.message;
 		}else{
-			var Merchant = {}
-			Merchant.merchant_id = result.Merchant.merchant_id;
-			Merchant.name = result.Merchant.name;
-			Merchant.email = result.Merchant.email;
-			Merchant.country_code = result.Merchant.country_code;
-			Merchant.number = result.Merchant.number;
-			Merchant.alternate_country_code = result.Merchant.alternate_country_code;
-			Merchant.alternate_number = result.Merchant.alternate_number;
-			Merchant.status = result.Merchant.status;
-			response.Merchant = Merchant;
+			delete result.Merchant['encrypted_password'];
+			response.Merchant = result.Merchant;
 		}
 		res.json(response);
 	});
@@ -54,17 +46,24 @@ exports.disable = function(req, res){
 			response.success = false;
 			response.message = err.message;
 		}else{
-			var Merchant = {}
-			Merchant.merchant_id = result.Merchant.merchant_id;
-			Merchant.name = result.Merchant.name;
-			Merchant.email = result.Merchant.email;
-			Merchant.country_code = result.Merchant.country_code;
-			Merchant.number = result.Merchant.number;
-			Merchant.alternate_country_code = result.Merchant.alternate_country_code;
-			Merchant.alternate_number = result.Merchant.alternate_number;
-			Merchant.status = result.Merchant.status;
-			response.Merchant = Merchant;
+			delete result.Merchant['encrypted_password'];
+			response.Merchant = result.Merchant;
 		}
 		res.json(response);
 	});
+}
+
+//get all the merchants
+exports.getAll = function(req, res){
+	Merchant.getAll(function(err, result){
+		var response = {};
+		response.success = true;
+		if(err){
+			response.success = false;
+			response.message = err.message;
+		}else{
+			response.Merchants = result.Merchants;
+		}
+		res.json(response);
+	})
 }

@@ -15,5 +15,11 @@ describe('Query Creator', function(){
             const correctQuery = 'INSERT INTO test (column1, column2, column3) VALUES (?,?,?)';
             assert.ok(correctQuery,QueryCreator.insert(args));
         });
-    });
+	});
+	describe('Select query', function(){
+		it('should generate correct query', function(){
+			var correctQuery = 'SELECT * FROM table';
+			assert.ok(QueryCreator.selectAll({table_name: 'table'}) === correctQuery);
+		});
+	});
 });

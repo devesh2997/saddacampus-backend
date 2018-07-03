@@ -32,9 +32,11 @@ exports.insert = function(args){
 }
 
 /**
- * Create a SELECT query string
+ * Create a SELECT * query string
  * @param {Object} args
- * @param {Array} args.fields
  * @param {String} args.table_name
- * @param {}
  */
+exports.selectAll = function(args){
+	assert(args.table_name);
+	return 'SELECT * FROM ' + args.table_name;
+}
