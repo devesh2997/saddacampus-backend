@@ -66,6 +66,21 @@ describe('Arguments validator', function(){
         it('returns false when length of password is less than 6', function(){
             assert.ok(!validator.passwordIsValid('12345'));
         });
-    })
+	});
+
+	describe('Business id validator', function(){
+        it('returns true when length of business_id is 3', function(){
+            assert.ok(validator.businessIdIsValid('rdb'));
+        });
+        it('returns false when business_id is missing', function(){
+            assert.ok(!validator.businessIdIsValid());
+        });
+        it('returns false when length of business_id is less than 3', function(){
+            assert.ok(!validator.businessIdIsValid('12'));
+		});
+		it('returns false when length of business_id is more than 3', function(){
+            assert.ok(!validator.businessIdIsValid('12345'));
+        });
+    });
 });
 

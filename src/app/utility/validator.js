@@ -19,3 +19,7 @@ exports.adminRoleIsValid = function(role){
 exports.passwordIsValid = function(password){
     return password && password.length > 5;
 }
+
+exports.businessIdIsValid = function(business_id){
+	return business_id && business_id.length == 3;
+}

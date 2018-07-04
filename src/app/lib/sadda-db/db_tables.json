@@ -14,5 +14,17 @@
 	"merchants":{
 		"name": "merchants",
 		"fields": ["merchant_id", "name", "email", "encrypted_password", "country_code", "number", "alternate_country_code", "alternate_number", "status"]
+	},
+	"businesses":{
+		"name": "businesses",
+		"fields": ["merchant_id", "business_id", "name", "address", "type", "gstin", "status"]
+	},
+	"business_account_info":{
+		"name": "business_account_info",
+		"fields": ["merchant_id", "business_id", "accountholder_name", "account_number", "ifsc"]
+	},
+	"business_operators":{
+		"name": "business_operators",
+		"fields": ["merchant_id", "business_id", "operator_id", "username", "encrypted_password"]
 	}
 }
