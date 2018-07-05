@@ -21,7 +21,7 @@ typeConstants.restaurant = 'restaurant';
 exports.types = typeConstants;
 
 /**
- * function to if merchant with given merchant_id exists or not
+ * function to check if merchant with given merchant_id exists or not
  * @param {Object} args
  * @param {String} args.merchant_id
  */
@@ -210,3 +210,72 @@ exports.disable = function(args, callback){
         });
 	}
 }
+
+/**
+ * delete business
+ * @param {Object} args
+ * @param {String} args.merchant_id
+ * @param {String} args.business_id
+ */
+exports.delete = function(args,callback){
+	if(!args.merchant_id || !args.business_id){
+		return callback(new Error(error_messages.MISSING_PARAMETERS));
+	}
+	if(!validator.businessIdIsValid(args.business_id)){
+		return callback(new Error(error_messages.INVALID_BUSINESS_ID));
+	}
+	findById(args, function(err, result){
+		if(err)
+			callback(err);
+		else{
+			if(!result.Business){
+				return callback(new Error(error_messages.BUSINESS_DOES_NOT_EXIST));
+			}else{
+				var query = "DELETE FROM "+db_tables.businesses.name+" WHERE (merchant_id='"+args.merchant_id+"' AND business_id='"+args.business_id+"')";
+				db.get().query(query,function(err, result){
+					if(err){
+						Log.e(err);
+						return callback(new Error(error_messages.UNKNOWN_ERROR));
+					}else{
+						if(result.affectedRows === 0){
+							return callback(new Error(error_messages.UNKNOWN_ERROR));
+						}
+						callback(null);
+					}
+				});
+			}
+		}
+	});
+}
+
+/**
+ * find all businesses owned by a particular merchant
+ * @param {Object} args
+ * @param {String} args.merchant_id
+ */
+exports.getAllByMerchantId = function(args, callback){
+	if(!args.merchant_id)
+		return callback(new Error(error_messages.MISSING_PARAMETERS));
+	else{
+		Merchant.findByMerchantId(args,function(err, res){
+			if(err){
+				Log.e(err);
+				return callback(new Error(error_messages.UNKNOWN_ERROR));
+			}
+			if(!res.Merchant)
+				return callback(new Error(error_messages.MERCHANT_DOES_NOT_EXIST));
+				var query = "SELECT * FROM "+db_tables.businesses.name+" WHERE merchant_id = '"+args.merchant_id+"'";
+				db.get().query(query, function(err,result){
+					if(err){
+						Log.e(err);
+						callback(new Error(error_messages.UNKNOWN_ERROR));
+					}else{
+						callback(null, {
+							Businesses: result
+						});
+					}
+				});
+		});
+	}
+}
+

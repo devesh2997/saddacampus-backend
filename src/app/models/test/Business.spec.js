@@ -4,6 +4,30 @@ var assert = require('assert');
 var error_messages = require('../../config/error_messages');
 var db = require('../../lib/sadda-db');
 
+var testSetup = function(callback){
+	Merchant.create({
+		name: 'devesh',
+		email: 'ananddev2@gmail.com',
+		password:'devdas23',
+		country_code: '+91',
+		number: '7541833389',
+		alternate_country_code: '+91',
+		alternate_number: '1478523698'
+	}, function(e, r){
+		if(e)throw(e);
+		Business.create({
+			merchant_id: r.Merchant.merchant_id,
+			business_id: 'RDB',
+			name: 'Rang De Basanti',
+			type: Business.types.restaurant,
+			address: 'fadsfds'
+		},function(e,r){
+			if(e)throw(e);
+			callback(e,r);
+		});
+	});
+}
+
 describe('Business-model',function(){
 	before(function(done){
 		db.connect(db.MODE_TEST, function(){
@@ -16,27 +40,10 @@ describe('Business-model',function(){
 		describe('When correct parameters are provided', function(){
 			var err, res;
 			before(function(done){
-				Merchant.create({
-					name: 'devesh',
-					email: 'ananddev2@gmail.com',
-					password:'devdas23',
-					country_code: '+91',
-					number: '7541833389',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
-				}, function(e, r){
-					if(e)throw(e);
-					Business.create({
-						merchant_id: r.Merchant.merchant_id,
-						business_id: 'RDB',
-						name: 'Rang De Basanti',
-						type: Business.types.restaurant,
-						address: 'fadsfds'
-					},function(error, result){
-						err = error;
-						res = result;
-						done();
-					});
+				testSetup(function(error, result){
+					err = error;
+					res = result;
+					done();
 				});
 			});
 			it('error is set to null',function(){
@@ -73,36 +80,18 @@ describe('Business-model',function(){
 			});
 		});
 		describe('When duplicate business exists', function(){
-			var err, res;
+			var err;
 			before(function(done){
-				Merchant.create({
-					name: 'devesh',
-					email: 'ananddev2@gmail.com',
-					password:'devdas23',
-					country_code: '+91',
-					number: '7541833389',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
-				}, function(e, r){
-					if(e)throw(e);
+				testSetup(function(error, result){
 					Business.create({
-						merchant_id: r.Merchant.merchant_id,
+						merchant_id: result.Business.merchant_id,
 						business_id: 'RDB',
 						name: 'Rang De Basanti',
 						type: Business.types.restaurant,
 						address: 'fadsfds'
-					},function(){
-						Business.create({
-							merchant_id: r.Merchant.merchant_id,
-							business_id: 'RDB',
-							name: 'Rang De Basanti',
-							type: Business.types.restaurant,
-							address: 'fadsfds'
-						},function(error, result){
-							err = error;
-							res = result;
-							done();
-						});
+					},function(error){
+						err = error;
+						done();
 					});
 				});
 			});
@@ -196,32 +185,14 @@ describe('Business-model',function(){
 		describe('When correct parameters are provided and business exists', function(){
 			var err, res;
 			before(function(done){
-				Merchant.create({
-					name: 'devesh',
-					email: 'ananddev2@gmail.com',
-					password:'devdas23',
-					country_code: '+91',
-					number: '7541833389',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
-				}, function(e, r){
-					if(e)throw(e);
-					Business.create({
-						merchant_id: r.Merchant.merchant_id,
-						business_id: 'RDB',
-						name: 'Rang De Basanti',
-						type: Business.types.restaurant,
-						address: 'fadsfds'
-					},function(e){
-						if(e)throw(e);
-						Business.findById({
-							merchant_id: r.Merchant.merchant_id,
-							business_id: 'RDB'
-						},function(error, result){
-							err = error;
-							res = result;
-							done();
-						});
+				testSetup(function(error, result){
+					Business.findById({
+						merchant_id: result.Business.merchant_id,
+						business_id: 'RDB'
+					},function(error, result){
+						err = error;
+						res = result;
+						done();
 					});
 				});
 			});
@@ -307,32 +278,14 @@ describe('Business-model',function(){
 		describe('When valid merchant_id and business_id is provided', function(){
 			var err,res;
 			before(function(done){
-				Merchant.create({
-					name: 'devesh',
-					email: 'ananddev2@gmail.com',
-					password:'devdas23',
-					country_code: '+91',
-					number: '7541833389',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
-				}, function(e, r){
-					if(e)throw(e);
-					Business.create({
-						merchant_id: r.Merchant.merchant_id,
-						business_id: 'RDB',
-						name: 'Rang De Basanti',
-						type: Business.types.restaurant,
-						address: 'fadsfds'
-					},function(e){
-						if(e)throw(e);
-						Business.disable({
-							merchant_id: r.Merchant.merchant_id,
-							business_id: 'RDB'
-						},function(error, result){
-							err = error;
-							res = result;
-							done();
-						});
+				testSetup(function(error, result){
+					Business.disable({
+						merchant_id: result.Business.merchant_id,
+						business_id: 'RDB'
+					},function(error, result){
+						err = error;
+						res = result;
+						done();
 					});
 				});
 			});
@@ -376,43 +329,20 @@ describe('Business-model',function(){
 				assert.ok(err.message === error_messages.MERCHANT_DOES_NOT_EXIST, err.message);
 			});
 		});
-		after(function(done){
-			db.dropTable(db.tables.merchants.name, function(){
-				done();
-			});
-		});
 	});
 
-	describe('Enable merchant', function(){
+	describe('Enable business', function(){
 		describe('When valid merchant_id is provided', function(){
 			var err,res;
 			before(function(done){
-				Merchant.create({
-					name: 'devesh',
-					email: 'ananddev2@gmail.com',
-					password:'devdas23',
-					country_code: '+91',
-					number: '7541833389',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
-				}, function(e, r){
-					if(e)throw(e);
-					Business.create({
-						merchant_id: r.Merchant.merchant_id,
-						business_id: 'RDB',
-						name: 'Rang De Basanti',
-						type: Business.types.restaurant,
-						address: 'fadsfds'
-					},function(e){
-						if(e)throw(e);
-						Business.enable({
-							merchant_id: r.Merchant.merchant_id,
-							business_id: 'RDB'
-						},function(error, result){
-							err = error;
-							res = result;
-							done();
-						});
+				testSetup(function(error, result){
+					Business.enable({
+						merchant_id: result.Business.merchant_id,
+						business_id: 'RDB'
+					},function(error, result){
+						err = error;
+						res = result;
+						done();
 					});
 				});
 			});
@@ -456,10 +386,108 @@ describe('Business-model',function(){
 				assert.ok(err.message === error_messages.MERCHANT_DOES_NOT_EXIST, err.message);
 			});
 		});
-		after(function(done){
-			db.dropTable(db.tables.merchants.name, function(){
-				done();
+	});
+	describe('Delete business', function(){
+		describe('When valid parameters are provided and business exists',function(){
+			var err, res;
+			before(function(done){
+				testSetup(function(error, result){
+					res = result;
+					Business.delete({
+						merchant_id: result.Business.merchant_id,
+						business_id: result.Business.business_id
+					},function(error){
+						err = error;
+						done();
+					});
+				});
 			});
+			it('error is set to null',function(){
+				assert.ok(err === null);
+			});
+			it('deletes the business from the database',function(done){
+				Business.findById({
+					merchant_id: res.Business.merchant_id,
+					business_id: res.Business.business_id
+				},function(err, res){
+					if(err)throw(err);
+					assert.ok(res.Business === undefined);
+					done();
+				});
+			});
+		});
+
+	});
+	describe('find all by merchant id', function(){
+		var merchant_id_test;
+		before(function(done){
+			testSetup(function(error,result){
+				merchant_id_test = result.Business.merchant_id;
+				Business.create({
+					merchant_id: merchant_id_test,
+					business_id: 'LPZ',
+					name: 'La Piazza',
+					type: Business.types.restaurant,
+					address: 'fsdfd'
+				},function(e){
+					if(e)throw(e);
+					done();
+				});
+			});
+		});
+		describe('When valid merchant_id is provided and businesses exist', function(){
+			var err,res;
+			before(function(done){
+				Business.getAllByMerchantId({merchant_id:merchant_id_test},function(error,result){
+					err = error;
+					res = result;
+					done();
+				});
+			});
+			it('error should be set to null',function(){
+				assert.ok(err === null);
+			});
+			it('res object should contain businesses object',function(){
+				assert.ok(res.Businesses);
+			});
+			it('length of businesses array should be 2',function(){
+				assert.ok(res.Businesses.length === 2);
+			});
+		})
+		describe('When merchant id is not provided', function(){
+			var err;
+			before(function(done){
+				Business.getAllByMerchantId({}, function(error){
+					err = error;
+					done();
+				});
+			});
+			it('error should not be null',function(){
+				assert.ok(err);
+			});
+			it('correct error message should be set',function(){
+				assert.ok(err.message === error_messages.MISSING_PARAMETERS);
+			});
+		});
+		describe('When merchant with correspondin merchant_id does not exist', function(){
+			var err;
+			before(function(done){
+				Business.getAllByMerchantId({merchant_id: 'fsadfadsfdsf'}, function(error){
+					err = error;
+					done();
+				});
+			});
+			it('error should not be null',function(){
+				assert.ok(err);
+			});
+			it('correct error message should be set',function(){
+				assert.ok(err.message === error_messages.MERCHANT_DOES_NOT_EXIST);
+			});
+		});
+	});
+	afterEach(function(done){
+		db.dropTable(db.tables.merchants.name, function(){
+			done();
 		});
 	});
 	after(function(done){

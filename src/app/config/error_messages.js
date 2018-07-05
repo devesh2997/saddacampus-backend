@@ -25,3 +25,4 @@ exports.TOKEN_AUTHENTICATION_FAILED = "Failed to authenticate token.";
 exports.INVALID_BUSINESS_ID = "Invalid business id";
 exports.DUPLICATE_BUSINESS = "Business with given business_id already exists";
 exports.INVALID_BUSINESS_TYPE = "Invalid business type";
+exports.BUSINESS_DOES_NOT_EXIST = "The business your are looking for does not exist";
