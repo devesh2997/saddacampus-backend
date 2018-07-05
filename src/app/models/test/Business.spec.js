@@ -485,6 +485,183 @@ describe('Business-model',function(){
 			});
 		});
 	});
+	describe('Update Business info',function(){
+		describe('When correct parameters are provided', function(){
+			var err, res;
+			before(function(done){
+				testSetup(function(error, result){
+					Business.update({
+						merchant_id: result.Business.merchant_id,
+						business_id: 'RDB',
+						new_business_id: 'ABC',
+						name: 'Rang Basanti',
+						type: Business.types.restaurant,
+						address: 'fadsfds'
+					},function(error, result){
+						err = error;
+						res = result;
+						done();
+					});
+				});
+			});
+			it('error is set to null',function(){
+				assert.ok(err === null, err);
+			});
+			it('Business object is returned',function(){
+				assert.ok(res.Business !== undefined, err);
+			});
+			it('Business object contains merchant_id',function(){
+				assert.ok(res.Business.merchant_id, err);
+			});
+			it('Business object contains changed business_id',function(){
+				assert.ok(res.Business.business_id === 'ABC', err);
+			});
+			it('Business object contains changed name',function(){
+				assert.ok(res.Business.name === 'Rang Basanti', err);
+			});
+			it('Business object contains changed address',function(){
+				assert.ok(res.Business.address === 'fadsfds', err);
+			});
+			it('Business object contains changed type',function(){
+				assert.ok(res.Business.type === Business.types.restaurant, err);
+			});
+			it('Business object containes status',function(){
+				assert.ok(res.Business.status !== null, err);
+			});
+			after(function(done){
+				db.dropTable(db.tables.merchants.name, function(){
+					done();
+				});
+			});
+		});
+		describe('Returns callback with error and sets the correct error messages when...', function(){
+			it('merchant_id is not provided',function(done){
+				Business.update({
+					business_id: 'abc'
+				},function(err){
+					assert.ok(err && err.message == error_messages.MISSING_PARAMETERS);
+					done();
+				});
+			});
+			it('business_id is not provided',function(done){
+				Business.update({
+					merchant_id: 'asdfas'
+				},function(err){
+					assert.ok(err && err.message == error_messages.MISSING_PARAMETERS, err.message);
+					done();
+				});
+			});
+			it('invalid business_id is provided',function(done){
+				Business.update({
+					merchant_id: 'asdfas',
+					business_id: 'as',
+					name: 'fasdf',
+					type: Business.types.restaurant,
+					address: 'fsdfds'
+				},function(err){
+					assert.ok(err && err.message == error_messages.INVALID_BUSINESS_ID, err.message);
+					done();
+				});
+			});
+			it('name is not provided',function(done){
+				Business.update({
+					merchant_id: 'asdfas',
+					business_id: 'as',
+					type: Business.types.restaurant
+				},function(err){
+					assert.ok(err && err.message == error_messages.MISSING_PARAMETERS, err.message);
+					done();
+				});
+			});
+			it('type is not provided',function(done){
+				Business.update({
+					merchant_id: 'asdfas',
+					business_id: 'as',
+					name: 'name'
+				},function(err){
+					assert.ok(err && err.message == error_messages.MISSING_PARAMETERS, err.message);
+					done();
+				});
+			});
+			it('address is not provided',function(done){
+				Business.update({
+					merchant_id: 'asdfas',
+					business_id: 'asf',
+					name: 'name',
+					type: Business.types.restaurant
+				},function(err){
+					assert.ok(err && err.message == error_messages.MISSING_PARAMETERS, err.message);
+					done();
+				});
+			});
+			it('invalid type is provided',function(done){
+				Business.update({
+					merchant_id: 'asdfas',
+					business_id: 'avs',
+					name: 'name',
+					type: 'test',
+					address: 'afasdfsd'
+				},function(err){
+					assert.ok(err && err.message == error_messages.INVALID_BUSINESS_TYPE, err.message);
+					done();
+				});
+			});
+		});
+		describe('When merchant does not exist', function(){
+			var err;
+			before(function(done){
+				Business.update({
+					merchant_id: 'fasdfsd',
+					business_id: 'abc',
+					name: 'Rang De Basanti',
+					type: Business.types.restaurant,
+					address: 'fadsfds'
+				},function(error){
+					err = error;
+					done();
+				});
+			});
+			it('return with error',function(){
+				assert.ok(err);
+			});
+			it('correct error message is set',function(){
+				assert.ok(err.message === error_messages.MERCHANT_DOES_NOT_EXIST,err.message);
+			});
+			after(function(done){
+				db.dropTable(db.tables.merchants.name, function(){
+					done();
+				});
+			});
+		});
+		describe('When duplicate business exists', function(){
+			var err;
+			before(function(done){
+				testSetup(function(error, result){
+					Business.update({
+						merchant_id: result.Business.merchant_id,
+						business_id: 'abc',
+						name: 'Rang De Basanti',
+						type: Business.types.restaurant,
+						address: 'fadsfds'
+					},function(error){
+						err = error;
+						done();
+					});
+				});
+			});
+			it('return with error',function(){
+				assert.ok(err);
+			});
+			it('correct error message is set',function(){
+				assert.ok(err.message === error_messages.BUSINESS_DOES_NOT_EXIST);
+			});
+			after(function(done){
+				db.dropTable(db.tables.merchants.name, function(){
+					done();
+				});
+			});
+		});
+	});
 	afterEach(function(done){
 		db.dropTable(db.tables.merchants.name, function(){
 			done();

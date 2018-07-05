@@ -5,6 +5,7 @@ var error_messages = require('../config/error_messages');
 var db_utils = require('../lib/db-utils');
 var Log = require('../lib/log');
 var validator = require('../utility/validator');
+var QueryBuilder = require('../lib/db-utils').QueryBuilder;
 
 
 //status constants for business model
@@ -73,8 +74,8 @@ var validateArgs = function(args, callback){
 				if(err)
 					return callback(err);
 				if(result.Business)
-					return callback(new Error(error_messages.DUPLICATE_BUSINESS));
-				return callback(null);
+					return callback(null, true);
+				return callback(null, false);
 			});
 		}
 	});
@@ -91,10 +92,12 @@ var validateArgs = function(args, callback){
  * @param {String} args.gstin
  */
 exports.create = function(args, callback){
-	validateArgs(args,function(err){
+	validateArgs(args,function(err, exists){
 		if(err)
 			return callback(err);
 		else{
+			if(exists)
+				return callback(new Error(error_messages.DUPLICATE_BUSINESS));
 			args.table_name = db_tables.businesses.name;
 			args.fields = db_tables.businesses.fields;
 			args.values = [args.merchant_id, args.business_id, args.name, args.address, args.type,args.gstin || '', statusConstants.disabled];
@@ -277,5 +280,54 @@ exports.getAllByMerchantId = function(args, callback){
 				});
 		});
 	}
+}
+
+/**
+ * Update business info
+ * All the info(except status) must be provided irrespective of whether they are being changed or not
+ * @param {Object} args
+ * @param {String} args.merchant_id
+ * @param {String} args.business_id
+ * @param {String} args.new_business_id
+ * @param {String} args.name
+ * @param {String} args.address
+ * @param {String} args.type
+ * @param {String} args.gstin
+ */
+exports.update = function(args, callback){
+	validateArgs(args,function(err, exists){
+		if(err)
+			return callback(err);
+		else{
+			if(!exists){
+				return callback(new Error(error_messages.BUSINESS_DOES_NOT_EXIST));
+			}
+			var query = QueryBuilder.update(db_tables.businesses.name).set({
+				business_id:args.new_business_id,
+				name: args.name,
+				address: args.address,
+				type: args.type,
+				gstin: args.gstin
+			}).whereAllEqual({merchant_id: args.merchant_id,business_id: args.business_id}).build();
+			db.get().query(query, function(err, result){
+				if(err){
+					Log.e(err);
+					return callback(err);
+				}else{
+					if(result.affectedRows === 1){
+						args.business_id = args.new_business_id;
+						findById(args,function(err, res){
+							if(err)
+								callback(err);
+							else
+								callback(null,res);
+						});
+					}else{
+						callback(new Error(error_messages.MERCHANT_DOES_NOT_EXIST));
+					}
+				}
+			});
+		}
+	});
 }
 
