@@ -59,6 +59,13 @@ var queryBuilder = {
 		return this;
 	},
 	/**
+	 * adds VALUES ? to the query
+	 */
+	values: function(){
+		this.query+="VALUES ? ";
+		return this;
+	},
+	/**
 	 * insert values place holder e.g-(?,?)
 	 * send values to database as separate entity and not as part of query
 	 */

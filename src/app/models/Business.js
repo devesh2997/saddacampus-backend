@@ -136,7 +136,7 @@ var findById = function(args, callback){
 		return callback(new Error(error_messages.INVALID_BUSINESS_ID));
 	else{
 		var query = "SELECT * FROM "+db_tables.businesses.name+" WHERE (merchant_id = '"+args.merchant_id+"' AND business_id = '"+args.business_id+"')";
-        db.get().query(query, function(err,result){
+		db.get().query(query, function(err,result){
             if(err){
                 Log.e(err);
                 callback(new Error(error_messages.UNKNOWN_ERROR));
