@@ -11,7 +11,12 @@ exports.getUserCount = function(callback){
             Log.e(err.toString());
             return callback(new Error(error_messages.UNKNOWN_ERROR));
         }else {
-            callback(null , result[0])
+            var response = {
+                success : true,
+                message : "Total User Count",
+                result : result
+            }
+            callback(null , response);
         }
     });
 }
