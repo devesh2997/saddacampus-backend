@@ -6,9 +6,8 @@ var User = require("./../../../app/models/User")
 describe.only("user-models" , function(){
     before(function(done){
         db.connect(db.MODE_TEST, function(){
-            db.drop([db.tables.admins.name], function(){
-                done();
-            });
+            db.drop([db.tables.users.name], function(){
+             });
         }); 
         var args = {
             country_code : "+91",
@@ -39,7 +38,7 @@ describe.only("user-models" , function(){
         });
      });
     after(function(done){
-        db.drop([db.tables.admins.name], function(){
+        db.drop([db.tables.users.name], function(){
             done();
         });
      });
