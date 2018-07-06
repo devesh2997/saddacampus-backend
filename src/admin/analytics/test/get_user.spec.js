@@ -16,15 +16,15 @@ describe.only("user-models" , function(){
                 err=error;
                 res.length = result.length;
                 done();
-            })
-        })
+            })// semi colon
+        })// semi colon
 
         it("check for error" , function(){
             assert.ok(!err);
-        })
+        })//semi colon
         it("check for result" , function(){
             assert.ok(res.length != undefined);
-        })
-     })
-})
+        })//semi colon
+     })//semi colon
+})//semi colon
 
