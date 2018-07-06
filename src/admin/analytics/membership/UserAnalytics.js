@@ -16,7 +16,7 @@ exports.getUserCount = function(callback){
         }else {
             response.totalUserCount = result[0].userCount;
         }
-        callback(response);
+        callback(null , response);
     });
 }
 
