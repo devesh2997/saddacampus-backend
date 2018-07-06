@@ -27,7 +27,7 @@ describe.only("UserAnalytics" , function(){
             before(function(done){
                     UserAnalytics.getUserCount(function(error , result){
                     err=error;
-                    res.userCount = result.result[0].userCount;
+                    res.userCount = result.totaluserCount;
                     success = result.success;
                     done();
                 });
