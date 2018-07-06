@@ -1,3 +1,9 @@
+var UserAnalytics = require("./membership/UserAnalytics");
+
 exports.getMembershipData = function(req,res){
-	res.send('Implement this');
+
+	//get users count
+	UserAnalytics.getUserCount(function(error , result){
+		res.json(result);
+	});
 }
