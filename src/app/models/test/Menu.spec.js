@@ -99,7 +99,7 @@ describe('Menu model', function(){
 			})
 		});
 		describe('When menu does not exist',function(){
-			var err, res;
+			var err;
 			before(function(done){
 				Menu.addCategories({
 					menu_id: 'fdasfasdfsadfsd',
@@ -109,13 +109,12 @@ describe('Menu model', function(){
 							category_name: 'Rice and Biryani'
 						},
 						{
-							category_id: 'BEV',
+							category_id: 'RIC',
 							category_name: 'Beverages'
 						}
 					]
-				},function(error, result){
+				},function(error){
 					err = error;
-					res = result;
 					done();
 				});
 			});
