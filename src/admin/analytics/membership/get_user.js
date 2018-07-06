@@ -1,5 +1,7 @@
 var db = require('../../../app/lib/sadda-db');
 var db_tables = db.tables;
+var Log = require('./../../../app/lib/log');
+var error_messages = require("./../../../app/config/error_messages");
 
 var Users = function(){
    
@@ -8,7 +10,8 @@ var Users = function(){
         var query = "SELECT * from " + db_tables.users.name ;
         db.get().query(query, function(err, result){
             if (err) {
-                return err;
+                Log.e(err.toString());
+                return next(new Error(error_messages.UNKNOWN_ERROR));
             }else {
                 var user_length = {
                     length : result.length
