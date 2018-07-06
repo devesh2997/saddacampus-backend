@@ -1,10 +1,8 @@
 var assert = require('assert');
-var get_users = require('./../membership/get_user');
+var UserAnalytics = require('./../membership/UserAnalytics');
 var db = require('./../../../app/lib/sadda-db');
-var users = new get_users();
 
-
-describe.only("user-models" , function(){
+describe("user-models" , function(){
     before(function(done){
         db.connect(db.MODE_TEST, function(){done()});
     });
@@ -12,19 +10,24 @@ describe.only("user-models" , function(){
         var res = { length : undefined };
         var err;
         before(function(done){
-                users.get_user_count(function(error , result){
+                UserAnalytics.getUserCount(function(error , result){
                 err=error;
-                res.length = result.length;
+                res.length = result.userCount;
                 done();
-            })// semi colon
-        })// semi colon
+            })
+        });
 
         it("check for error" , function(){
             assert.ok(!err);
-        })//semi colon
+        });
         it("check for result" , function(){
             assert.ok(res.length != undefined);
-        })//semi colon
-     })//semi colon
-})//semi colon
+        });
+     });
+    after(function(done){
+            db.drop();
+            done();
+     });
+});
+
 

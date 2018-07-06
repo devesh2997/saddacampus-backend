@@ -1,10 +1,9 @@
-var get_users = require("./membership/get_user");
+var UserAnalytics = require("./membership/UserAnalytics");
 
 exports.getMembershipData = function(req,res){
-	var Users  = new get_users();
-
+	
 	//get users count
-	Users.get_user_count(function(error,result){
+	UserAnalytics.getUserCount(function(error,result){
 		res.send(result);
-	}) //semi colon missing
+	});
 }
