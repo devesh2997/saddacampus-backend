@@ -23,7 +23,7 @@ exports.getUserCount = function(callback){
    
 //User registered previous week
 exports.previousWeekRegistered = function(callback){
-    var currentDate  = moment().format('YYYY-MM-DD').toString();
+    var currentDate  = moment().add(1,'day').format('YYYY-MM-DD').toString();
     var previousDate = moment().subtract(7,'days').format('YYYY-MM-DD').toString();
     var query = "SELECT COUNT(*) as userCount from " + db_tables.users.name+" WHERE created_at BETWEEN '"+previousDate+"' AND '"+currentDate+"'";
     var response = {};
@@ -42,7 +42,7 @@ exports.previousWeekRegistered = function(callback){
 
 //User registered previous month
 exports.previousMonthRegistered = function(callback){
-    var currentDate  = moment().format('YYYY-MM-DD').toString();
+    var currentDate  = moment().add(1,'day').format('YYYY-MM-DD').toString();
     var previousDate = moment().subtract(1,'months').format('YYYY-MM-DD').toString();
     var query = "SELECT COUNT(*) as userCount from " + db_tables.users.name+" WHERE created_at BETWEEN '"+previousDate+"' AND '"+currentDate+"'";
     var response = {};
@@ -58,3 +58,5 @@ exports.previousMonthRegistered = function(callback){
         callback(null , response);
     });
 }
+
+
