@@ -3,7 +3,7 @@ var UserAnalytics = require('./../membership/UserAnalytics');
 var db = require('./../../../app/lib/sadda-db');
 var User = require("./../../../app/models/User")
 
-describe("UserAnalytics" , function(){
+describe.only("UserAnalytics" , function(){
 	var testSetup = function(callback){
 		var args = {
 			country_code : "+91",
@@ -12,7 +12,7 @@ describe("UserAnalytics" , function(){
 			profilepic : " "
 		}
 		User.create(args , function(error, result){
-			callback(error, result);
+           callback(error, result);
 		});
 	}
 	before(function(done){
@@ -25,9 +25,47 @@ describe("UserAnalytics" , function(){
     describe("Get Total User Count" , function(){
 		var res;
         before(function(done){
+            testSetup(function(error){
+				if(error)throw(error);
+				UserAnalytics.getUserCount(function(error , result){
+					res=result;
+					done();
+				});
+			});
+		});
+		it("correct user count is returned" , function(){
+			assert.ok(res.totalUserCount === 1);
+		});
+		it("success is true" , function(){
+			assert.ok(res.success);
+		});
+
+    });
+    describe("Get Total User Registered previous week" , function(){
+		var res;
+        before(function(done){
+            testSetup(function(error){
+				if(error)throw(error);
+				UserAnalytics.previousWeekRegistered(function(error , result){
+					res=result;
+					done();
+				});
+			});
+		});
+		it("correct user count is returned" , function(){
+            assert.ok(res.totalUserCount === 1);
+		});
+		it("success is true" , function(){
+			assert.ok(res.success);
+		});
+
+    });
+    describe("Get Total User registered previous month" , function(){
+		var res;
+        before(function(done){
 			testSetup(function(error){
 				if(error)throw(error);
-				UserAnalytics.getUserCount(function(result){
+				UserAnalytics.previousMonthRegistered(function(error , result){
 					res=result;
 					done();
 				});
@@ -42,7 +80,7 @@ describe("UserAnalytics" , function(){
 
 	});
 	afterEach(function(done){
-		db.drop([db.tables.users.name], function(){
+        db.drop([db.tables.users.name], function(){
 			done();
 		});
 	});
