@@ -4,6 +4,10 @@
  */
 var queryBuilder = {
 	query : "",
+	select: function(){
+		this.query+= "SELECT ";
+		return this;
+	},
 	selectAll: function(){
 		this.query = this.query + "SELECT * ";
 		return this;

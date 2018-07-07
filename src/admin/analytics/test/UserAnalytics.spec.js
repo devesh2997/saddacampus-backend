@@ -27,7 +27,7 @@ describe("UserAnalytics" , function(){
         before(function(done){
 			testSetup(function(error){
 				if(error)throw(error);
-				UserAnalytics.getUserCount(function(result){
+				UserAnalytics.getUserCount(function(err,result){
 					res=result;
 					done();
 				});

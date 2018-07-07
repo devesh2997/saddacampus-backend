@@ -27,3 +27,5 @@ exports.DUPLICATE_BUSINESS = "Business with given business_id already exists";
 exports.INVALID_BUSINESS_TYPE = "Invalid business type";
 exports.BUSINESS_DOES_NOT_EXIST = "The business your are looking for does not exist";
 exports.MENU_DOES_NOT_EXIST = "The menu your are looking for does not exist";
+exports.DUPLICATE_MENU_CATEGORY = "Duplicate category with same category_id exists. category_id should be unique for every menu.";
+exports.INVALID_MENU_CATEGORY_ID = "Invalid category_id provided. Length of category_id should be 3";

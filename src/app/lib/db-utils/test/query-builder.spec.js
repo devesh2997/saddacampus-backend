@@ -2,6 +2,10 @@ var assert = require('assert');
 var QueryBuilder = require('../utils/query-builder');
 
 describe('Query Builder', function(){
+	it('SELECT ',function(){
+		var query = QueryBuilder.select().build();
+		assert.ok(query === "SELECT ");
+	})
 	it('SELECT * FROM table ',function(){
 		var query = QueryBuilder.selectAll().from(['table']).build();
 		assert.ok(query === "SELECT * FROM table ",query);
