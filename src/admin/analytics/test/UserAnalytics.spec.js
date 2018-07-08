@@ -13,7 +13,7 @@ describe.only("UserAnalytics" , function(){
 			profilepic : " "
 		}
 		User.create(args , function(error, result){
-           callback(error, result);
+           callback(
 		});
 	}
 	before(function(done){
@@ -224,7 +224,7 @@ describe.only("UserAnalytics" , function(){
 	})
 	afterEach(function(done){
         db.drop([db.tables.users.name], function(){
-			done();
+			  done();
 		});
 	});
 	after(function(done){

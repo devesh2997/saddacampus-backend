@@ -21,7 +21,6 @@ exports.getUserCount = function(callback){
         callback(null , response);
     });
 }
-  
 //User registered previous six weeks
 exports.getWeek = function(){
     var response = {};

@@ -23,3 +23,7 @@ exports.passwordIsValid = function(password){
 exports.businessIdIsValid = function(business_id){
 	return business_id && business_id.length == 3;
 }
+
+exports.menuCategoryIdIsValid = function(category_id){
+	return category_id && category_id.length == 3;
+}
