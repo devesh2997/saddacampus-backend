@@ -41,14 +41,41 @@ describe.only("UserAnalytics" , function(){
 			assert.ok(res.success);
 		});
 
-    });
+	});
+	describe("Get Total User Registered previous six Days" , function(){
+		describe("Registered  the previous day" , function(){
+			var res;
+			before(function(done){
+				testSetup(function(error){
+					if(error)throw(error);
+					var currentDate  = moment().subtract(1,'day').format('YYYY-MM-DD hh:mm:ss').toString();
+					var query = "UPDATE "+db.tables.users.name+" SET created_at = '"+currentDate+"' WHERE number=9162728446 ";
+					db.get().query(query , function(err){
+						if(err)throw(err);
+						new UserAnalytics.getMonth().data(function(error , result){
+							res=result;
+							done();
+						});
+					})
+				});
+			});
+			it("correct user count is returned" , function(){
+				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 0 );
+			});
+			it("success is true" , function(){
+				assert.ok(res.success);
+			});
+		});
+	
+		
+	});
     describe("Get Total User Registered previous week" , function(){
 		describe("Registered within the week" , function(){
 			var res;
 			before(function(done){
 				testSetup(function(error){
 					if(error)throw(error);
-					var currentDate  = moment().subtract(2,'day').format('YYYY-MM-DD').toString();
+					var currentDate  = moment().subtract(2,'day').format('YYYY-MM-DD hh:mm:ss').toString();
 					var query = "UPDATE "+db.tables.users.name+" SET created_at = '"+currentDate+"' WHERE number=9162728446 ";
 					db.get().query(query , function(err){
 						if(err)throw(err);
@@ -71,7 +98,7 @@ describe.only("UserAnalytics" , function(){
 			before(function(done){
 				testSetup(function(error){
 					if(error)throw(error);
-					var currentDate  = moment().subtract(10,'day').format('YYYY-MM-DD').toString();
+					var currentDate  = moment().subtract(10,'day').format('YYYY-MM-DD hh:mm:ss').toString();
 					var query = "UPDATE "+db.tables.users.name+" SET created_at = '"+currentDate+"' WHERE number=9162728446 ";
 					db.get().query(query , function(err){
 						if(err)throw(err);
@@ -97,7 +124,7 @@ describe.only("UserAnalytics" , function(){
 			before(function(done){
 				testSetup(function(error){
 					if(error)throw(error);
-					var currentDate  = moment().subtract(20,'day').format('YYYY-MM-DD').toString();
+					var currentDate  = moment().subtract(20,'day').format('YYYY-MM-DD hh:mm:ss').toString();
 					var query = "UPDATE "+db.tables.users.name+" SET created_at = '"+currentDate+"' WHERE number=9162728446 ";
 					db.get().query(query , function(err){
 						if(err)throw(err);
@@ -120,7 +147,7 @@ describe.only("UserAnalytics" , function(){
 			before(function(done){
 				testSetup(function(error){
 					if(error)throw(error);
-					var currentDate  = moment().subtract(50,'day').format('YYYY-MM-DD').toString();
+					var currentDate  = moment().subtract(50,'day').format('YYYY-MM-DD hh:mm:ss').toString();
 					var query = "UPDATE "+db.tables.users.name+" SET created_at = '"+currentDate+"' WHERE number=9162728446 ";
 					db.get().query(query , function(err){
 						if(err)throw(err);

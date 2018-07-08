@@ -7,12 +7,19 @@ exports.getTotalUser = function(req,res){
 	})
 }
 
+// get no of user registered previous seven days
+exports.previousDays = function(req,res){
+	var week = new UserAnalytics.getDay();
+	week.data(function(error , result){
+		res.json(result);
+	});
+}
 // get no of user registered previous week
 exports.previousWeeks = function(req,res){
 	var week = new UserAnalytics.getWeek();
 	week.data(function(error , result){
 		res.json(result);
-	})
+	});
 }
 
 // get no of user registered previous month
@@ -20,7 +27,7 @@ exports.previousMonths = function(req,res){
 	var month = new UserAnalytics.getMonth();
 	month.data(function(error , result){
 		res.json(result);
-	})
+	});
 }
 
 //get no of user registered between the given dates
@@ -32,5 +39,12 @@ exports.custom = function(req,res){
 	};
 	UserAnalytics.custom(args , function(err,result){
 		res.send(result);
+	});
+}
+
+//exports all the function 
+exports.getAll = function(req,res){
+	UserAnalytics.getAll(function(error , result){
+		res.json(result);
 	});
 }
