@@ -195,6 +195,32 @@ describe.only("UserAnalytics" , function(){
 				assert.ok(res.success);
 			});
 		});
+		describe("Registered without parameters" , function(){
+			var res;
+			before(function(done){
+				testSetup(function(error){
+					if(error)throw(error);
+					var registeredDate  = moment().subtract(15,'day').format('YYYY-MM-DD').toString();
+					var query = "UPDATE "+db.tables.users.name+" SET created_at = '"+registeredDate+"' WHERE number=9162728446 ";
+					db.get().query(query , function(err){
+						if(err)throw(err);
+						var args = {
+							start_date :  moment().subtract(10,'day').format('YYYY-MM-DD').toString()
+						}
+						UserAnalytics.custom(args,function(error , result){
+							res=result;
+							done();
+						});
+					})
+				});
+			});
+			it("correct message is returned" , function(){
+				assert.ok(res.message === "Required parameter/s is/are missing.");
+			});
+			it("success is false" , function(){
+				assert.ok(!res.success);
+			});
+		});
 	})
 	afterEach(function(done){
         db.drop([db.tables.users.name], function(){
