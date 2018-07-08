@@ -280,7 +280,7 @@ describe('MenuCategory model',function(){
 				assert.ok(err === null);
 			});
 			it('noOfRowsDeleted should be 1',function(){
-				assert.ok(res.noOfRowsDeleted === 1);
+				assert.ok(res.affectedRows === 1);
 			});
 		});
 		describe('When menu_id is not provided',function(){
@@ -332,6 +332,128 @@ describe('MenuCategory model',function(){
 			var err;
 			before(function(done){
 				MenuCategory.delete({menu_id: 'fsadfsd',category_id: 'RI'},function(error){
+					err = error;
+					done();
+				});
+			});
+			it('error should not be null',function(){
+				assert.ok(err);
+			});
+			it('correct error message should be set',function(){
+				assert.ok(err.message === error_messages.INVALID_MENU_CATEGORY_ID);
+			});
+		});
+	});
+	describe('Update category',function(){
+		var menu_id_test;
+		before(function(done){
+			Menu.create({},function(e, r){
+				if(e)throw(e);
+				menu_id_test = r.Menu.menu_id;
+				MenuCategory.addCategories({
+					menu_id: r.Menu.menu_id,
+					categories: [
+						{
+							category_id: 'RIC',
+							category_name: 'Rice and Biryani'
+						},
+						{
+							category_id: 'BEV',
+							category_name: 'Beverages'
+						}
+					]
+				},function(error){
+					if(error)throw(error);
+					done();
+				});
+			});
+		});
+		describe('When valid menu_id and category_id is passed',function(){
+			var err,res;
+			before(function(done){
+				MenuCategory.update({
+						menu_id: menu_id_test,
+						category_id:'RIC',
+						updated_category:{
+							category_id: 'BRE',
+							category_name: 'Breads'
+						}
+					},function(error,result){
+					err = error;
+					res = result;
+					done();
+				});
+			});
+			it('error should be null',function(){
+				assert.ok(err === null);
+			});
+			it('noOfRowsDeleted should be 1',function(){
+				assert.ok(res.affectedRows === 1);
+			});
+		});
+		describe('When menu_id is not provided',function(){
+			var err;
+			before(function(done){
+				MenuCategory.update({},function(error){
+					err = error;
+					done();
+				});
+			});
+			it('error should not be null',function(){
+				assert.ok(err);
+			});
+			it('correct error message should be set',function(){
+				assert.ok(err.message === error_messages.MISSING_PARAMETERS);
+			});
+		});
+		describe('When category_id is not provided',function(){
+			var err;
+			before(function(done){
+				MenuCategory.update({},function(error){
+					err = error;
+					done();
+				});
+			});
+			it('error should not be null',function(){
+				assert.ok(err);
+			});
+			it('correct error message should be set',function(){
+				assert.ok(err.message === error_messages.MISSING_PARAMETERS);
+			});
+		});
+		describe('When menu does not exist',function(){
+			var err;
+			before(function(done){
+				MenuCategory.update({
+					menu_id: 'rewfsad',
+					category_id:'RIC',
+					updated_category:{
+						category_id: 'BRE',
+						category_name: 'Breads'
+					}
+				},function(error){
+					err = error;
+					done();
+				});
+			});
+			it('error should not be null',function(){
+				assert.ok(err);
+			});
+			it('correct error message should be set',function(){
+				assert.ok(err.message === error_messages.MENU_DOES_NOT_EXIST);
+			});
+		});
+		describe('When invalid category_id is provided',function(){
+			var err;
+			before(function(done){
+				MenuCategory.delete({
+					menu_id: 'rewfsad',
+					category_id:'RI',
+					updated_category:{
+						category_id: 'BRE',
+						category_name: 'Breads'
+					}
+				},function(error){
 					err = error;
 					done();
 				});

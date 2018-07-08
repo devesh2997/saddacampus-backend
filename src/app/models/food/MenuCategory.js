@@ -142,7 +142,7 @@ exports.getCategories = getCategories;
 
 /**
  * Deletes category from a menu
- * return {noOfRowsDeleted:}
+ * return {affectedRows:}
  * @param {Object} args
  * @param {String} args.menu_id
  * @param {String} args.category_id
@@ -166,7 +166,41 @@ exports.delete = function(args,callback){
 				return callback(new Error(error_messages.UNKNOWN_ERROR));
 			}
 			callback(null,{
-				noOfRowsDeleted: result.affectedRows
+				affectedRows: result.affectedRows
+			});
+		});
+	});
+}
+
+/**
+ * Update category in a menu
+ * returns {affectedRows}
+ * @param {Object} args
+ * @param {String} args.menu_id
+ * @param {String} args.category_id
+ * @param {Object} args.updated_category
+ * @param {String} args.updated_category.category_id
+ * @param {String} args.updated_category.category_name
+ */
+exports.update = function(args,callback){
+	if(!args.menu_id || !args.category_id || !args.updated_category || !args.updated_category.category_id || !args.updated_category.category_name)
+		return callback(new Error(error_messages.MISSING_PARAMETERS));
+
+		if(!validator.menuCategoryIdIsValid(args.category_id) || !validator.menuCategoryIdIsValid(args.updated_category.category_id))
+		return callback(new Error(error_messages.INVALID_MENU_CATEGORY_ID));
+
+	Menu.findById(args,function(err,result){
+		if(err)return callback(err);
+		if(!result.Menu)return callback(new Error(error_messages.MENU_DOES_NOT_EXIST));
+		var query = QueryBuilder.update(db.tables.menu_categories.name).set(args.updated_category).whereAllEqual({category_id:args.category_id}).build();
+		db.get().query(query,function(err,result){
+			if(err){
+				Log.e(err.toString());
+				callback(new Error(error_messages.UNKNOWN_ERROR));
+			}
+			if(result.affectedRows !== 1)return callback(new Error(error_messages.UNKNOWN_ERROR));
+			return callback(null, {
+				affectedRows: result.affectedRows
 			});
 		});
 	});
