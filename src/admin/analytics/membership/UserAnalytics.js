@@ -110,13 +110,16 @@ exports.getMonth = function(){
 
 //Get user registered with the given dates
 exports.custom = function(args , callback){
-    if(args.start_date != null && args.end_date != null)
-    {
+    var response = {};
+    response.success = true;
+    if(!args.start_date || !args.end_date) {
+        response.success = false;
+        response.message = error_messages.MISSING_PARAMETERS;
+        callback(null , response);
+    }else {
         var start_date = args.start_date;
         var end_date = moment(args.end_date).add(1,'day').format('YYYY-MM-DD').toString();
         var query = "SELECT COUNT(*) as userCount from "+db_tables.users.name+" WHERE created_at BETWEEN '"+start_date+"' AND '"+end_date+"'";
-        var response = {};
-        response.success = true;
         db.get().query(query, function(err,result){
             if (err) {
                 Log.e(err.toString());
@@ -126,6 +129,6 @@ exports.custom = function(args , callback){
                 response.totalUserCount = result[0].userCount;
             }
             callback(null , response);
-        })
+        })               
     }
 }
