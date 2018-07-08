@@ -4,12 +4,12 @@
   "description": "Backend of the Saddacampus platform.",
   "main": "index.js",
   "scripts": {
-	"start": "npm-run-all --parallel security-check start:server lint:watch test:watch",
-	"start:test": "npm-run-all --parallel security-check start:server:test lint:watch test:watch",
+    "start": "npm-run-all --parallel security-check start:server lint:watch test:watch",
+    "start:test": "npm-run-all --parallel security-check start:server:test lint:watch test:watch",
     "test": "mocha --require babel-register \"src/**/*.spec.js\" --reporter progress --exit",
     "test:watch": "npm run test -- --watch",
-	"start:server": "node app.js",
-	"start:server:test": "node app_test.js",
+    "start:server": "node app.js",
+    "start:server:test": "node app_test.js",
     "security-check": "nsp check",
     "lint": "esw app.js --color",
     "lint:watch": "npm run lint -- --watch"
