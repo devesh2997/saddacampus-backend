@@ -4,7 +4,7 @@ var db = require('./../../../app/lib/sadda-db');
 var User = require("./../../../app/models/User");
 var moment = require("moment");
 
-describe.only("UserAnalytics" , function(){
+describe("UserAnalytics" , function(){
 	var testSetup = function(callback){
 		var args = {
 			country_code : "+91",
@@ -13,7 +13,7 @@ describe.only("UserAnalytics" , function(){
 			profilepic : " "
 		}
 		User.create(args , function(error, result){
-           callback(
+           callback(error,result);
 		});
 	}
 	before(function(done){
@@ -89,7 +89,7 @@ describe.only("UserAnalytics" , function(){
 				assert.ok(res.success);
 			});
 		});
-		
+
 	});
 	describe("Get Total User Registered previous six months" , function(){
 		describe("Registered within the last month" , function(){
@@ -138,7 +138,7 @@ describe.only("UserAnalytics" , function(){
 				assert.ok(res.success);
 			});
 		});
-		
+
 	});
 	describe("User registred between the given dates",function(){
 		describe("Registered within the given period" , function(){
@@ -224,7 +224,7 @@ describe.only("UserAnalytics" , function(){
 	})
 	afterEach(function(done){
         db.drop([db.tables.users.name], function(){
-			  done();
+			done();
 		});
 	});
 	after(function(done){

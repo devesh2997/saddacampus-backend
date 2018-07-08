@@ -243,7 +243,7 @@ describe('MenuCategory model',function(){
 			});
 		})
 	});
-	describe.only('Delete category',function(){
+	describe('Delete category',function(){
 		var menu_id_test;
 		before(function(done){
 			Menu.create({},function(e, r){
