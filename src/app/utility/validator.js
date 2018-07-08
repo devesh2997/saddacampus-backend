@@ -31,3 +31,7 @@ exports.menuCategoryIdIsValid = function(category_id){
 exports.menuCustomisationIdIsValid = function(customisation_id){
 	return customisation_id && customisation_id.length == 3;
 }
+
+exports.menuCategoryItemNameIsValid = function(item_name){
+	return item_name && item_name.length >= 3;
+}

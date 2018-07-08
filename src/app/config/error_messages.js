@@ -31,4 +31,5 @@ exports.DUPLICATE_MENU_CATEGORY = "Duplicate category with same category_id exis
 exports.INVALID_MENU_CATEGORY_ID = "Invalid category_id provided. Length of category_id should be 3";
 exports.INVALID_MENU_CUSTOMISATION_ID = "Invalid customisation_id provided. Length of customisation_id should be 3";
 exports.DUPLICATE_MENU_CUSTOMISATION = "Duplicate customisation with same customisation_id exists. category_id should be unique for every menu.";
-
+exports.INVALID_RESOURCE_FIELD = "The resource field your are looking for does not exist";
+exports.INVALID_MENU_CATEGORY_ITEM_NAME = "Length of menu category item names should be more than 3";
