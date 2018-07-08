@@ -18,6 +18,10 @@ describe('Query Builder', function(){
 		var query = QueryBuilder.update('table').build();
 		assert.ok(query === "UPDATE table ",query);
 	});
+	it('DELETE  ',function(){
+		var query = QueryBuilder.delete().build();
+		assert.ok(query === "DELETE ",query);
+	});
 	it('INSERT INTO table',function(){
 		var query = QueryBuilder.insertInto('table').build();
 		assert.ok(query === "INSERT INTO table ",query);

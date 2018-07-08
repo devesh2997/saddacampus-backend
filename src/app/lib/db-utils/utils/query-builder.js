@@ -20,6 +20,10 @@ var queryBuilder = {
 		this.query+= "UPDATE "+table_name+" ";
 		return this;
 	},
+	delete: function(){
+		this.query+= "DELETE ";
+		return this;
+	},
 	/**
 	 * set columns fields
 	 * @param {Object} args

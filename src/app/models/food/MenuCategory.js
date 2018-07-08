@@ -22,14 +22,10 @@ var validator = require('../../utility/validator');
  * @returns {Object} {noOfCategoriesAdded:}
  */
 exports.addCategories = function(args, callback){
-	//check for missing parameters
-	if(!args.menu_id || !args.hasOwnProperty('categories'))
-		return callback(new Error(error_messages.MISSING_PARAMETERS));
 
 	//check for duplicate category_id
-	hasDuplicate(args,function(err,hasDuplicate){
+	validateArgs(args,function(err){
 		if(err)return callback(err);
-		if(hasDuplicate)return callback(new Error(error_messages.DUPLICATE_MENU_CATEGORY));
 		//check if menu exists or not
 		Menu.findById(args,function(err, result){
 			if(err)
@@ -68,11 +64,20 @@ exports.addCategories = function(args, callback){
  * @param {String} args.menu_id
  * @param {Array} args.categories
  */
-var hasDuplicate = function(args,callback){
-	var has = false;
+var validateArgs = function(args,callback){
+	//check for missing parameters
+	if(!args.menu_id || !args.hasOwnProperty('categories'))
+		return callback(new Error(error_messages.MISSING_PARAMETERS));
+
+	/**
+	 * check for duplicates
+	 */
 	var categories = args.categories;
+	var has = false;
 	//check inside the given array
 	for(var i=0 ;i<categories.length;i++){
+		if(!validator.menuCategoryIdIsValid(categories[i].category_id))//validate category_id
+			return callback(new Error(error_messages.INVALID_MENU_CATEGORY_ID));
 		for(var j=i+1; j<categories.length; j++){
 			if(categories[i].category_id === categories[j].category_id){
 				has = true;
@@ -80,7 +85,7 @@ var hasDuplicate = function(args,callback){
 			}
 		}
 	}
-	if(has)return callback(null,has);
+	if(has)return callback(new Error(error_messages.DUPLICATE_MENU_CATEGORY));
 	//check inside the database
 	getCategories(args,function(err,result){
 		if(err)return callback(err);
@@ -93,7 +98,8 @@ var hasDuplicate = function(args,callback){
 				}
 			}
 		}
-		return callback(null,has);
+		if(has)return callback(new Error(error_messages.DUPLICATE_MENU_CATEGORY));
+		else return callback(null);
 	});
 
 }
@@ -135,7 +141,8 @@ var getCategories = function(args,callback){
 exports.getCategories = getCategories;
 
 /**
- *
+ * Deletes category from a menu
+ * return {noOfRowsDeleted:}
  * @param {Object} args
  * @param {String} args.menu_id
  * @param {String} args.category_id
@@ -144,4 +151,23 @@ exports.delete = function(args,callback){
 	//check for missing parameters
 	if(!args.menu_id || !args.category_id)
 		return callback(new Error(error_messages.MISSING_PARAMETERS));
+
+	if(!validator.menuCategoryIdIsValid(args.category_id))
+		return callback(new Error(error_messages.INVALID_MENU_CATEGORY_ID));
+
+	Menu.findById(args,function(err,result){
+		if(err)return callback(err);
+		if(!result.Menu)return callback(new Error(error_messages.MENU_DOES_NOT_EXIST));
+
+		var query = QueryBuilder.delete().from([db.tables.menu_categories.name]).whereAllEqual({category_id:args.category_id}).build();
+		db.get().query(query,function(err,result){
+			if(err){
+				Log.e(err.toString());
+				return callback(new Error(error_messages.UNKNOWN_ERROR));
+			}
+			callback(null,{
+				noOfRowsDeleted: result.affectedRows
+			});
+		});
+	});
 }

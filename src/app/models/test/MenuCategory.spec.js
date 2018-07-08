@@ -13,6 +13,11 @@ describe('MenuCategory model',function(){
 		});
 	});
 	describe('Add categories',function(){
+		afterEach(function(done){
+			db.dropTable(db.tables.menus.name, function(){
+				done();
+			});
+		});
 		describe('When valid parameter is provided and menu exists',function(){
 			var err, res;
 			before(function(done){
@@ -142,7 +147,7 @@ describe('MenuCategory model',function(){
 					done();
 				});
 			});
-			it('invalid category id is provided',function(){
+			it('invalid category id is provided',function(done){
 				Menu.create({},function(e, r){
 					if(e)throw(e);
 					MenuCategory.addCategories({
@@ -154,7 +159,8 @@ describe('MenuCategory model',function(){
 							}
 						]
 					},function(error){
-						assert.ok(error instanceof Error && error.message === error_messages.INVALID_MENU_CATEGORY_ID);
+						assert.ok(error instanceof Error && error.message ===error_messages.INVALID_MENU_CATEGORY_ID);
+						done();
 					});
 				});
 			});
@@ -236,6 +242,107 @@ describe('MenuCategory model',function(){
 				assert.ok(err.message === error_messages.MENU_DOES_NOT_EXIST);
 			});
 		})
+	});
+	describe.only('Delete category',function(){
+		var menu_id_test;
+		before(function(done){
+			Menu.create({},function(e, r){
+				if(e)throw(e);
+				menu_id_test = r.Menu.menu_id;
+				MenuCategory.addCategories({
+					menu_id: r.Menu.menu_id,
+					categories: [
+						{
+							category_id: 'RIC',
+							category_name: 'Rice and Biryani'
+						},
+						{
+							category_id: 'BEV',
+							category_name: 'Beverages'
+						}
+					]
+				},function(error){
+					if(error)throw(error);
+					done();
+				});
+			});
+		});
+		describe('When valid menu_id and category_id is passed',function(){
+			var err,res;
+			before(function(done){
+				MenuCategory.delete({menu_id: menu_id_test,category_id:'RIC'},function(error,result){
+					err = error;
+					res = result;
+					done();
+				});
+			});
+			it('error should be null',function(){
+				assert.ok(err === null);
+			});
+			it('noOfRowsDeleted should be 1',function(){
+				assert.ok(res.noOfRowsDeleted === 1);
+			});
+		});
+		describe('When menu_id is not provided',function(){
+			var err;
+			before(function(done){
+				MenuCategory.delete({},function(error){
+					err = error;
+					done();
+				});
+			});
+			it('error should not be null',function(){
+				assert.ok(err);
+			});
+			it('correct error message should be set',function(){
+				assert.ok(err.message === error_messages.MISSING_PARAMETERS);
+			});
+		});
+		describe('When category_id is not provided',function(){
+			var err;
+			before(function(done){
+				MenuCategory.delete({},function(error){
+					err = error;
+					done();
+				});
+			});
+			it('error should not be null',function(){
+				assert.ok(err);
+			});
+			it('correct error message should be set',function(){
+				assert.ok(err.message === error_messages.MISSING_PARAMETERS);
+			});
+		});
+		describe('When menu does not exist',function(){
+			var err;
+			before(function(done){
+				MenuCategory.delete({menu_id: 'fsadfsd',category_id: 'RIC'},function(error){
+					err = error;
+					done();
+				});
+			});
+			it('error should not be null',function(){
+				assert.ok(err);
+			});
+			it('correct error message should be set',function(){
+				assert.ok(err.message === error_messages.MENU_DOES_NOT_EXIST);
+			});
+		});
+		describe('When invalid category_id is provided',function(){
+			var err;
+			before(function(done){
+				MenuCategory.delete({menu_id: 'fsadfsd',category_id: 'RI'},function(error){
+					err = error;
+					done();
+				});
+			});
+			it('error should not be null',function(){
+				assert.ok(err);
+			});
+			it('correct error message should be set',function(){
+				assert.ok(err.message === error_messages.INVALID_MENU_CATEGORY_ID);
+			});
+		});
 	});
 	afterEach(function(done){
 		db.dropTable(db.tables.menus.name, function(){
