@@ -27,3 +27,7 @@ exports.businessIdIsValid = function(business_id){
 exports.menuCategoryIdIsValid = function(category_id){
 	return category_id && category_id.length == 3;
 }
+
+exports.menuCustomisationIdIsValid = function(customisation_id){
+	return customisation_id && customisation_id.length == 3;
+}

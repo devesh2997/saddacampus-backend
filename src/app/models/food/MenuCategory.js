@@ -19,7 +19,7 @@ var validator = require('../../utility/validator');
  * @param {Object} args
  * @param {String} args.menu_id
  * @param {MenuCategory[]} args.categories
- * @returns {Object} {noOfCategoriesAdded:}
+ * @returns {Object} {affectedRows:}
  */
 exports.addCategories = function(args, callback){
 
@@ -50,7 +50,7 @@ exports.addCategories = function(args, callback){
 					return callback(new Error(error_messages.UNKNOWN_ERROR));
 				}else{
 					return callback(null, {
-						noOfCategoriesAdded: result.affectedRows
+						affectedRows: result.affectedRows
 					});
 				}
 			});
@@ -186,22 +186,33 @@ exports.update = function(args,callback){
 	if(!args.menu_id || !args.category_id || !args.updated_category || !args.updated_category.category_id || !args.updated_category.category_name)
 		return callback(new Error(error_messages.MISSING_PARAMETERS));
 
-		if(!validator.menuCategoryIdIsValid(args.category_id) || !validator.menuCategoryIdIsValid(args.updated_category.category_id))
-		return callback(new Error(error_messages.INVALID_MENU_CATEGORY_ID));
+	if(!validator.menuCategoryIdIsValid(args.category_id) || !validator.menuCategoryIdIsValid(args.updated_category.category_id))
+	return callback(new Error(error_messages.INVALID_MENU_CATEGORY_ID));
 
-	Menu.findById(args,function(err,result){
+	//check for duplicates in the database
+	getCategories(args,function(err,result){
 		if(err)return callback(err);
-		if(!result.Menu)return callback(new Error(error_messages.MENU_DOES_NOT_EXIST));
-		var query = QueryBuilder.update(db.tables.menu_categories.name).set(args.updated_category).whereAllEqual({category_id:args.category_id}).build();
-		db.get().query(query,function(err,result){
-			if(err){
-				Log.e(err.toString());
-				callback(new Error(error_messages.UNKNOWN_ERROR));
+		var databaseCategories = result.categories;
+		for(var j=0; j<databaseCategories.length; j++){
+			if(args.updated_category.category_id === databaseCategories[j].category_id){
+				return callback(new Error(error_messages.DUPLICATE_MENU_CATEGORY));
 			}
-			if(result.affectedRows !== 1)return callback(new Error(error_messages.UNKNOWN_ERROR));
-			return callback(null, {
-				affectedRows: result.affectedRows
+		}
+		Menu.findById(args,function(err,result){
+			if(err)return callback(err);
+			if(!result.Menu)return callback(new Error(error_messages.MENU_DOES_NOT_EXIST));
+			var query = QueryBuilder.update(db.tables.menu_categories.name).set(args.updated_category).whereAllEqual({category_id:args.category_id}).build();
+			db.get().query(query,function(err,result){
+				if(err){
+					Log.e(err.toString());
+					callback(new Error(error_messages.UNKNOWN_ERROR));
+				}
+				if(result.affectedRows !== 1)return callback(new Error(error_messages.UNKNOWN_ERROR));
+				return callback(null, {
+					affectedRows: result.affectedRows
+				});
 			});
 		});
 	});
+
 }

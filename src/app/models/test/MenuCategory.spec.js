@@ -46,7 +46,7 @@ describe('MenuCategory model',function(){
 				assert.ok(err === null);
 			});
 			it('noOfCategoriesAdded added should be equal to 2',function(){
-				assert.ok(res.noOfCategoriesAdded === 2);
+				assert.ok(res.affectedRows === 2);
 			});
 		});
 		describe('When two categories with same category_id is provided',function(){
