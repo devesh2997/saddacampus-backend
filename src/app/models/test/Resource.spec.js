@@ -2,8 +2,10 @@ var assert = require('assert');
 var Resource = require('../Resource');
 var validator = require('../../utility/validator');
 var error_messages = require('../../config/error_messages');
+var db = require('../../lib/sadda-db');
 
 describe('Resource model',function(){
+	var resc;
 	var fields_test = [
 		{
 			name: 'menu_id',
@@ -32,6 +34,7 @@ describe('Resource model',function(){
 			isForeign: false,
 			reference_table: 'menus',
 			reference_field: 'menu_id',
+			validation_error:error_messages.INVALID_MENU_CATEGORY_ITEM_ID,
 			isCompulsory: true
 		},
 		{
@@ -50,12 +53,27 @@ describe('Resource model',function(){
 			isForeign: false,
 			isCompulsory: false
 		},
+		{
+			name: 'encrypted_password',
+			type: 'password',
+			isPrimary: false,
+			isForeign: false,
+			validator: validator.passwordIsValid,
+			validation_error: error_messages.INVALID_PASSWORD,
+			isCompulsory: true
+		},
 	]
-	describe('Check for fields',function(){
-		var resc;
-		before(function(){
-			resc = new Resource('table',fields_test);
+	before(function(done){
+		resc = new Resource('Table','table',fields_test);
+		db.connect(db.MODE_TEST, function(){
+			db.dropTable(resc.table_name, function(){
+				done();
+			});
 		});
+	});
+
+
+	describe('Check for fields',function(){
 		it('When field name exists it returns true',function(){
 			assert.ok(resc.checkForField('cuisine'));
 		});
@@ -64,10 +82,10 @@ describe('Resource model',function(){
 		});
 	});
 
-	describe.only('Validate values',function(){
+	describe('Validate values',function(){
 		var resc;
 		before(function(){
-			resc = new Resource('table',fields_test);
+			resc = new Resource('Table','table',fields_test);
 		});
 		it('should return allCorrect:true when all validations pass',function(){
 			var values = [
@@ -136,6 +154,59 @@ describe('Resource model',function(){
 				assert.ok(res.values[1].err === error_messages.INVALID_MENU_CATEGORY_ID && res.values[0].err === error_messages.INVALID_RESOURCE_FIELD);
 			});
 		});
+		describe('invalid value type is provided',function(){
+			var res;
+			var values = [
+				{'menu_id': 'fsdafsdf'},
+				{'category_id': 'fd3'},
+				{'name': 'fsdas'},
+				{'item_id': 'fsd'},
+				{'cuisine': 'fads'}
+			];
+			before(function(){
+				res = resc.validateValues(values);
+			});
+			it('should return allCorrect:false',function(){
+				assert.ok(!res.allCorrect);
+			});
+			it('should set the err for incorrect fields',function(){
+				assert.ok(res.values[3].err === error_messages.INVALID_MENU_CATEGORY_ITEM_ID);
+			});
+		});
+		describe('invalid password value is provided',function(){
+			var res;
+			var values = [
+				{'menu_id': 'fsdafsdf'},
+				{'category_id': 'fd3'},
+				{'name': 'fsdas'},
+				{'item_id': 3},
+				{'cuisine': 'fads'},
+				{'encrypted_password': 'fsd'}
+			];
+			before(function(){
+				res = resc.validateValues(values);
+			});
+			it('should return allCorrect:false',function(){
+				assert.ok(!res.allCorrect);
+			});
+			it('should set the err for incorrect fields',function(){
+				assert.ok(res.values[5].err === error_messages.INVALID_PASSWORD);
+			});
+		});
 
+	});
+	describe('Create Resource',function(){
+
+	});
+	afterEach(function(done){
+		db.dropTable(resc.table_name, function(){
+			done();
+		});
+	});
+	after(function(done){
+		db.dropTable(resc.table_name, function(){
+			db.end();
+			done();
+		});
 	});
 });

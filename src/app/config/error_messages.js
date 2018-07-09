@@ -33,3 +33,5 @@ exports.INVALID_MENU_CUSTOMISATION_ID = "Invalid customisation_id provided. Leng
 exports.DUPLICATE_MENU_CUSTOMISATION = "Duplicate customisation with same customisation_id exists. category_id should be unique for every menu.";
 exports.INVALID_RESOURCE_FIELD = "The resource field your are looking for does not exist";
 exports.INVALID_MENU_CATEGORY_ITEM_NAME = "Length of menu category item names should be more than 3";
+exports.INVALID_MENU_CATEGORY_ITEM_ID = "Item id should be a number";
+exports.INVALID_PRIMARY_RESOURCE_FIELD = "The resource field you have provided is not a primary key field."
