@@ -27,9 +27,7 @@ exports.getUserCount = getUserCount;
 var getDay = function(){
     var response = {};
     response.success = true;
-    response.result = {
-        data:[]
-    };
+    response.data = [];
     var query = function(date,next){
         var query = "SELECT COUNT(*) as userCount from " + db_tables.users.name+" WHERE created_at <= '"+date+"'";
         db.get().query(query, function(err, result){
@@ -37,7 +35,7 @@ var getDay = function(){
                 Log.e(err.toString());
                 next(new Error(error_messages.UNKNOWN_ERROR));
             }else {
-                response.result.data.push(result[0].userCount);
+                response.data.push(result[0].userCount);
             }
             var new_date = moment(date).subtract(1,'day').format('YYYY-MM-DD hh:mm:ss').toString();
             next(null , new_date);
@@ -71,9 +69,7 @@ exports.getDay = getDay;
 var getWeek = function(){
     var response = {};
     response.success = true;
-    response.result = {
-        data:[]
-    };
+    response.data = [];
     var query = function(date,next){
         var query = "SELECT COUNT(*) as userCount from " + db_tables.users.name+" WHERE created_at <= '"+date+"'";
         db.get().query(query, function(err, result){
@@ -81,7 +77,7 @@ var getWeek = function(){
                 Log.e(err.toString());
                 next(new Error(error_messages.UNKNOWN_ERROR));
             }else {
-                response.result.data.push(result[0].userCount);
+                response.data.push(result[0].userCount);
             }
             var new_date = moment(date).subtract(7,'day').format('YYYY-MM-DD hh:mm:ss').toString();
             next(null , new_date);
@@ -115,9 +111,7 @@ exports.getWeek = getWeek;
 var getMonth = function(){
     var response = {};
     response.success = true;
-    response.result = {
-        data:[]
-    };
+    response.data = [];
     var query = function(date,next){
         var query = "SELECT COUNT(*) as userCount from " + db_tables.users.name+" WHERE created_at <= '"+date+"'";
         db.get().query(query, function(err, result){
@@ -125,7 +119,7 @@ var getMonth = function(){
                 Log.e(err.toString());
                 next(new Error(error_messages.UNKNOWN_ERROR));
             }else {
-                response.result.data.push(result[0].userCount);
+                response.data.push(result[0].userCount);
             }
             var new_date = moment(date).subtract(30,'day').format('YYYY-MM-DD hh:mm:ss').toString();
             next(null , new_date);
