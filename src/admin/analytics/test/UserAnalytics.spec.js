@@ -4,7 +4,7 @@ var db = require('./../../../app/lib/sadda-db');
 var User = require("./../../../app/models/User");
 var moment = require("moment");
 
-describe.only("UserAnalytics" , function(){
+describe("UserAnalytics" , function(){
 	var testSetup = function(callback){
 		var args = {
 			country_code : "+91",

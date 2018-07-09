@@ -182,12 +182,12 @@ exports.custom = function(args , callback){
 
 //get user All the four function excluding the custom one
 exports.getAll = function(next){
-    async.series([
-            getUserCount,
-            new getDay().data,
-            new getWeek().data,
-            new getMonth().data         
-        ] , function(err, result){
+    async.series({
+        totatUser:getUserCount,
+        previousDay : new getDay().data,
+        previousWeek:new getWeek().data,
+        previousMOnth:new getMonth().data         
+    } , function(err, result){
             var res = {};
             if(err){
                 res.success = false;
