@@ -180,7 +180,7 @@ exports.getAll = function(next){
         totatUser:getUserCount,
         previousDay : new getDay().data,
         previousWeek:new getWeek().data,
-        previousMOnth:new getMonth().data         
+        previousMonth:new getMonth().data         
     } , function(err, result){
             var res = {};
             if(err){
