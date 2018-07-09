@@ -4,6 +4,10 @@
  */
 var queryBuilder = {
 	query : "",
+	select: function(){
+		this.query+= "SELECT ";
+		return this;
+	},
 	selectAll: function(){
 		this.query = this.query + "SELECT * ";
 		return this;
@@ -14,6 +18,10 @@ var queryBuilder = {
 	 */
 	update: function(table_name){
 		this.query+= "UPDATE "+table_name+" ";
+		return this;
+	},
+	delete: function(){
+		this.query+= "DELETE ";
 		return this;
 	},
 	/**

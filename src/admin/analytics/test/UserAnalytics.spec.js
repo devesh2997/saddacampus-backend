@@ -116,7 +116,6 @@ describe("UserAnalytics" , function(){
 				assert.ok(res.success);
 			});
 		});
-		
 	});
 	describe("Get Total User Registered previous six months" , function(){
 		describe("Registered within the last month" , function(){
@@ -165,7 +164,6 @@ describe("UserAnalytics" , function(){
 				assert.ok(res.success);
 			});
 		});
-		
 	});
 	describe("User registred between the given dates",function(){
 		describe("Registered within the given period" , function(){
