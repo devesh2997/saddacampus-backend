@@ -6,7 +6,7 @@ var moment = require("moment");
 var async  = require("async");
 
 //Count and return the no of users
-exports.getUserCount = function(callback){
+var getUserCount = function(callback){
     var query = "SELECT COUNT(*) as userCount from " + db_tables.users.name ;
     var response = {};
     response.success = true;
@@ -21,35 +21,35 @@ exports.getUserCount = function(callback){
         callback(null , response);
     });
 }
-//User registered previous six weeks
-exports.getWeek = function(){
+exports.getUserCount = getUserCount;
+
+//get user previous seven days data
+var getDay = function(){
     var response = {};
     response.success = true;
-    response.result = {
-        data:[]
-    };
-    this.query = function(date,next){
+    response.data = [];
+    var query = function(date,next){
         var query = "SELECT COUNT(*) as userCount from " + db_tables.users.name+" WHERE created_at <= '"+date+"'";
         db.get().query(query, function(err, result){
             if (err) {
                 Log.e(err.toString());
                 next(new Error(error_messages.UNKNOWN_ERROR));
             }else {
-                response.result.data.push(result[0].userCount);
+                response.data.push(result[0].userCount);
             }
-            var new_date = moment(date).subtract(7,'day').format('YYYY-MM-DD').toString();
+            var new_date = moment(date).subtract(1,'day').format('YYYY-MM-DD hh:mm:ss').toString();
             next(null , new_date);
         });
     }
     this.data = function(next){
         async.waterfall([
-            async.apply(this.query , moment().add(1,'day').format('YYYY-MM-DD')),
-            this.query,
-            this.query,
-            this.query,
-            this.query,
-            this.query,
-            this.query
+            async.apply(query , moment().format('YYYY-MM-DD hh:mm:ss')),
+            query,
+            query,
+            query,
+            query,
+            query,
+            query
         ] , function(error){
                 if(error)
                 {
@@ -60,39 +60,80 @@ exports.getWeek = function(){
                 }
                 next(null , response);
             }
-        )
+        );
     }
 }
+exports.getDay = getDay;
+
+//User registered previous seven weeks
+var getWeek = function(){
+    var response = {};
+    response.success = true;
+    response.data = [];
+    var query = function(date,next){
+        var query = "SELECT COUNT(*) as userCount from " + db_tables.users.name+" WHERE created_at <= '"+date+"'";
+        db.get().query(query, function(err, result){
+            if (err) {
+                Log.e(err.toString());
+                next(new Error(error_messages.UNKNOWN_ERROR));
+            }else {
+                response.data.push(result[0].userCount);
+            }
+            var new_date = moment(date).subtract(7,'day').format('YYYY-MM-DD hh:mm:ss').toString();
+            next(null , new_date);
+        });
+    }
+    this.data = function(next){
+        async.waterfall([
+            async.apply(query , moment().add(1,'day').format('YYYY-MM-DD hh:mm:ss')),
+            query,
+            query,
+            query,
+            query,
+            query,
+            query
+        ] , function(error){
+                if(error)
+                {
+                    next(null , {
+                        success:false,
+                        message : error_messages.UNKNOWN_ERROR
+                    });
+                }
+                next(null , response);
+            }
+        );
+    }
+}
+exports.getWeek = getWeek;
  
-//User registered previous six month
-exports.getMonth = function(){
+//User registered previous seven month
+var getMonth = function(){
     var response = {};
     response.success = true;
-    response.result = {
-        data:[]
-    };
-    this.query = function(date,next){
+    response.data = [];
+    var query = function(date,next){
         var query = "SELECT COUNT(*) as userCount from " + db_tables.users.name+" WHERE created_at <= '"+date+"'";
         db.get().query(query, function(err, result){
             if (err) {
                 Log.e(err.toString());
                 next(new Error(error_messages.UNKNOWN_ERROR));
             }else {
-                response.result.data.push(result[0].userCount);
+                response.data.push(result[0].userCount);
             }
-            var new_date = moment(date).subtract(30,'day').format('YYYY-MM-DD').toString();
+            var new_date = moment(date).subtract(30,'day').format('YYYY-MM-DD hh:mm:ss').toString();
             next(null , new_date);
         });
     }
     this.data = function(next){
         async.waterfall([
-            async.apply(this.query , moment().add(1,'day').format('YYYY-MM-DD')),
-            this.query,
-            this.query,
-            this.query,
-            this.query,
-            this.query,
-            this.query
+            async.apply(query , moment().add(1,'day').format('YYYY-MM-DD hh:mm:ss')),
+            query,
+            query,
+            query,
+            query,
+            query,
+            query
         ] , function(error){
                 if(error)
                 {
@@ -103,9 +144,10 @@ exports.getMonth = function(){
                 }
                 next(null , response);
             }
-        )
+        );
     }
 }
+exports.getMonth = getMonth;
 
 //Get user registered with the given dates
 exports.custom = function(args , callback){
@@ -128,6 +170,29 @@ exports.custom = function(args , callback){
                 response.totalUserCount = result[0].userCount;
             }
             callback(null , response);
-        })               
+        });               
     }
 }
+
+//get user All the four function excluding the custom one
+exports.getAll = function(next){
+    async.series({
+        totatUser:getUserCount,
+        previousDay : new getDay().data,
+        previousWeek:new getWeek().data,
+        previousMonth:new getMonth().data         
+    } , function(err, result){
+            var res = {};
+            if(err){
+                res.success = false;
+                res.message = err;
+                next(null , res);
+            }else{
+                res.success = true;
+                res.result = result;
+                next(null , res);
+            }
+        }
+    );
+}
+  
