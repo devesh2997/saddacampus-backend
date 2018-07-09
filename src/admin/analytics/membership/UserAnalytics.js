@@ -106,7 +106,7 @@ var getWeek = function(){
     }
 }
 exports.getWeek = getWeek;
- 
+
 //User registered previous seven month
 var getMonth = function(){
     var response = {};
@@ -170,7 +170,7 @@ exports.custom = function(args , callback){
                 response.totalUserCount = result[0].userCount;
             }
             callback(null , response);
-        });               
+        });
     }
 }
 
@@ -178,9 +178,9 @@ exports.custom = function(args , callback){
 exports.getAll = function(next){
     async.series({
         totatUser:getUserCount,
-        previousDay : new getDay().data,
-        previousWeek:new getWeek().data,
-        previousMonth:new getMonth().data         
+        lastSevenDays : new getDay().data,
+        lastSevenWeeks:new getWeek().data,
+        lastSevenMonth:new getMonth().data
     } , function(err, result){
             var res = {};
             if(err){
@@ -195,4 +195,4 @@ exports.getAll = function(next){
         }
     );
 }
-  
+
