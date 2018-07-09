@@ -5,7 +5,7 @@ var error_messages = require('../../config/error_messages');
 var db = require('../../lib/sadda-db');
 
 describe('Resource model',function(){
-	var resc;
+	var resc,resc2;
 	var fields_test = [
 		{
 			name: 'menu_id',
@@ -21,8 +21,6 @@ describe('Resource model',function(){
 			type: 'string',
 			isPrimary: true,
 			isForeign: true,
-			reference_table: 'menu_categories',
-			reference_field: 'category_id',
 			validator: validator.menuCategoryIdIsValid,
 			validation_error: error_messages.INVALID_MENU_CATEGORY_ID,
 			isCompulsory: true
@@ -62,11 +60,44 @@ describe('Resource model',function(){
 			validation_error: error_messages.INVALID_PASSWORD,
 			isCompulsory: true
 		},
+	];
+	var fields_test_2 = [
+		{
+			name: 'menu_id',
+			type: 'string',
+			isPrimary: true,
+			isForeign: true,
+			reference_table: 'menus',
+			reference_field: 'menu_id',
+			isCompulsory: true
+		},
+		{
+			name: 'category_id',
+			type: 'string',
+			isPrimary: true,
+			isForeign: true,
+			reference_table: 'menu_categories',
+			reference_field: 'category_id',
+			validator: validator.menuCategoryIdIsValid,
+			validation_error: error_messages.INVALID_MENU_CATEGORY_ID,
+			isCompulsory: true
+		},
+		{
+			name: 'category_name',
+			type: 'string',
+			isPrimary: false,
+			isForeign: false,
+			validation_error:error_messages.INVALID_MENU_CATEGORY_ITEM_NAME,
+			isCompulsory: true
+		},
 	]
 	before(function(done){
+		resc2 = new Resource('MenuCategory','menu_categories',fields_test_2);
+		fields_test[1]['ref_model'] = resc2;
+		fields_test[1]['ref_model_field_name'] = fields_test_2[1].name;
 		resc = new Resource('Table','table',fields_test);
 		db.connect(db.MODE_TEST, function(){
-			db.dropTable(resc.table_name, function(){
+			db.dropTable(resc2.table_name, function(){
 				done();
 			});
 		});
@@ -195,16 +226,29 @@ describe('Resource model',function(){
 		});
 
 	});
-	describe('Create Resource',function(){
-
+	var args2 = {menu_id:'qwerty',category_id:'ABC',category_name:'Rice'}
+	describe.only('Create Resource',function(){
+		var err,res;
+		before(function(done){
+			resc2.create(args2,function(error,result){
+				res = result;
+				err = error;
+				console.log(res);
+				console.log(err);
+				done();
+			});
+		});
+		it('error should be null',function(){
+			assert.ok(err === null);
+		});
 	});
 	afterEach(function(done){
-		db.dropTable(resc.table_name, function(){
+		db.dropTable(resc2.table_name, function(){
 			done();
 		});
 	});
 	after(function(done){
-		db.dropTable(resc.table_name, function(){
+		db.dropTable(resc2.table_name, function(){
 			db.end();
 			done();
 		});

@@ -35,3 +35,5 @@ exports.INVALID_RESOURCE_FIELD = "The resource field your are looking for does n
 exports.INVALID_MENU_CATEGORY_ITEM_NAME = "Length of menu category item names should be more than 3";
 exports.INVALID_MENU_CATEGORY_ITEM_ID = "Item id should be a number";
 exports.INVALID_PRIMARY_RESOURCE_FIELD = "The resource field you have provided is not a primary key field."
+exports.MISSING_PRIMARY_KEY = "Required primary key field is missing";
+exports.FOREIGN_KEY_CONSTRAINT_FAILED = "Foregin key constraint failded";

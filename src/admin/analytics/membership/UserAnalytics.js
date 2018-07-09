@@ -177,10 +177,10 @@ exports.custom = function(args , callback){
 //get user All the four function excluding the custom one
 exports.getAll = function(next){
     async.series({
-        totatUser:getUserCount,
+        totalUser:getUserCount,
         lastSevenDays : new getDay().data,
         lastSevenWeeks:new getWeek().data,
-        lastSevenMonth:new getMonth().data
+        lastSevenMonths:new getMonth().data
     } , function(err, result){
             var res = {};
             if(err){

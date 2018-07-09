@@ -11,8 +11,8 @@ var Log = require('../lib/log');
  * @property {Object} type
  * @property {boolean} isPrimary
  * @property {boolean} isForeign
- * @property {Object} reference_model
- * @property {String} reference_model_field
+ * @property {Object} ref_model
+ * @property {String} ref_model_field_name
  * @property {function} validator
  * @property {String} validation_error
  * @property {boolean} isCompulsory
@@ -86,11 +86,38 @@ Resource.prototype.validateValues = function(values){
  * @param {{field_name:field_value}} args key-value pairs of primary keys
  */
 Resource.prototype.findByPrimaryKey = function(args, callback){
+	var res_name = this.resource_name;
 	for(var field_name in args){
 		var model_field = this.getFieldByName(field_name);
 		if(model_field && !model_field.isPrimary){
-			return callback(new Error(error_messages.INVALID_PRIMARY_RESOURCE_FIELD));
+			delete args[field_name];
 		}
+	}
+	for(var field in this.fields){
+		if(field.isPrimary){
+			if(!args[field.name])
+				return callback(new Error(error_messages.MISSING_PRIMARY_KEY +':'+field_name));
+		}
+	}
+	this.get(args,function(err,result){
+		if(err) return callback(err);
+		var res = {};
+		res[res_name] = result[0];
+		return callback(null,res);
+	});
+}
+
+Resource.prototype.validateForeignConstraints = function(args,callback){
+	var flag = true;
+	for(var field in this.fields){
+		if(!field.isForeign)
+			continue;
+		(function(field){
+			field.ref_model.findByPrimaryKey(args,function(err,result){
+				if(err) return callback(err);
+				if(!result[field.res_name]) return callback(new Error(error_messages.FOREIGN_KEY_CONSTRAINT_FAILED + field.toString()));
+			});
+		}(field));
 	}
 }
 
@@ -121,13 +148,13 @@ Resource.prototype.get = function(args, callback){
  * @param {{field_name:field_value}} args
  */
 Resource.prototype.create = function(args,callback){
+	var res_name = this.resource_name;
 	var columns =[], values=[];
 	for(var field in args){
 		columns.push(field);
 		values.push(args[field]);
 	}
 	var query = QueryBuilder.insertInto(this.table_name).columns(columns).numOfValues(values.length).build();
-	var res_name = this.resource_name;
 	db.get().query(query,values,function(err){
 		if(err){
 			Log.e(err.toString());
@@ -135,8 +162,8 @@ Resource.prototype.create = function(args,callback){
 		}
 		this.get(args,function(err,result){
 			if(err)return callback(err);
-			var res = {}
-			res[res_name] = result;
+			var res = {};
+			res[res_name] = result[0];
 			return callback(null,res);
 		});
 	});
