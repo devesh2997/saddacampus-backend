@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm-run-all --parallel security-check start:server lint:watch test:watch",
     "start:test": "npm-run-all --parallel security-check start:server:test lint:watch test:watch",
-    "test": "mocha --require babel-register \"src/**/*.spec.js\" --exit",
+    "test": "mocha --require babel-register \"src/**/*.spec.js\" --reporter progress --exit",
     "test:watch": "npm run test -- --watch",
     "start:server": "node app.js",
     "start:server:test": "node app_test.js",
