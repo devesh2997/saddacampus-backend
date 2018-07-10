@@ -8,6 +8,11 @@ var membership = new Membership();
 
 v1.use('/membership', membership.router);
 
+var Merchant = require('./src/merchant/membership');
+var merchant = new Merchant();
+
+v1.use('/merchant', merchant.router);
+
 var Admin = require('./src/admin');
 
 v1.use('/admin',Admin.router);
