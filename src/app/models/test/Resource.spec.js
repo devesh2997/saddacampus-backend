@@ -227,7 +227,7 @@ describe('Resource model',function(){
 
 	});
 	var args2 = {menu_id:'qwerty',category_id:'ABC',category_name:'Rice'}
-	describe.only('Create Resource',function(){
+	describe('Create Resource',function(){
 		var err,res;
 		before(function(done){
 			resc2.create(args2,function(error,result){

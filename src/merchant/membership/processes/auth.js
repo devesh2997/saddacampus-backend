@@ -41,24 +41,22 @@ var Auth = function(args){
 				});
 			}else{
                 var Merchant = result.Merchant;
-                var saltRound = 10;
-                bcrpyt.hash(args.password , saltRound , function(err,hash){
-                    if(hash === Merchant.encrypted_password) {
-                        //generate jwt token with merchant_id
+                bcrpyt.compare(args.password ,Merchant.encrypted_password ,  function(err, res){
+                    if(res) {
                         var merchant_id_token = jwt.sign({
                             merchant_id: Merchant.merchant_id
                         },process.env.JWT_SECRET || 'mynameissaddacampus');
                         next(null, {
                             success: true,
-                            user_exists: true,
+                            merchant_exists: true,
                             token: merchant_id_token,
-                            User: Merchant
+                            Merchant : Merchant
                         });
                     } else {
-                        next(new Error(error_messages.WRONG_PASSWORD))
+                        next(new Error(error_messages.WRONG_PASSWORD));
                     }
-                })
-			}
+                });
+            }
         });
 	}
 	
