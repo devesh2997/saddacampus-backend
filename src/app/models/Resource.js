@@ -49,35 +49,36 @@ Resource.prototype.checkForField = function(field_name){
 
 /**
  * validate field values
- * @param {{field_name: field_value}[]} values
+ * @param {{field_name: field_value}} values
  */
 Resource.prototype.validateValues = function(values){
 	var flag = true;
-	values.forEach(field => {
-		for(var field_name in field){
-			if(!this.checkForField(field_name)){
+	var errors = {};
+	for(var field_name in values){
+		if(!this.checkForField(field_name)){
+			flag = false;
+			errors[field_name] = error_messages.INVALID_RESOURCE_FIELD;
+			continue;
+		}
+		var resc_field = this.getFieldByName(field_name);
+		if(typeof values[field_name] !== resc_field.type){
+			flag = false;
+			if(resc_field.validation_error)errors[field_name] = resc_field.validation_error;
+			else errors[field_name] = error_messages.INVALID_RESOURCE_FIELD_TYPE
+			continue;
+		}
+		if(resc_field.validator){
+			if(!resc_field.validator(values[field_name])){
 				flag = false;
-				field.err = error_messages.INVALID_RESOURCE_FIELD;
+				errors[field_name] = resc_field.validation_error;
 				continue;
-			}
-			var resc_field = this.getFieldByName(field_name);
-			if(typeof field[field_name] !== resc_field.type){
-				flag = false;
-				field.err = resc_field.validation_error;
-				continue;
-			}
-			if(resc_field.validator){
-				if(!resc_field.validator(field[field_name])){
-					flag = false;
-					field.err = resc_field.validation_error;
-					continue;
-				}
 			}
 		}
-	});
-	return {
-		allCorrect: flag,
-		values: values
+	}
+	if(!flag){
+		return new Error(JSON.stringify(errors));
+	}else{
+		return null;
 	}
 }
 
@@ -108,17 +109,35 @@ Resource.prototype.findByPrimaryKey = function(args, callback){
 }
 
 Resource.prototype.validateForeignConstraints = function(args,callback){
-	var flag = true;
-	for(var field in this.fields){
-		if(!field.isForeign)
-			continue;
-		(function(field){
-			field.ref_model.findByPrimaryKey(args,function(err,result){
-				if(err) return callback(err);
-				if(!result[field.res_name]) return callback(new Error(error_messages.FOREIGN_KEY_CONSTRAINT_FAILED + field.toString()));
-			});
-		}(field));
+	var error = null;
+	var foreign_field = [];
+	this.fields.forEach(field => {
+		if(field.isForeign)
+			foreign_field.push(field);
+	});
+	var count =0 ;
+	if(foreign_field.length === 0)done();
+	foreign_field.forEach(field => {
+		field.ref_model.findByPrimaryKey(args,function(err,result){
+			count ++;
+			if(err) error = err;
+			if(!result[field.res_name]) error = new Error(error_messages.FOREIGN_KEY_CONSTRAINT_FAILED + field.toString());
+			if(count === foreign_field.length)done();
+		});
+	});
+	function done(){
+		if(error)return callback(error);
+		return callback(null);
 	}
+}
+
+Resource.prototype.hasDuplicate = function(args,callback){
+	var res_name = this.resource_name;
+	this.findByPrimaryKey(args,function(err, result){
+		if(err) return callback(err);
+		if(result[res_name])return callback(null,true);
+		return callback(null,false);
+	});
 }
 
 /**
@@ -126,6 +145,7 @@ Resource.prototype.validateForeignConstraints = function(args,callback){
  * @param {{field_name:field_value}} args
  */
 Resource.prototype.get = function(args, callback){
+	var scope = this;
 	var query = QueryBuilder.selectAll().from([this.table_name]).whereAllEqual(args).build();
 	db.get().query(query,function(err,result){
 		if(err){
@@ -134,7 +154,7 @@ Resource.prototype.get = function(args, callback){
 		}
 		result.forEach(row => {
 			for(var field_name in row){
-				var model_field = this.getFieldByName(field_name);
+				var model_field = scope.getFieldByName(field_name);
 				if(model_field.type === 'password')
 					delete row[field_name];
 			}
@@ -147,7 +167,8 @@ Resource.prototype.get = function(args, callback){
  * Create resource
  * @param {{field_name:field_value}} args
  */
-Resource.prototype.create = function(args,callback){
+Resource.prototype.insert = function(args,callback){
+	var scope = this;
 	var res_name = this.resource_name;
 	var columns =[], values=[];
 	for(var field in args){
@@ -155,18 +176,26 @@ Resource.prototype.create = function(args,callback){
 		values.push(args[field]);
 	}
 	var query = QueryBuilder.insertInto(this.table_name).columns(columns).numOfValues(values.length).build();
+
 	db.get().query(query,values,function(err){
 		if(err){
 			Log.e(err.toString());
 			return callback(new Error(error_messages.UNKNOWN_ERROR));
 		}
-		this.get(args,function(err,result){
+		scope.get(args,function(err,result){
 			if(err)return callback(err);
 			var res = {};
 			res[res_name] = result[0];
 			return callback(null,res);
 		});
 	});
+}
+
+Resource.prototype.create = function(args,callback){
+	var validation = this.validateValues(args);
+	if(!validation.allCorrect){
+
+	}
 }
 
 module.exports = Resource;

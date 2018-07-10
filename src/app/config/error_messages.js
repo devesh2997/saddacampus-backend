@@ -37,3 +37,4 @@ exports.INVALID_MENU_CATEGORY_ITEM_ID = "Item id should be a number";
 exports.INVALID_PRIMARY_RESOURCE_FIELD = "The resource field you have provided is not a primary key field."
 exports.MISSING_PRIMARY_KEY = "Required primary key field is missing";
 exports.FOREIGN_KEY_CONSTRAINT_FAILED = "Foregin key constraint failded";
+exports.INVALID_RESOURCE_FIELD_TYPE = "Invalid resource field value type provided";
