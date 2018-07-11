@@ -4,7 +4,7 @@ var db = require('./../../../app/lib/sadda-db');
 var User = require("./../../../app/models/User");
 var moment = require("moment");
 
-describe("UserAnalytics" , function(){
+describe.only("UserAnalytics" , function(){
 	var testSetup = function(callback){
 		var args = {
 			country_code : "+91",
@@ -52,15 +52,16 @@ describe("UserAnalytics" , function(){
 					var query = "UPDATE "+db.tables.users.name+" SET created_at = '"+currentDate+"' WHERE number=9162728446 ";
 					db.get().query(query , function(err){
 						if(err)throw(err);
-						new UserAnalytics.getMonth().data(function(error , result){
+						new UserAnalytics.getDay().data(function(error , result){
 							res=result;
+							console.log(res);
 							done();
 						});
 					})
 				});
 			});
 			it("correct user count is returned" , function(){
-				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 0 );
+				assert.ok(res.data[0] === 1 && res.data[1] === 1 );
 			});
 			it("success is true" , function(){
 				assert.ok(res.success);
@@ -87,7 +88,7 @@ describe("UserAnalytics" , function(){
 				});
 			});
 			it("correct user count is returned" , function(){
-				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 0);
+				assert.ok(res.data[0] === 1 && res.data[1] === 0);
 			});
 			it("success is true" , function(){
 				assert.ok(res.success);
@@ -110,7 +111,7 @@ describe("UserAnalytics" , function(){
 				});
 			});
 			it("correct user count is returned" , function(){
-				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 1 && res.result.data[2] === 0);
+				assert.ok(res.data[0] === 1 && res.data[1] === 1 && res.data[2] === 0);
 			});
 			it("success is true" , function(){
 				assert.ok(res.success);
@@ -135,7 +136,7 @@ describe("UserAnalytics" , function(){
 				});
 			});
 			it("correct user count is returned" , function(){
-				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 0);
+				assert.ok(res.data[0] === 1 && res.data[1] === 0);
 			});
 			it("success is true" , function(){
 				assert.ok(res.success);
@@ -158,7 +159,7 @@ describe("UserAnalytics" , function(){
 				});
 			});
 			it("correct user count is returned" , function(){
-				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 1 && res.result.data[2]==0);
+				assert.ok(res.data[0] === 1 && res.data[1] === 1 && res.data[2]==0);
 			});
 			it("success is true" , function(){
 				assert.ok(res.success);
