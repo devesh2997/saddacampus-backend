@@ -16,7 +16,7 @@ describe('Authentication',function(){
 			});
 		});
 	});
-    describe.only('When invalid email is provided', function(){
+    describe('When invalid email is provided', function(){
         var auth;
         before(function(){
             auth = new Auth({email : "akash@145" , password : "akash"});
@@ -42,7 +42,7 @@ describe('Authentication',function(){
             });
         });
     });
-    describe.only('When invalid password is provided',function(){
+    describe('When invalid password is provided',function(){
         var auth;
         before(function(){
             auth = new Auth({email : "akashagarwal0403@gmal.com" , password : "sdsw"});
@@ -69,7 +69,7 @@ describe('Authentication',function(){
         });
     });
 
-    describe.only('When wrong password is entered ',function(){  
+    describe('When wrong password is entered ',function(){  
         var auth; 
         var response; 
         before(function(done){
@@ -100,7 +100,7 @@ describe('Authentication',function(){
             assert.ok(response.message === error_messages.WRONG_PASSWORD && response.message );
         });
     });
-    describe.only('When user exists',function(){  
+    describe('When user exists',function(){  
         var auth; 
         var response; 
         before(function(done){
@@ -144,7 +144,7 @@ describe('Authentication',function(){
         });       
     });
 
-    describe.only('When user does not exist', function(){
+    describe('When user does not exist', function(){
         var auth;
         var response;
         before(function(done){
