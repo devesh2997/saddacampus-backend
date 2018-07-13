@@ -52,7 +52,7 @@ describe("UserAnalytics" , function(){
 					var query = "UPDATE "+db.tables.users.name+" SET created_at = '"+currentDate+"' WHERE number=9162728446 ";
 					db.get().query(query , function(err){
 						if(err)throw(err);
-						new UserAnalytics.getMonth().data(function(error , result){
+						new UserAnalytics.getDay().data(function(error , result){
 							res=result;
 							done();
 						});
@@ -60,7 +60,7 @@ describe("UserAnalytics" , function(){
 				});
 			});
 			it("correct user count is returned" , function(){
-				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 0 );
+				assert.ok(res.data[0] === 1 && res.data[1] === 1 );
 			});
 			it("success is true" , function(){
 				assert.ok(res.success);
@@ -87,7 +87,7 @@ describe("UserAnalytics" , function(){
 				});
 			});
 			it("correct user count is returned" , function(){
-				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 0);
+				assert.ok(res.data[0] === 1 && res.data[1] === 0);
 			});
 			it("success is true" , function(){
 				assert.ok(res.success);
@@ -110,7 +110,7 @@ describe("UserAnalytics" , function(){
 				});
 			});
 			it("correct user count is returned" , function(){
-				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 1 && res.result.data[2] === 0);
+				assert.ok(res.data[0] === 1 && res.data[1] === 1 && res.data[2] === 0);
 			});
 			it("success is true" , function(){
 				assert.ok(res.success);
@@ -135,7 +135,7 @@ describe("UserAnalytics" , function(){
 				});
 			});
 			it("correct user count is returned" , function(){
-				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 0);
+				assert.ok(res.data[0] === 1 && res.data[1] === 0);
 			});
 			it("success is true" , function(){
 				assert.ok(res.success);
@@ -158,7 +158,7 @@ describe("UserAnalytics" , function(){
 				});
 			});
 			it("correct user count is returned" , function(){
-				assert.ok(res.result.data[0] === 1 && res.result.data[1] === 1 && res.result.data[2]==0);
+				assert.ok(res.data[0] === 1 && res.data[1] === 1 && res.data[2]==0);
 			});
 			it("success is true" , function(){
 				assert.ok(res.success);
