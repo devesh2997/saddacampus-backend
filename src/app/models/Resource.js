@@ -20,13 +20,15 @@ var Log = require('../lib/log');
 
 /**
  * Resource model
+ * @param {String} resource_name
  * @param {String} table_name
- * @param {Field[]} fields
+ * @param {Object} def
  */
-var Resource = function(resource_name,table_name,fields){
+var Resource = function(resource_name,table_name,def){
 	this.resource_name = resource_name;
 	this.table_name = table_name;
-	this.fields = fields;
+	this.fields = def.fields;
+	this.indexes = def.indexes;
 }
 
 Resource.prototype.getFieldByName = function(field_name){

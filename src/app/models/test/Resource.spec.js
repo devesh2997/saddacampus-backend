@@ -6,6 +6,26 @@ var db = require('../../lib/sadda-db');
 
 describe('Resource model',function(){
 	var menu_resc,menu_cat_resc;
+	var menu_def = {};
+	var menu_cat_def = {};
+	menu_def.indexes = {
+		unique:[
+			{
+				name:'id_unique',
+				fields: ['id'],
+				duplication_error: 'Duplicate Menu with same id exists'
+			}
+		],
+	}
+	menu_cat_def.indexes = {
+		unique:[
+			{
+				name:'id_unique',
+				fields: ['id'],
+				duplication_error: 'Duplicate Menu category with same id exists'
+			}
+		],
+	}
 	var menu_fields = [
 		{
 			name: 'id',
@@ -74,11 +94,13 @@ describe('Resource model',function(){
 			isForeign: false,
 			isCompulsory: true
 		},
-	]
+	];
 	before(function(done){
-		menu_resc = new Resource('Menu','menus',menu_fields);
+		menu_def.fields = menu_fields;
+		menu_resc = new Resource('Menu','menus',menu_def);
 		menu_cat_fields[2].ref_model = menu_resc;
 		menu_cat_fields[2].ref_model_field_name = 'menu_id';
+		menu_cat_def.fields = menu_cat_fields;
 		menu_cat_resc = new Resource('MenuCategory','menu_categories',menu_cat_fields);
 		db.connect(db.MODE_TEST, function(){
 			db.dropTable(menu_resc.table_name, function(){
