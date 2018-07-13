@@ -54,7 +54,6 @@ describe("UserAnalytics" , function(){
 						if(err)throw(err);
 						new UserAnalytics.getDay().data(function(error , result){
 							res=result;
-							console.log(res);
 							done();
 						});
 					})
