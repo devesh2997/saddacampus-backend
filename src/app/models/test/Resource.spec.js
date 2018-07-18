@@ -20,7 +20,7 @@ describe('Resource model',function(){
 	menu_cat_def.indexes = {
 		unique:[
 			{
-				name:'id_unique',
+				name:'cat_id_unique',
 				fields: ['id'],
 				duplication_error: 'Duplicate Menu category with same id exists'
 			}
@@ -44,21 +44,21 @@ describe('Resource model',function(){
 		{
 			name: 'description',
 			type: 'string',
-			isPrimary: true,
+			isPrimary: false,
 			isForeign: false,
 			isCompulsory: false
 		},
 		{
 			name: 'created_on',
 			type: 'string',
-			isPrimary: true,
+			isPrimary: false,
 			isForeign: false,
 			isCompulsory: true
 		},
 		{
 			name: 'updated_on',
 			type: 'string',
-			isPrimary: true,
+			isPrimary: false,
 			isForeign: false,
 			isCompulsory: true
 		},
@@ -84,7 +84,7 @@ describe('Resource model',function(){
 			isPrimary: true,
 			isForeign: false,
 			validator: validator.menuCategoryIdIsValid,
-			validation_error: error_messages.INVALID_MENU_CATEGORY_ITEM_ID,
+			validation_error: error_messages.INVALID_MENU_CATEGORY_ID,
 			isCompulsory: true
 		},
 		{
@@ -98,10 +98,10 @@ describe('Resource model',function(){
 	before(function(done){
 		menu_def.fields = menu_fields;
 		menu_resc = new Resource('Menu','menus',menu_def);
-		menu_cat_fields[2].ref_model = menu_resc;
-		menu_cat_fields[2].ref_model_field_name = 'menu_id';
+		menu_cat_fields[1].ref_model = menu_resc.getRef();
+		menu_cat_fields[1].ref_model_field_name = 'menu_id';
 		menu_cat_def.fields = menu_cat_fields;
-		menu_cat_resc = new Resource('MenuCategory','menu_categories',menu_cat_fields);
+		menu_cat_resc = new Resource('MenuCategory','menu_categories',menu_cat_def);
 		db.connect(db.MODE_TEST, function(){
 			db.dropTable(menu_resc.table_name, function(){
 				done();
@@ -109,17 +109,7 @@ describe('Resource model',function(){
 		});
 	});
 
-
-	describe('Check for fields',function(){
-		it('When field name exists it returns true',function(){
-			assert.ok(menu_resc.checkForField('description'));
-		});
-		it('When field name does not exists it returns false',function(){
-			assert.ok(!menu_resc.checkForField('test'));
-		});
-	});
-
-	describe.only('Validate values',function(){
+	describe('Validate values',function(){
 		it('should return null when all validations pass',function(){
 			var values = {
 				menu_id: 'fsdafsdf',
@@ -187,21 +177,69 @@ describe('Resource model',function(){
 			});
 		});
 	});
-	describe('Insert Resource',function(){
-		var args = {menu_id:'qwerty',description:'ABC',created_on:'2018-10-10',updated_on:'2018-10-10'};
+	describe('Create Resource',function(){
 		var err,res;
 		before(function(done){
-			menu_resc.insert(args,function(error,result){
-				res = result;
-				err = error;
-				done();
+			var menu_val = {
+				id: 1,
+				menu_id: 'fsdafsdf',
+				description: 'fdf',
+				created_on: '2018-06-06',
+				updated_on: '2018-06-06',
+			};
+			var menu_cat_val = {
+				id:1,
+				menu_id: 'fsdafsdf',
+				category_id: 'dff',
+				category_name: 'fsdas'
+			};
+			menu_resc.create(menu_val,function(e){
+				if(e)throw(e);
+				menu_cat_resc.create(menu_cat_val,function(error,result){
+					err = error;
+					res = result;
+					done();
+				});
 			});
 		});
 		it('error should be null',function(){
 			assert.ok(err === null);
 		});
-		it('should have Menu object in result',function(){
-			assert.ok(res.Menu);
+	});
+	describe.only('Update Resource',function(){
+		var err,res;
+		before(function(done){
+			var menu_val = {
+				id: 1,
+				menu_id: 'fsdafsdf',
+				description: 'fdf',
+				created_on: '2018-06-06',
+				updated_on: '2018-06-06',
+			};
+			var menu_cat_val = {
+				id:1,
+				menu_id: 'fsdafsdf',
+				category_id: 'dff',
+				category_name: 'fsdas'
+			};
+			menu_resc.create(menu_val,function(e){
+				if(e)throw(e);
+				menu_cat_resc.create(menu_cat_val,function(er){
+					if(er)throw(er);
+					menu_cat_resc.update({
+						category_id: 'trs'
+					},{
+						category_id: 'dff'
+					},function(error,result){
+						err = error;
+						res =result;
+						done();
+					});
+				});
+			});
+		});
+		it('error should be null',function(){
+			assert.ok(err === null);
 		});
 	});
 	afterEach(function(done){

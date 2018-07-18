@@ -2,6 +2,7 @@ var error_messages = require('../config/error_messages');
 var QueryBuilder = require('../lib/db-utils').QueryBuilder;
 var db = require('../lib/sadda-db');
 var Log = require('../lib/log');
+var async = require('async');
 
 //Resource field type def
 /**
@@ -53,7 +54,7 @@ Resource.prototype.checkForField = function(field_name){
  * validate field values
  * @param {{field_name: field_value}} values
  */
-Resource.prototype.validateValues = function(values){
+Resource.prototype.validateValues = function(values,callback){
 	var flag = true;
 	var errors = {};
 	for(var field_name in values){
@@ -78,9 +79,9 @@ Resource.prototype.validateValues = function(values){
 		}
 	}
 	if(!flag){
-		return new Error(JSON.stringify(errors));
+		return callback(new Error(JSON.stringify(errors)));
 	}else{
-		return null;
+		return callback(null);
 	}
 }
 
@@ -90,10 +91,11 @@ Resource.prototype.validateValues = function(values){
  */
 Resource.prototype.findByPrimaryKey = function(args, callback){
 	var res_name = this.resource_name;
+	var primary_args = {};
 	for(var field_name in args){
 		var model_field = this.getFieldByName(field_name);
-		if(model_field && !model_field.isPrimary){
-			delete args[field_name];
+		if(model_field && model_field.isPrimary){
+			primary_args[field_name]= args[field_name];
 		}
 	}
 	for(var field in this.fields){
@@ -110,6 +112,48 @@ Resource.prototype.findByPrimaryKey = function(args, callback){
 	});
 }
 
+Resource.prototype.hasDuplicate = function(args, callback){
+	var res_name = this.resource_name;
+	this.findByPrimaryKey(args, function(err,result){
+		if(err){
+			return callback(err);
+		}
+		if(result[res_name]){
+			return callback(new Error(error_messages.DUPLICATE_RESOURCE));
+		}
+		return callback(null);
+	});
+}
+
+Resource.prototype.hasUpdationDuplicate = function(args_old,args_new, callback){
+	var res_name = this.resource_name;
+	var flag = true;
+	var count = 0;
+	var error;
+	for(var field_name in args_old){
+		var field = this.getFieldByName(field_name);
+		if(args_old[field_name] !== args_new[field_name] && field.isPrimary){
+			this.findByPrimaryKey(args_new, function(err,result){
+				count++;
+				flag = false;
+				if(err){
+					error = err;
+				}else if(result[res_name]){
+					error = new Error(error_messages.DUPLICATE_RESOURCE);
+				}
+				if(count == Object.keys(args_old).length)done();
+			});
+		}else{
+			count++;
+			if(count == Object.keys(args_old).length)done();
+		}
+	}
+	function done(){
+		if(error)return callback(error);
+		return callback(null);
+	}
+}
+
 Resource.prototype.validateForeignConstraints = function(args,callback){
 	var error = null;
 	var foreign_field = [];
@@ -120,12 +164,20 @@ Resource.prototype.validateForeignConstraints = function(args,callback){
 	var count =0 ;
 	if(foreign_field.length === 0)done();
 	foreign_field.forEach(field => {
-		field.ref_model.findByPrimaryKey(args,function(err,result){
-			count ++;
-			if(err) error = err;
-			if(!result[field.res_name]) error = new Error(error_messages.FOREIGN_KEY_CONSTRAINT_FAILED + field.toString());
+		if(args[field.name]){
+			var foreign_arg = {};
+			foreign_arg[field.name] = args[field.name];
+			field.ref_model.get(foreign_arg,function(err,result){
+				count ++;
+				if(err) error = err;
+				else if(!result[0]) error = new Error(error_messages.FOREIGN_KEY_CONSTRAINT_FAILED + field.toString());
+				if(count === foreign_field.length)done();
+			});
+		}else{
+			count++;
 			if(count === foreign_field.length)done();
-		});
+		}
+
 	});
 	function done(){
 		if(error)return callback(error);
@@ -133,14 +185,76 @@ Resource.prototype.validateForeignConstraints = function(args,callback){
 	}
 }
 
-Resource.prototype.hasDuplicate = function(args,callback){
-	var res_name = this.resource_name;
-	this.findByPrimaryKey(args,function(err, result){
-		if(err) return callback(err);
-		if(result[res_name])return callback(null,true);
-		return callback(null,false);
+Resource.prototype.validateUniqueConstraints = function(args,callback){
+	var error = {};
+	var flag = false;
+	if(!this.indexes.unique || this.indexes.unique.length === 0) done();
+	var count = 0;
+	var unique_indexes = this.indexes.unique;
+	unique_indexes.forEach(unique_index => {
+		count++;
+		var unique_fields = unique_index.fields;
+		var unique_args = {};
+		unique_fields.forEach(field => {
+			if(!args[field]){
+				flag = true;
+				error[unique_index.name] = new Error(error_messages.UNIQUE_FIELD_MISSING);
+			}else unique_args[field] = args[field];
+		});
+		if(!error[unique_index.name]){
+			this.get(unique_args,function(err,result){
+				if(err) return callback(err);
+				if(result.length !== 0){
+					flag = true;
+					error[unique_index.name] = unique_index.duplication_error;
+				}
+				if(count === unique_indexes.length)done();
+			});
+		}else{
+			if(count === unique_indexes.length)done();
+		}
 	});
+	function done(){
+		if(flag)return callback(new Error(JSON.stringify(error)));
+		return callback(null);
+	}
 }
+
+Resource.prototype.validateUpdationUniqueConstraints = function(args_old,args_new,callback){
+	var error = {};
+	var flag = false;
+	if(!this.indexes.unique || this.indexes.unique.length === 0) done();
+	var count = 0;
+	var unique_indexes = this.indexes.unique;
+	unique_indexes.forEach(unique_index => {
+		var flag2 = false;
+		count++;
+		var unique_fields = unique_index.fields;
+		var unique_args={};
+		unique_fields.forEach(field => {
+			unique_args[field] = args_new[field];
+			if(args_old[field] !== args_new[field])
+				flag2 = true;
+		});
+		if(flag2){
+			this.get(unique_args,function(err,result){
+				if(err) return callback(err);
+				if(result.length !== 0){
+					flag = true;
+					error[unique_index.name] = unique_index.duplication_error;
+				}
+				if(count === unique_indexes.length)done();
+			});
+		}else{
+			if(count === unique_indexes.length)done();
+		}
+	});
+	function done(){
+		if(flag)return callback(new Error(JSON.stringify(error)));
+		return callback(null);
+	}
+}
+
 
 /**
  * Get resource
@@ -194,10 +308,98 @@ Resource.prototype.insert = function(args,callback){
 }
 
 Resource.prototype.create = function(args,callback){
-	var validation = this.validateValues(args);
-	if(!validation.allCorrect){
+	async.series([
+		this.validateValues.bind(this,args),
+		this.validateForeignConstraints.bind(this,args),
+		this.validateUniqueConstraints.bind(this,args),
+		this.hasDuplicate.bind(this,args),
+		this.insert.bind(this,args)
+	], function(err, result){
+		if(err){
+			return callback(err);
+		}else{
+			return callback(null, result[3]);
+		}
+	});
+}
 
+Resource.prototype.updateRow = function(args_set,args_where,callback){
+	var args_where_primary = {};
+	for(var field_name in args_where){
+		var field = this.getFieldByName(field_name);
+		if(field.isPrimary){
+			args_where_primary[field_name] = args_where[field_name];
+		}
+	}
+	var query = QueryBuilder.update(this.table_name).set(args_set).whereAllEqual(args_where_primary).build();
+	db.get().query(query,function(err,result){
+		if(err){
+			Log.e(err.message);
+			return callback(new Error(error_messages.UNKNOWN_ERROR));
+		}
+		if(result.affectedRows ===  0)return callback(new Error(error_messages.UNKNOWN_ERROR));
+		return callback(null);
+	});
+}
+
+Resource.prototype.updateFieldForeignConstraintsNotAllowed = function(args,callback){
+	for(var field_name in args){
+		var field = this.getFieldByName(field_name);
+		if(field.isForeign){
+			return callback(new Error(error_messages.FOREIGN_KEY_UPDATE_NOT_ALLOWED));
+		}
+	}
+	return callback(null);
+}
+Resource.prototype.processUpdate = function(args_set,args_where,callback){
+	var response = [];
+	var scope = this;
+	var count = 0;
+	this.get(args_where, function(err,result){
+		if(err)return callback(err);
+		if(result.length === 0)done();
+		result.forEach(row => {
+			var new_row = {};
+			for(var field_name in row)
+				new_row[field_name] = row[field_name];
+			for(var field in args_set){
+				new_row[field] = args_set[field];
+			}
+			async.series({
+				updateFieldForeignConstraintsNotAllowed:scope.updateFieldForeignConstraintsNotAllowed.bind(scope,args_set),
+				validateUpdationUniqueConstraints:scope.validateUpdationUniqueConstraints.bind(scope,row,new_row),
+				hasUpdationDuplicate:scope.hasUpdationDuplicate.bind(scope,row,new_row),
+				updateRow:scope.updateRow.bind(scope,args_set,row),
+				result:scope.get.bind(scope,new_row)
+			}, function(err, res){
+				count++;
+				if(err){
+					return callback(err);
+				}else{
+					response.push(res['result'][0]);
+				}
+				if(count === result.length)done();
+			});
+		});
+	});
+	function done(){
+		return callback(null,response);
 	}
 }
 
+
+Resource.prototype.update = function(args_set,args_where,callback){
+	async.series([
+		this.validateValues.bind(this,args_set),
+		this.validateValues.bind(this,args_where),
+		this.processUpdate.bind(this,args_set,args_where)
+	], function(err,result){
+		if(err)return callback(err);
+		return callback(null,result[2]);
+	});
+}
+
+Resource.prototype.getRef = function(){
+	return this;
+}
 module.exports = Resource;
