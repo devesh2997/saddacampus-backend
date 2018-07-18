@@ -1,0 +1,51 @@
+<!--Featured Coupons Section-->
+<table>
+    <tr><td><h2>Featured Coupons </h2></td></tr>
+    <tr>
+<% Coupon.forEach(function(coupons){ %>
+<% for(var i=0;i<featuredCoupons.length;i++){ %>
+<td>
+<% if(coupons["Coupon_ID"] == featuredCoupons[i]) {%>    
+  <h3>  <%= coupons["Title"] %> </h3>
+  <h4>  <%= coupons["Campaign_Name"] %></h4>
+    <%= coupons["Description"] %>
+    <%= coupons["Type_Value"] %>
+    <%= coupons["Tracking_URL"] %>
+</td>
+<% } %>
+<% } %>
+<% }) %>
+</tr>
+</table>
+<!--Coupon Categories Section-->
+<table>
+    <tr>
+<% for(var i=0; i< couponCategory.length ; i++){ %>
+    <th>
+      <a href="#i"><img src="https://previews.123rf.com/images/alekseyvanin/alekseyvanin1705/alekseyvanin170502408/77841777-sale-coupon-line-icon-filled-outline-vector-sign-linear-colorful-pictogram-isolated-on-white-logo-il.jpg" width="92" height="92"></a>
+      <h4><a href="#i" ><%= couponCategory[i]; %></a></h4> 
+    </th>
+<% }  %>
+    </tr>
+</table>
+<!--Coupons Section-->
+<% for(var j=0;j< couponCategory.length; j++){ %>
+<table>
+<tr>
+    <th id="j"><%= couponCategory[j] %> </th>
+</tr>    
+<tr>
+<% Coupon.forEach(function(coupons){ %>
+<td>
+<% if(coupons["Category"] == couponCategory[j] && coupons["Expiry_Date"] >= current_date) {%>    
+  <h3 id="j">  <%= coupons["Title"] %> </h3>
+  <h4>  <%= coupons["Campaign_Name"] %></h4>
+    <%= coupons["Description"] %>
+    <%= coupons["Type_Value"] %>
+    <%= coupons["Tracking_URL"] %>
+</td>
+<% } %>    
+<% }) %>
+</tr>
+</table>
+<%  }   %>
