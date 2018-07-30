@@ -20,7 +20,7 @@ var validator = require('../../utility/validator');
  * returns affected rows
  * @param {Object} args
  * @param {String} args.menu_id
- * @param {MenuCategory[]} args.customisations
+ * @param {MenuCustomisation[]} args.customisations
  * @returns {Object} {noOfCustomisationsAdded:}
  */
 exports.addCustomisations = function(args,callback){

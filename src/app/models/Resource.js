@@ -127,7 +127,6 @@ Resource.prototype.hasDuplicate = function(args, callback){
 
 Resource.prototype.hasUpdationDuplicate = function(args_old,args_new, callback){
 	var res_name = this.resource_name;
-	var flag = true;
 	var count = 0;
 	var error;
 	for(var field_name in args_old){
@@ -135,7 +134,6 @@ Resource.prototype.hasUpdationDuplicate = function(args_old,args_new, callback){
 		if(args_old[field_name] !== args_new[field_name] && field.isPrimary){
 			this.findByPrimaryKey(args_new, function(err,result){
 				count++;
-				flag = false;
 				if(err){
 					error = err;
 				}else if(result[res_name]){
