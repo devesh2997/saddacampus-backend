@@ -2,7 +2,7 @@ var error_messages = require('../../config/error_messages');
 var Resource = require("./../Resource");
 var menu_modal = require("./../modal/menu");
 var menu_customisation_modal = require('./../modal/menu_customization');
-
+var _ = require("underscore");
 var menu = new Resource("Menus","menus",menu_modal);
 menu_customisation_modal.fields[1].ref_model = menu.getRef();
 menu_customisation_modal.fields[1].ref_model_field_name = 'menu_id';
@@ -115,4 +115,70 @@ exports.findMenuCustomisation = function(args,callback){
         return callback(new Error(error_messages.MISSING_PARAMETERS));
     }
     
+}
+
+/**
+ * 
+ * @param {Object} args 
+ * @param {String} args.menu_id
+ * @param {String} args.customisation_id
+ * @param {Object} args.update 
+ */
+exports.update = function(args,callback){
+    var args_where;
+    if(args && args.menu_id && args.customisation_id && args.update && !(_.isEmpty(args.update))){
+        args_where = {
+            menu_id : args.menu_id,
+            customisation_id : args.customisation_id
+        }
+    }
+    else if(args && args.customisation_id && args.update && !(_.isEmpty(args.update))){
+        args_where = {
+            customisation_id : args.customisation_id
+        }
+    }
+    else {
+        return callback(new Error(error_messages.MISSING_PARAMETERS));
+    }
+    if(args.update.name != null){
+        args.update.name  = args.update.name.toUpperCase();
+        args.update["customisation_id"] = args.update.name.substr(0,3);
+    }
+    menu_customisation.update(args.update , args_where , function(err,result){
+        if(err) return callback(err);
+        return callback(null , result);
+    });
+} 
+
+/**
+ * delete from menu customisation
+ * @param {Object} args 
+ * @param {String} args.menu_id
+ * @param {String} args.customisation_id 
+ */
+exports.delete = function(args,callback){
+    var value;
+    if(args && args.menu_id && args.customisation_id){
+        value = {
+            menu_id : args.menu_id,
+            customisation_id : args.customisation_id
+        }
+    }
+    else if(args && args.menu_id){
+        value = {
+            menu_id : args.menu_id
+        }
+    }
+    else if(args && args.customisation_id){
+        value = {
+            customisation_id : args.customisation_id
+        }
+    }
+    else {
+        return callback(new Error(error_messages.MISSING_PARAMETERS));
+    }
+    menu_customisation.delete(value , function(err,result){
+        if(err) return callback(err);
+        return  callback(null,result);
+    });
 }

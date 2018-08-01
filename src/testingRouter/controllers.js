@@ -83,3 +83,21 @@ exports.getMenuCustomisation = function(req,res){
         }
     });
 }
+
+exports.menuCustomisationUpdate = function(req,res){
+    menuCustomisation.update(req.body , function(err,result){
+        if(err) res.send({error:err.message});
+        else{
+            res.send(result);
+        }
+    });
+}
+
+exports.menuCustomisationDelete = function(req,res){
+    menuCustomisation.delete(req.body , function(err,result){
+        if(err) res.send({error:err.message});
+        else{
+            res.send(result);
+        }
+    })
+}

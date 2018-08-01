@@ -11,5 +11,7 @@ router.post("/deleteMenuCategory",controllers.menuCategoryDelete);
 router.post("/findMenuCategory",controllers.getMenuCategory);
 router.post("/menuCustomisation",controllers.menuCustomisation);
 router.post("/findMenuCustomisation",controllers.getMenuCustomisation);
+router.post("/updateMenuCustomisation",controllers.menuCustomisationUpdate);
+router.post("/deleteMenuCustomisation",controllers.menuCustomisationDelete);
 
 module.exports = router;

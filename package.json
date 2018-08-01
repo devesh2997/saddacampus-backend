@@ -29,6 +29,7 @@
     "moment": "^2.22.1",
     "mysql": "^2.15.0",
     "path": "^0.12.7",
+    "underscore": "^1.9.1",
     "uniqid": "^4.1.1"
   },
   "devDependencies": {
