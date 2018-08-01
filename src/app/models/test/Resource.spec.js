@@ -110,7 +110,7 @@ describe('Resource model',function(){
 	});
 
 	describe('Validate values',function(){
-		it('should return null when all validations pass',function(){
+		it.only('should return null when all validations pass',function(){
 			var values = {
 				menu_id: 'fsdafsdf',
 				description: 'fdf',

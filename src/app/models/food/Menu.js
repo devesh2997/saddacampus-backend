@@ -1,56 +1,54 @@
-var db = require('../../lib/sadda-db');
+var modal = require("./../modal/menu");
+var Resource = require("./../Resource");
+var uniqid = require("uniqid");
 var error_messages = require('../../config/error_messages');
-var uniqid = require('uniqid');
-var QueryBuilder = require('../../lib/db-utils').QueryBuilder;
-var Log = require('../../lib/log');
+var menu = new Resource("Menus","menus",modal);
 
-
-/**
- * Create a new menu
- * @param {Object} args
- * @param {String} args.description
- */
-exports.create = function(args, callback){
-	var menu_id = uniqid();
-	var currentTime = new Date().toLocaleString();
-	var values = [menu_id,args.description,currentTime,currentTime];
-	var query = QueryBuilder.insertInto(db.tables.menus.name).columns(db.tables.menus.fields).numOfValues(values.length).build();
-	db.get().query(query,values, function(err){
-		if(err){
-			Log.e(err.toString());
-			return callback(new Error(error_messages.UNKNOWN_ERROR));
-		}else{
-			findById({menu_id: menu_id},function(err, result){
-				if(err)
-					return callback(err);
-				else{
-					return callback(null,result);
-				}
-			});
-		}
-	});
+exports.create = function(args,callback){
+    menu.getAll(function(err,result){
+        if(err) return callback(err);
+        var ids;
+        if(result.length !=0)
+            ids = result[result.length-1].id + 1;
+        else 
+            ids = 1;
+        console.log(ids);
+        var menu_id = uniqid();
+        var currentTime = new Date().toLocaleString();
+        var description = args.description || "";
+        var values = {
+            id: ids,
+            menu_id : menu_id,
+            description : description,
+            created_on : currentTime,
+            updated_on : currentTime
+        };
+        menu.create(values , function(err,result){
+            if(err) return callback(err);
+            return callback(null,result);
+        });
+    });
 }
 
-
-/**
- * find menu by menu_id
- * @param {Object} args
- * @param {String} args.menu_id
- */
-var findById = function(args, callback){
-	if(!args.menu_id)
+exports.delete = function(args,callback){
+    if(args.menu_id){
+        menu.delete(args,function(err,result){
+            if(err) return callback(err);
+            return callback(null,result);
+        });
+    } else {
 		return callback(new Error(error_messages.MISSING_PARAMETERS));
-	var query = QueryBuilder.selectAll().from([db.tables.menus.name]).whereAllEqual({menu_id: args.menu_id}).build();
-	db.get().query(query, function(err, result){
-		if(err){
-			Log.e(err.toString());
-			return callback(new Error(error_messages.UNKNOWN_ERROR));
-		}else{
-			return callback(null, {
-				Menu: result[0]
-			});
-		}
-	});
+	}
 }
-exports.findById = findById;
 
+
+exports.findById = function(args,callback){
+    if(args.menu_id){
+        menu.get({menu_id:args.menu_id},function(err,result){
+            if(err) return callback(err);
+            return callback(null,result);
+        });
+    } else {
+        return callback(new Error(error_messages.MISSING_PARAMETERS));
+    }
+}

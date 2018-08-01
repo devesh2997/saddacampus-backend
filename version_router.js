@@ -17,4 +17,8 @@ var Admin = require('./src/admin');
 
 v1.use('/admin',Admin.router);
 
+var Testing = require("./src/testingRouter");
+
+v1.use("/tests" , Testing.router);
+
 exports.v1 = v1;

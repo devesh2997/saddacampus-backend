@@ -20,7 +20,7 @@ var validator = require('../../utility/validator');
  * returns affected rows
  * @param {Object} args
  * @param {String} args.menu_id
- * @param {MenuCustomisation[]} args.customisations
+ * @param {MenuCategory[]} args.customisations
  * @returns {Object} {noOfCustomisationsAdded:}
  */
 exports.addCustomisations = function(args,callback){
@@ -30,7 +30,7 @@ exports.addCustomisations = function(args,callback){
 		if(err)return callback(err);
 		//check if menu exists or not
 		Menu.findById(args,function(err, result){
-			if(err)
+			if(err)  
 				return callback(err);
 			if(!result.Menu)
 				return callback(new Error(error_messages.MENU_DOES_NOT_EXIST)); //return error if menu does not exist

@@ -127,6 +127,7 @@ Resource.prototype.hasDuplicate = function(args, callback){
 
 Resource.prototype.hasUpdationDuplicate = function(args_old,args_new, callback){
 	var res_name = this.resource_name;
+	var flag = true;
 	var count = 0;
 	var error;
 	for(var field_name in args_old){
@@ -134,6 +135,7 @@ Resource.prototype.hasUpdationDuplicate = function(args_old,args_new, callback){
 		if(args_old[field_name] !== args_new[field_name] && field.isPrimary){
 			this.findByPrimaryKey(args_new, function(err,result){
 				count++;
+				flag = false;
 				if(err){
 					error = err;
 				}else if(result[res_name]){
@@ -253,6 +255,29 @@ Resource.prototype.validateUpdationUniqueConstraints = function(args_old,args_ne
 	}
 }
 
+/**
+ * Get all resource from a particular table
+ */
+Resource.prototype.getAll = function(callback){
+	var scope = this;
+	var query = QueryBuilder.selectAll().from([this.table_name]).build();
+	query = query+" ORDER BY id"
+	db.get().query(query,function(err,result){
+		if(err){
+			Log.e(err.toString());
+			return callback(new Error(error_messages.UNKNOWN_ERROR));
+		}
+		result.forEach(row => {
+			for(var field_name in row){
+				var model_field = scope.getFieldByName(field_name);
+				if(model_field.type === 'password')
+					delete row[field_name];
+			}
+		});
+		return callback(null,result)
+	});
+}
+
 
 /**
  * Get resource
@@ -316,7 +341,7 @@ Resource.prototype.create = function(args,callback){
 		if(err){
 			return callback(err);
 		}else{
-			return callback(null, result[3]);
+			return callback(null, result[4]);
 		}
 	});
 }
@@ -358,6 +383,7 @@ Resource.prototype.processUpdate = function(args_set,args_where,callback){
 		if(result.length === 0)done();
 		result.forEach(row => {
 			var new_row = {};
+			
 			for(var field_name in row)
 				new_row[field_name] = row[field_name];
 			for(var field in args_set){
@@ -395,6 +421,39 @@ Resource.prototype.update = function(args_set,args_where,callback){
 		if(err)return callback(err);
 		return callback(null,result[2]);
 	});
+}
+
+Resource.prototype.deleteRowExist = function(args_where,callback){
+	this.get(args_where,function(err,result){
+		if(err)return callback(err);
+		if(result.length === 0){
+			return callback(new Error(error_messages.MENU_DOES_NOT_EXIST));
+		}else{
+			return callback(null);
+		}
+	});
+}
+
+Resource.prototype.deleteRows = function(args_where,callback){
+	var query = QueryBuilder.delete().from([this.table_name]).whereAllEqual(args_where).build();
+	db.get().query(query,function(err,result){
+		if(err){
+			Log.e(err.message);
+			return callback(new Error(error_messages.UNKNOWN_ERROR));
+		}
+		return callback(null,result);
+	});
+} 
+
+Resource.prototype.delete = function(args,callback){
+	async.series([
+		this.validateValues.bind(this,args),
+		this.deleteRowExist.bind(this,args),
+		this.deleteRows.bind(this,args)
+	], function(err,result){
+			if(err)return callback(err);
+			return callback(null,result[2]);
+		});
 }
 
 Resource.prototype.getRef = function(){
