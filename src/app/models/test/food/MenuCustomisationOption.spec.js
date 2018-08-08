@@ -4,7 +4,7 @@ var MenuCustomisationOption = require("./../../food/MenuCustomizationOptions");
 var Menu = require("./../../food/Menu");
 var MenuCustomisation = require('./../../food/MenuCustomization');
 
- describe.only("Menu category Items modal",function(){
+ describe("Menu category Items modal",function(){
     var menu_id ;
     var customisation_id;
     before(function(done){
