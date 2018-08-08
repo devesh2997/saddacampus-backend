@@ -164,7 +164,7 @@ Resource.prototype.validateForeignConstraints = function(args,callback){
 	var count =0 ;
 	if(foreign_field.length === 0)done();
 	foreign_field.forEach(field => {
-		if(args[field.name]){
+		if(args[field.name]) {
 			var foreign_arg = {};
 			foreign_arg[field.name] = args[field.name];
 			field.ref_model.get(foreign_arg,function(err,result){
@@ -220,64 +220,6 @@ Resource.prototype.validateUniqueConstraints = function(args,callback){
 	}
 }
 
-Resource.prototype.validateUpdationUniqueConstraints = function(args_old,args_new,callback){
-	var error = {};
-	var flag = false;
-	if(!this.indexes.unique || this.indexes.unique.length === 0) done();
-	var count = 0;
-	var unique_indexes = this.indexes.unique;
-	unique_indexes.forEach(unique_index => {
-		var flag2 = false;
-		count++;
-		var unique_fields = unique_index.fields;
-		var unique_args={};
-		unique_fields.forEach(field => {
-			unique_args[field] = args_new[field];
-			if(args_old[field] !== args_new[field])
-				flag2 = true;
-		});
-		if(flag2){
-			this.get(unique_args,function(err,result){
-				if(err) return callback(err);
-				if(result.length !== 0){
-					flag = true;
-					error[unique_index.name] = unique_index.duplication_error;
-				}
-				if(count === unique_indexes.length)done();
-			});
-		}else{
-			if(count === unique_indexes.length)done();
-		}
-	});
-	function done(){
-		if(flag)return callback(new Error(JSON.stringify(error)));
-		return callback(null);
-	}
-}
-
-/**
- * Get all resource from a particular table
- */
-Resource.prototype.getAll = function(callback){
-	var scope = this;
-	var query = QueryBuilder.selectAll().from([this.table_name]).build();
-	query = query+" ORDER BY id"
-	db.get().query(query,function(err,result){
-		if(err){
-			Log.e(err.toString());
-			return callback(new Error(error_messages.UNKNOWN_ERROR));
-		}
-		result.forEach(row => {
-			for(var field_name in row){
-				var model_field = scope.getFieldByName(field_name);
-				if(model_field.type === 'password')
-					delete row[field_name];
-			}
-		});
-		return callback(null,result)
-	});
-}
-
 
 /**
  * Get resource
@@ -293,9 +235,11 @@ Resource.prototype.get = function(args, callback){
 		}
 		result.forEach(row => {
 			for(var field_name in row){
-				var model_field = scope.getFieldByName(field_name);
-				if(model_field.type === 'password')
-					delete row[field_name];
+				if(field_name != "id"){
+					var model_field = scope.getFieldByName(field_name);
+					if(model_field.type === 'password')
+						delete row[field_name];
+				}
 			}
 		});
 		return callback(null,result)
@@ -315,7 +259,6 @@ Resource.prototype.insert = function(args,callback){
 		values.push(args[field]);
 	}
 	var query = QueryBuilder.insertInto(this.table_name).columns(columns).numOfValues(values.length).build();
-
 	db.get().query(query,values,function(err){
 		if(err){
 			Log.e(err.toString());
@@ -334,14 +277,13 @@ Resource.prototype.create = function(args,callback){
 	async.series([
 		this.validateValues.bind(this,args),
 		this.validateForeignConstraints.bind(this,args),
-		this.validateUniqueConstraints.bind(this,args),
 		this.hasDuplicate.bind(this,args),
 		this.insert.bind(this,args)
 	], function(err, result){
 		if(err){
 			return callback(err);
 		}else{
-			return callback(null, result[4]);
+			return callback(null, result[3]);
 		}
 	});
 }
@@ -391,7 +333,6 @@ Resource.prototype.processUpdate = function(args_set,args_where,callback){
 			}
 			async.series({
 				updateFieldForeignConstraintsNotAllowed:scope.updateFieldForeignConstraintsNotAllowed.bind(scope,args_set),
-				validateUpdationUniqueConstraints:scope.validateUpdationUniqueConstraints.bind(scope,row,new_row),
 				hasUpdationDuplicate:scope.hasUpdationDuplicate.bind(scope,row,new_row),
 				updateRow:scope.updateRow.bind(scope,args_set,row),
 				result:scope.get.bind(scope,new_row)

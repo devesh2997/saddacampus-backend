@@ -3,6 +3,7 @@ var controllers = require('./controllers');
 var router = express.Router();
 
 router.post('/menu',controllers.menu);
+router.post("/menui",controllers.completeMenu);
 router.post("/getMenu",controllers.getMenu);
 router.post("/deleteMenu" , controllers.deleteMenu);
 router.post("/menuCategory",controllers.menuCategory);
@@ -13,5 +14,13 @@ router.post("/menuCustomisation",controllers.menuCustomisation);
 router.post("/findMenuCustomisation",controllers.getMenuCustomisation);
 router.post("/updateMenuCustomisation",controllers.menuCustomisationUpdate);
 router.post("/deleteMenuCustomisation",controllers.menuCustomisationDelete);
-
+router.post("/menuCategoryItems",controllers.categoryItems);
+router.post("/findMenuCategoryItem",controllers.findMenuCategoryItem);
+router.post("/updateMenuCategoryItem",controllers.updateMenuCategoryItem);
+router.post("/deleteMenuCategoryItem",controllers.deleteMenuCategoryItem);
+router.post("/menuCustomisationOptions",controllers.customisationOptions);
+router.post("/findMenuCustomisationOptions",controllers.findMenuCustomisationOptions);
+router.post("/updateMenuCustomisationOption",controllers.updateMenuCustomisationOption);
+router.post("/deleteMenuCustomisationOption",controllers.deleteMenuCustomisationOption);
+router.post("/itemCustomisation",controllers.itemCustomisation);
 module.exports = router;

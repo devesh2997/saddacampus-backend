@@ -2,13 +2,7 @@ var validator = require('../../utility/validator');
 var error_messages = require('../../config/error_messages');
 var menu_cat_def = {};
 menu_cat_def.indexes = {
-    unique:[
-        {
-            name:'cat_id_unique',
-            fields: ['id'],
-            duplication_error: 'Duplicate Menu category with same id exists'
-        }
-    ],
+  
 }
 menu_cat_def.fields = [
     {

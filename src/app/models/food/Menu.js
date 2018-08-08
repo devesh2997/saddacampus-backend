@@ -2,37 +2,33 @@ var modal = require("./../modal/menu");
 var Resource = require("./../Resource");
 var uniqid = require("uniqid");
 var error_messages = require('../../config/error_messages');
-var menu = new Resource("Menus","menus",modal);
 
-exports.create = function(args,callback){
-    menu.getAll(function(err,result){
-        if(err) return callback(err);
-        var ids;
-        if(result.length !=0)
-            ids = result[result.length-1].id + 1;
-        else 
-            ids = 1;
-        console.log(ids);
-        var menu_id = uniqid();
-        var currentTime = new Date().toLocaleString();
-        var description = args.description || "";
-        var values = {
-            id: ids,
-            menu_id : menu_id,
-            description : description,
-            created_on : currentTime,
-            updated_on : currentTime
-        };
-        menu.create(values , function(err,result){
+var Menu = function(resource){
+    Resource.call(this,"Menus","menus",modal);
+    this.resource = resource;
+}
+Menu.prototype  = Object.create(Resource.prototype);
+Menu.prototype.constructor = Menu;
+
+Menu.prototype.addMenu = function(args,callback){
+    var menu_id = uniqid();
+    var currentTime = new Date().toLocaleString();
+    var description = args.description || "";
+    var values = {
+        menu_id : menu_id,
+        description : description,
+        created_on : currentTime,
+        updated_on : currentTime
+    };
+    this.resource.create(values , function(err,result){
             if(err) return callback(err);
             return callback(null,result);
-        });
     });
 }
-
-exports.delete = function(args,callback){
+ 
+Menu.prototype.deleteMenu = function(args,callback){
     if(args.menu_id){
-        menu.delete(args,function(err,result){
+        this.resource.delete({menu_id : args.menu_id},function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -42,9 +38,9 @@ exports.delete = function(args,callback){
 }
 
 
-exports.findById = function(args,callback){
+Menu.prototype.findByIdMenu = function(args,callback){
     if(args.menu_id){
-        menu.get({menu_id:args.menu_id},function(err,result){
+        this.resource.get({menu_id:args.menu_id},function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -52,3 +48,6 @@ exports.findById = function(args,callback){
         return callback(new Error(error_messages.MISSING_PARAMETERS));
     }
 }
+
+
+module.exports = new Menu(new Menu());

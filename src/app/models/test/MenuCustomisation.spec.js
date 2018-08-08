@@ -1,6 +1,6 @@
 var assert = require('assert');
-var Menu = require('../food/Menu');
-var MenuCustomisation = require('../food/MenuCustomisation')
+var Menu = require('../food/_Menu');
+var MenuCustomisation = require('../food/_MenuCustomisation')
 var error_messages = require('../../config/error_messages');
 var db = require('../../lib/sadda-db');
 

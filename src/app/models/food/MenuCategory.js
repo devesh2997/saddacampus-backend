@@ -1,12 +1,16 @@
 var error_messages = require('../../config/error_messages');
 var Resource = require("./../Resource");
-var menu_modal = require("./../modal/menu");
+var menu_modal = require('./Menu');
 var menu_category_modal = require('./../modal/menu_category');
 
-var menu = new Resource("Menus","menus",menu_modal);
-menu_category_modal.fields[1].ref_model = menu.getRef();
-menu_category_modal.fields[1].ref_model_field_name = 'menu_id';
-var menu_category = new Resource('MenuCategory','menu_categories',menu_category_modal);
+var MenuCategory = function(menu_category){
+    Resource.call(this,'MenuCategory','menu_categories',menu_category_modal);
+    this.menu_category = menu_category;
+    menu_category_modal.fields[1].ref_model = menu_modal.getRef();
+    menu_category_modal.fields[1].ref_model_field_name = 'menu_id';
+}
+MenuCategory.prototype  = Object.create(Resource.prototype);
+MenuCategory.prototype.constructor = MenuCategory;
 
 /**
  * add categories to menu,
@@ -14,43 +18,33 @@ var menu_category = new Resource('MenuCategory','menu_categories',menu_category_
  * @param {String} args.menu_id
  * @param {MenuCategory[]} args.categories
  */
-exports.create = function(args,callback){
+MenuCategory.prototype.addCategories = function(args,callback){
     var flag = false;
     var error = {};
     var res = {};
     if(args.menu_id && args.categories && args.categories.length != 0){
-        menu_category.getAll(function(err,result){
-            if(err) return callback(err);
-            var ids;
-            if(result.length !=0)
-                ids = result[result.length-1].id;
-            else
-                ids = 0;
             var categories = [...args.categories];
             categories.forEach(element => {
-                ids++;
                 var category_name = element.toUpperCase();
                 var category_id = category_name.substr(0,3);
                 var values = {
-                    id:ids,
                     menu_id:args.menu_id,
                     category_id:category_id,
                     category_name:category_name
                 }
-                menu_category.create(values,function(err,result){
+                this.menu_category.create(values,function(err,result){
                     if(err) {
                         flag = true;
                         error[category_name] = err.message;
                     }
                     else {
-                        res[category_name] = result;
+                        res[category_name] = result.MenuCategory;
                     }
                     
                     if(categories[categories.length-1] == element)done();
                 });
             });
-        });
-    } else{
+        } else{
         return callback(new Error(error_messages.MISSING_PARAMETERS));
     }
     function done(){
@@ -70,7 +64,7 @@ exports.create = function(args,callback){
  * @param {String} args.category_id
  * @param {String} args.updated_category_name
  */
-exports.update = function(args,callback){
+MenuCategory.prototype.updateCategory = function(args,callback){
     if(args.menu_id && args.category_id && args.updated_category_name){
         var args_where = {
             menu_id : args.menu_id,
@@ -82,7 +76,7 @@ exports.update = function(args,callback){
             category_name : updated_category_name,
             category_id : updated_category_id
         };
-        menu_category.update(args_set,args_where,function(err,result){
+        this.menu_category.update(args_set,args_where,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -98,7 +92,7 @@ exports.update = function(args,callback){
  * @param {String} args.menu_id 
  * @param {String} args.category_id
  */
-exports.findMenuCategory = function(args,callback){
+MenuCategory.prototype.findMenuCategory = function(args,callback){
     var flag = true;
     var value = {};
     if(args.menu_id && args.category_id){
@@ -121,7 +115,7 @@ exports.findMenuCategory = function(args,callback){
         flag = false;
     }
     if(flag){
-        menu_category.get(value,function(err,result){
+        this.menu_category.get(value,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -139,13 +133,13 @@ exports.findMenuCategory = function(args,callback){
  * @param {String} args.menu_id
  * @param {String} args.category_id
  */
-exports.delete = function(args,callback){
+MenuCategory.prototype.deleteCategory = function(args,callback){
     if(args.menu_id && args.category_id){
         var value = {
             menu_id : args.menu_id,
             category_id : args.category_id
         }
-        menu_category.delete(value,function(err,result){
+        this.menu_category.delete(value,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -153,3 +147,5 @@ exports.delete = function(args,callback){
         return callback(new Error(error_messages.MISSING_PARAMETERS));
     }
 }
+
+module.exports = new MenuCategory(new MenuCategory());

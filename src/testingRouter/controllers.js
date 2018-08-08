@@ -1,9 +1,13 @@
 var menu  = require("./../app/models/food/Menu");
 var menuCategory = require("./../app/models/food/MenuCategory");
 var menuCustomisation = require('./../app/models/food/MenuCustomization');
-
-exports.menu = function(req,res){
-    menu.create(req.body , function(err,result){
+var menuCategoryItems = require('./../app/models/food/MenuCategoryItems');
+var menuCustomisationOptions = require('./../app/models/food/MenuCustomizationOptions');
+var getMenu = require('./../app/models/food/getMenu');
+var itemCustomisation  = require('./../app/models/food/Menu_category_items_has_customisations');
+exports.menu = function(req,res){ 
+   // console.log(menu.getRef());
+    menu.addMenu(req.body , function(err,result){
         if(err) res.send({error:err.message});
         else{
             res.send({result: result});
@@ -12,7 +16,7 @@ exports.menu = function(req,res){
 }
 
 exports.getMenu = function(req,res){
-    menu.findById(req.body , function(err,result){
+    menu.findByIdMenu(req.body , function(err,result){
         if(err) res.send({success:false , error:err.message});
         else{
             res.send({success: true , result: result});
@@ -21,7 +25,7 @@ exports.getMenu = function(req,res){
 }
 
 exports.deleteMenu = function(req,res){
-    menu.delete(req.body , function(err,result){
+    menu.deleteMenu(req.body , function(err,result){
         if(err) res.send({success:false , error:err.message});
         else{
             res.send({success: true , result: result});
@@ -31,7 +35,7 @@ exports.deleteMenu = function(req,res){
 }
 
 exports.menuCategory = function(req,res){
-    menuCategory.create(req.body , function(err,result){
+    menuCategory.addCategories(req.body , function(err,result){
         if(err) res.send({error:err.message});
         else{
             res.send( result);
@@ -40,7 +44,7 @@ exports.menuCategory = function(req,res){
 }
 
 exports.menuCategoryUpdate = function(req,res){
-    menuCategory.update(req.body , function(err,result){
+    menuCategory.updateCategory(req.body , function(err,result){
         if(err) res.send({error:err.message});
         else{
             res.send(result);
@@ -49,7 +53,7 @@ exports.menuCategoryUpdate = function(req,res){
 }
 
 exports.menuCategoryDelete = function(req,res){
-    menuCategory.delete(req.body , function(err,result){
+    menuCategory.deleteCategory(req.body , function(err,result){
         if(err) res.send({error:err.message});
         else{
             res.send(result);
@@ -67,7 +71,7 @@ exports.getMenuCategory = function(req,res){
 }
 
 exports.menuCustomisation = function(req,res){
-    menuCustomisation.create(req.body , function(err,result){
+    menuCustomisation.addCustomisation(req.body , function(err,result){
         if(err) res.send({error:err.message});
         else{
             res.send( result);
@@ -85,7 +89,7 @@ exports.getMenuCustomisation = function(req,res){
 }
 
 exports.menuCustomisationUpdate = function(req,res){
-    menuCustomisation.update(req.body , function(err,result){
+    menuCustomisation.updateCustomisation(req.body , function(err,result){
         if(err) res.send({error:err.message});
         else{
             res.send(result);
@@ -94,7 +98,98 @@ exports.menuCustomisationUpdate = function(req,res){
 }
 
 exports.menuCustomisationDelete = function(req,res){
-    menuCustomisation.delete(req.body , function(err,result){
+    menuCustomisation.deleteCustomisation(req.body , function(err,result){
+        if(err) res.send({error:err.message});
+        else{
+            res.send(result);
+        }
+    })
+}
+
+exports.categoryItems = function(req,res){
+    menuCategoryItems.addCategoryItems(req.body , function(err,result){
+        if(err) res.send({error:err.message});
+        else{
+            res.send( result);
+        }
+    });
+}
+
+exports.findMenuCategoryItem = function(req,res){
+    menuCategoryItems.findItemsCustomisation(req.body , function(err,result){
+        if(err) res.send({error: err.message});
+        else{
+            res.send(result);
+        }
+    });
+}
+
+exports.updateMenuCategoryItem = function(req,res){
+    menuCategoryItems.updateCategoryItem(req.body , function(err,result){
+        if(err) res.send({error: err.message});
+        else{
+            res.send(result);
+        }
+    });
+}
+
+exports.deleteMenuCategoryItem = function(req,res){
+    menuCategoryItems.deleteCategoryItem(req.body , function(err,result){
+        if(err) res.send({error: err.message});
+        else{
+            res.send(result);
+        }
+    });
+}
+
+exports.customisationOptions = function(req,res){
+    menuCustomisationOptions.addCustomisationOptions(req.body , function(err,result){
+        if(err) res.send({error:err.message});
+        else{
+            res.send( result);
+        }
+    });
+}
+
+exports.findMenuCustomisationOptions = function(req,res){
+    menuCustomisationOptions.findCustomisationOptions(req.body , function(err,result){
+        if(err) res.send({error: err.message});
+        else{
+            res.send(result);
+        }
+    });
+}
+
+exports.updateMenuCustomisationOption = function(req,res){
+    menuCustomisationOptions.updateCustomisationOption(req.body , function(err,result){
+        if(err) res.send({error: err.message});
+        else{
+            res.send(result);
+        }
+    });
+}
+
+exports.deleteMenuCustomisationOption = function(req,res){
+    menuCustomisationOptions.deleteCustomisationOption(req.body , function(err,result){
+        if(err) res.send({error: err.message});
+        else{
+            res.send(result);
+        }
+    });
+}
+
+exports.completeMenu = function(req,res){
+    var value = {menu_id : req.params.menu_id};
+    getMenu.getComplete(req.body,function(err,result){
+        if(err) res.send({error:err.message});
+        else{
+            res.send(result);
+        }
+    })
+}
+
+exports.itemCustomisation = function(req,res){
+    itemCustomisation.addItemCustomisation(req.body , function(err,result){
         if(err) res.send({error:err.message});
         else{
             res.send(result);

@@ -1,12 +1,17 @@
 var error_messages = require('../../config/error_messages');
 var Resource = require("./../Resource");
-var menu_modal = require("./../modal/menu");
 var menu_customisation_modal = require('./../modal/menu_customization');
 var _ = require("underscore");
-var menu = new Resource("Menus","menus",menu_modal);
-menu_customisation_modal.fields[1].ref_model = menu.getRef();
-menu_customisation_modal.fields[1].ref_model_field_name = 'menu_id';
-var menu_customisation = new Resource('MenuCustomisation','menu_customisations',menu_customisation_modal);
+var menu_modal = require('./Menu');
+
+var MenuCustomisation = function(menu_customisation){
+    Resource.call(this,'MenuCustomisation','menu_customisations',menu_customisation_modal);
+    this.menu_customisation = menu_customisation;
+    menu_customisation_modal.fields[1].ref_model = menu_modal.getRef();
+    menu_customisation_modal.fields[1].ref_model_field_name = 'menu_id';
+}
+MenuCustomisation.prototype  = Object.create(Resource.prototype);
+MenuCustomisation.prototype.constructor = MenuCustomisation;
 
 /**
  * create new Menu customisation row
@@ -14,57 +19,40 @@ var menu_customisation = new Resource('MenuCustomisation','menu_customisations',
  * @param {String} args.menu_id
  * @param {MenuCustomisation[]} args.menu_customisation
  */
-exports.create = function(args,callback){
+MenuCustomisation.prototype.addCustomisation = function(args,callback){
     var flag = false;
     var error = {};
     var res = {};
     if(args && args.menu_id && args.menu_customisation && args.menu_customisation.length != 0){
-        menu_customisation.getAll(function(err,result){
-            if(err) return callback(err);
-            var ids;
-            if(result.length !=0)
-                ids = result[result.length-1].id;
-            else
-                ids = 0;
-            var customisation = [...args.menu_customisation];
-            customisation.forEach(element => {
-                ids++;
-                var min_selections , max_selections ;
-                var name = element.name.toUpperCase();
-                var customisation_id = name.substr(0,3);
-                if(!element.min_selections)
-                    min_selections = 0;
-                else
-                    min_selections = element.min_selections;
-                if(!element.max_selections)
-                    max_selections = 0;
-                else
-                    max_selections = element.max_selections;
-                if(min_selections > max_selections){
-                    flag = true;
-                    error[name] = error_messages.MIN_MAX_SELECTION;
-                } else {
-                    var values = {
-                        id:ids,
-                        menu_id:args.menu_id,
-                        customisation_id: customisation_id,
-                        name: name,
-                        min_selections : min_selections,
-                        max_selections : max_selections
-                    }
-                    menu_customisation.create(values,function(err,result){
-                        if(err) {
-                            flag = true;
-                            error[name] = err.message;
-                        }
-                        else {
-                            res[name] = result;
-                        }
-                        if(customisation[customisation.length-1] == element)done();
-                    });
+        var customisation = [...args.menu_customisation];
+        customisation.forEach(element => {
+            var min_selections , max_selections ;
+            var name = element.name.toUpperCase();
+            var customisation_id = name.substr(0,3);
+            min_selections = element.min_selections ? element.min_selections : 0;
+            max_selections = element.max_selections ? element.max_selections : 0;
+            if(min_selections > max_selections){
+                flag = true;
+                error[name] = error_messages.MIN_MAX_SELECTION;
+            } else {
+                var values = {
+                    menu_id:args.menu_id,
+                    customisation_id: customisation_id,
+                    name: name,
+                    min_selections : min_selections,
+                    max_selections : max_selections
                 }
-                
-            });
+                this.menu_customisation.create(values,function(err,result){
+                    if(err) {
+                        flag = true;
+                        error[name] = err.message;
+                    }
+                    else {
+                        res[name] = result.MenuCustomisation;
+                    }
+                    if(customisation[customisation.length-1] == element)done();
+                });
+            }
         });
     } else{
         return callback(new Error(error_messages.MISSING_PARAMETERS));
@@ -84,7 +72,7 @@ exports.create = function(args,callback){
  * @param {String} args.menu_id
  * @param {String} args.customisation.id 
  */
-exports.findMenuCustomisation = function(args,callback){
+MenuCustomisation.prototype.findMenuCustomisation = function(args,callback){
     var flag = true;
     var value = {};
     if(args.menu_id && args.customisation_id){
@@ -107,7 +95,7 @@ exports.findMenuCustomisation = function(args,callback){
         flag = false;
     }
     if(flag){
-        menu_customisation.get(value,function(err,result){
+        this.menu_customisation.get(value,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -124,7 +112,7 @@ exports.findMenuCustomisation = function(args,callback){
  * @param {String} args.customisation_id
  * @param {Object} args.update 
  */
-exports.update = function(args,callback){
+MenuCustomisation.prototype.updateCustomisation = function(args,callback){
     var args_where;
     if(args && args.menu_id && args.customisation_id && args.update && !(_.isEmpty(args.update))){
         args_where = {
@@ -144,7 +132,7 @@ exports.update = function(args,callback){
         args.update.name  = args.update.name.toUpperCase();
         args.update["customisation_id"] = args.update.name.substr(0,3);
     }
-    menu_customisation.update(args.update , args_where , function(err,result){
+    this.menu_customisation.update(args.update , args_where , function(err,result){
         if(err) return callback(err);
         return callback(null , result);
     });
@@ -156,7 +144,7 @@ exports.update = function(args,callback){
  * @param {String} args.menu_id
  * @param {String} args.customisation_id 
  */
-exports.delete = function(args,callback){
+MenuCustomisation.prototype.deleteCustomisation = function(args,callback){
     var value;
     if(args && args.menu_id && args.customisation_id){
         value = {
@@ -177,8 +165,10 @@ exports.delete = function(args,callback){
     else {
         return callback(new Error(error_messages.MISSING_PARAMETERS));
     }
-    menu_customisation.delete(value , function(err,result){
+    this.menu_customisation.delete(value , function(err,result){
         if(err) return callback(err);
         return  callback(null,result);
     });
 }
+
+module.exports = new MenuCustomisation(new MenuCustomisation());
