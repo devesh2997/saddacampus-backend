@@ -23,4 +23,6 @@ router.post("/findMenuCustomisationOptions",controllers.findMenuCustomisationOpt
 router.post("/updateMenuCustomisationOption",controllers.updateMenuCustomisationOption);
 router.post("/deleteMenuCustomisationOption",controllers.deleteMenuCustomisationOption);
 router.post("/itemCustomisation",controllers.itemCustomisation);
+router.post("/categoryCustomisation",controllers.categoryCustomisation);
+router.post("/getCategoryCustomisation",controllers.getCategoryCustomisation);
 module.exports = router;

@@ -14,20 +14,25 @@ var ItemsCustomisation = function(items_customisation){
     modal.fields[2].ref_model = items_modal.getRef();
     modal.fields[2].ref_model_field_name = 'item_id';
     modal.fields[3].ref_model = menu_customisation_modal.getRef();
-    modal.fields[3].ref_model_field_name = 'menu_idf';
-    modal.fields[4].ref_model = menu_customisation_modal.getRef();
-    modal.fields[4].ref_model_field_name = 'customisation_id';
+    modal.fields[3].ref_model_field_name = 'customisation_id';
 }
 ItemsCustomisation.prototype  = Object.create(Resource.prototype);
 ItemsCustomisation.prototype.constructor = ItemsCustomisation;
 
+/**
+ * add a customisation to an item
+ * @param {Object} args 
+ * @param {String} args.menu_id
+ * @param {String} args.category_id
+ * @param {String} args.customisation_id
+ * @param {String} args.item_id
+ */
 ItemsCustomisation.prototype.addItemCustomisation = function(args,callback){
     if(args && args.menu_id && args.category_id && args.item_id && args.customisation_id){
         var value = {
             'menu_id' : args.menu_id,
             'category_id' : args.category_id,
             'item_id' : args.item_id,
-            'menu_idf' : args.menu_id,
             'customisation_id' : args.customisation_id
         }
         this.items_customisation.create(value,function(err,result){
@@ -39,9 +44,35 @@ ItemsCustomisation.prototype.addItemCustomisation = function(args,callback){
     }
 }
 
+/**
+ * Return the customisation id
+ * @param {Object} args 
+ * @param {String} args.menu_id
+ * @param {String} args.category_id
+ * @param {String} args.item_id 
+ */
 ItemsCustomisation.prototype.getItemCustomisation = function(args,callback){
     if(args.menu_id && args.category_id && args.item_id){
         this.items_customisation.get({menu_id : args.menu_id , category_id : args.category_id , item_id : args.item_id},function(err,result){
+            if(err) return callback(err);
+            return callback(null,result);       
+        });
+    } else {
+        return callback(new Error(error_messages.MISSING_PARAMETERS));
+    }
+}
+
+/**
+ * Remove a customisation from the item
+ * @param {Object} args 
+ * @param {String} args.menu_id
+ * @param {String} args.category_id
+ * @param {String} args.item_id
+ * @param {String} args.customisation_id 
+ */
+ItemsCustomisation.prototype.deleteItemCustomisation = function(args,callback){
+    if(args.menu_id && args.category_id && args.item_id && args.customisation_id){
+        this.items_customisation.delete({menu_id : args.menu_id , category_id : args.category_id , item_id : args.item_id , customisation_id : args.customisation_id},function(err,result){
             if(err) return callback(err);
             return callback(null,result);       
         });

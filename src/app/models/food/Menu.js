@@ -10,6 +10,11 @@ var Menu = function(resource){
 Menu.prototype  = Object.create(Resource.prototype);
 Menu.prototype.constructor = Menu;
 
+/**
+ * Add a menu
+ * @param {Object} args 
+ * @param {String} args.description 
+ */
 Menu.prototype.addMenu = function(args,callback){
     var menu_id = uniqid();
     var currentTime = new Date().toLocaleString();
@@ -26,6 +31,11 @@ Menu.prototype.addMenu = function(args,callback){
     });
 }
  
+/**
+ * Remove a menu 
+ * @param {Object} args 
+ * @param {String} args.menu_id 
+ */
 Menu.prototype.deleteMenu = function(args,callback){
     if(args.menu_id){
         this.resource.delete({menu_id : args.menu_id},function(err,result){
@@ -37,7 +47,11 @@ Menu.prototype.deleteMenu = function(args,callback){
 	}
 }
 
-
+/**
+ * Return the menu details for the given menu_id
+ * @param {Object} args 
+ * @param {String} args.menu_id 
+ */
 Menu.prototype.findByIdMenu = function(args,callback){
     if(args.menu_id){
         this.resource.get({menu_id:args.menu_id},function(err,result){

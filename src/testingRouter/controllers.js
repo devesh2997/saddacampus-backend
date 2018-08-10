@@ -5,8 +5,9 @@ var menuCategoryItems = require('./../app/models/food/MenuCategoryItems');
 var menuCustomisationOptions = require('./../app/models/food/MenuCustomizationOptions');
 var getMenu = require('./../app/models/food/getMenu');
 var itemCustomisation  = require('./../app/models/food/Menu_category_items_has_customisations');
+var categoryCustomisation = require('./../app/models/food/Menu_category_has_customisation');
+
 exports.menu = function(req,res){ 
-   // console.log(menu.getRef());
     menu.addMenu(req.body , function(err,result){
         if(err) res.send({error:err.message});
         else{
@@ -190,6 +191,24 @@ exports.completeMenu = function(req,res){
 
 exports.itemCustomisation = function(req,res){
     itemCustomisation.addItemCustomisation(req.body , function(err,result){
+        if(err) res.send({error:err.message});
+        else{
+            res.send(result);
+        }
+    })
+}
+
+exports.categoryCustomisation = function(req,res){
+    categoryCustomisation.addCategoryCustomisation(req.body , function(err,result){
+        if(err) res.send({error:err.message});
+        else{
+            res.send(result);
+        }
+    })
+}
+
+exports.getCategoryCustomisation = function(req,res){
+    categoryCustomisation.getCategoryCustomisation(req.body , function(err,result){
         if(err) res.send({error:err.message});
         else{
             res.send(result);

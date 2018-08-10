@@ -1,8 +1,8 @@
-var items_customisation_def = {};
-items_customisation_def.indexes = {
+var category_customisation_def = {};
+category_customisation_def.indexes = {
 
 }
-items_customisation_def.fields = [
+category_customisation_def.fields = [
     {
         name: 'menu_id',
         type: 'string',
@@ -18,13 +18,6 @@ items_customisation_def.fields = [
         isCompulsory: true
     },
     {
-        name: 'item_id',
-        type: 'number',
-        isPrimary: true,
-        isForeign: true,
-        isCompulsory: true
-    },
-    {
         name: 'customisation_id',
         type: 'string',
         isPrimary: true,
@@ -32,4 +25,4 @@ items_customisation_def.fields = [
         isCompulsory: true
     }
 ];
-module.exports = items_customisation_def;
+module.exports = category_customisation_def;

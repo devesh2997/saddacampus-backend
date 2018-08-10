@@ -5,6 +5,7 @@ var menuCategoryItems = require('./MenuCategoryItems');
 var async = require('async');
 var ItemCustomisation = require('./Menu_category_items_has_customisations');
 var MenuCustomisation = require('./MenuCustomizationOptions');
+var CategoryCustomisation = require('./Menu_category_has_customisation');
 
 var menu_result = [];
 
@@ -42,6 +43,20 @@ var  findItemsCustomisation = function(args,callback){
     }
 } 
 
+/**
+ * Used to get the complete customisation for a particular Category
+ * @param {Object} args 
+ * @param {Number} args.resultCount
+ * @param {String} args.category_id
+ */ 
+var findCategoryCustomisation = function(args,callback){
+    CategoryCustomisation.getCategoryCustomisation({menu_id:menu_result[0].menu_id,category_id:args.category_id},function(err,res){
+        if(err) return callback(err);
+        menu_result[0]["menuCategory"][args.resultCount]["customisations"] = res;
+        callback(null)
+    });
+}
+
 var GetCompleteMenu = function(){
     var getMenu = function(args,next){
         menu.findByIdMenu({menu_id:args.menu_id},function(err,result){
@@ -64,6 +79,17 @@ var GetCompleteMenu = function(){
                 if(err) return next(err);
                 menu_result[0]["menuCategory"][count]["items"] = res;
                 menu_result[0]["menuCategory"][count++]["customisations"] = [];
+                if(count == menu_result[0]["menuCategory"].length) return next(null);
+            });
+        });
+    }
+    var getCustomisation = function(next){
+        var count = 0;
+        var resultCount = 0;
+        menu_result[0]["menuCategory"].forEach(function(element){
+            findCategoryCustomisation({category_id:element.category_id,resultCount:resultCount++},function(err){
+                if(err) next(err)
+                count++;
                 if(count == menu_result[0]["menuCategory"].length) return next(null);
             });
         });
@@ -95,6 +121,7 @@ var GetCompleteMenu = function(){
                 async.apply(getMenu,args),
                 getCategories,
                 getItems,
+                getCustomisation,
                 getItemsCustomisation
             ] , function(err){
                 if(err) return callback(err)
