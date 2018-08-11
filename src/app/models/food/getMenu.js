@@ -48,7 +48,7 @@ var  findItemsCustomisation = function(args,callback){
  * @param {Object} args 
  * @param {Number} args.resultCount
  * @param {String} args.category_id
- */ 
+ */                                  
 var findCategoryCustomisation = function(args,callback){
     CategoryCustomisation.getCategoryCustomisation({menu_id:menu_result[0].menu_id,category_id:args.category_id},function(err,res){
         if(err) return callback(err);
@@ -56,6 +56,7 @@ var findCategoryCustomisation = function(args,callback){
         callback(null)
     });
 }
+
 
 var GetCompleteMenu = function(){
     var getMenu = function(args,next){
@@ -66,6 +67,7 @@ var GetCompleteMenu = function(){
         });
     }    
     var getCategories = function(next){
+        if(menu_result.length == 0) return next(null);
         menuCategory.findMenuCategory({menu_id:menu_result[0].menu_id},function(err,res){
             if(err) return next(err);
             menu_result[0]["menuCategory"] = res;
@@ -74,6 +76,7 @@ var GetCompleteMenu = function(){
     }
     var getItems = function(next){
         var count = 0;
+        if(menu_result.length == 0 || menu_result[0]["menuCategory"].length == 0) return next(null);
         menu_result[0]["menuCategory"].forEach(function(element){
             menuCategoryItems.findCategoryItems({menu_id:menu_result[0].menu_id,category_id:element.category_id},function(err,res){
                 if(err) return next(err);
@@ -85,6 +88,7 @@ var GetCompleteMenu = function(){
     }
     var getCustomisation = function(next){
         var count = 0;
+        if( menu_result.length == 0 || menu_result[0]["menuCategory"].length == 0) return next(null);
         var resultCount = 0;
         menu_result[0]["menuCategory"].forEach(function(element){
             findCategoryCustomisation({category_id:element.category_id,resultCount:resultCount++},function(err){
@@ -98,6 +102,7 @@ var GetCompleteMenu = function(){
         var count = 0;
         var check = 0;
         var counterCheck = 0;
+        if(menu_result.length == 0 || menu_result[0]["menuCategory"].length == 0) return next(null);
         menu_result[0]["menuCategory"].forEach(function(){
             var item_count = 0;
             if( menu_result[0]["menuCategory"][count]["items"].length != 0){

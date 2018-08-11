@@ -58,7 +58,7 @@ CategoryCustomisation.prototype.getCategoryCustomisation = function(args,callbac
                     menu_customisation_option_modal.findCompleteOptions({menu_id : element.menu_id , customisation_id : element.customisation_id},function(err,res){
                         if(err) return callback(err);
                         count++;
-                        element["customisation_option"] = res[0];
+                        element["customisation"] = res[0];
                         if(count == result.length) return callback(null,result)
                     });
                 });
