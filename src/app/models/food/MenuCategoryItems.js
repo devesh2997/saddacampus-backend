@@ -2,7 +2,7 @@ var error_messages = require('../../config/error_messages');
 var Resource = require("./../Resource");
 var menu_modal = require('./Menu');
 var menu_category_modal = require('./MenuCategory');
-var menu_category_items_modal = require('./../modal/menu_category_items');
+var menu_category_items_modal = require('./../modal/food/menu_category_items');
 var _ = require("underscore");
 
 var MenuCategoryItems = function(menu_category_items){
@@ -28,19 +28,18 @@ MenuCategoryItems.prototype.addCategoryItems = function(args,callback){
     var error = {};
     var res = {};
     var scope = this;
-    if(args.menu_id && args.category_id && args.category_items.length != 0){
+    if(args && args.menu_id && args.category_id && args.category_items.length != 0){
             var items = [...args.category_items];
             this.menu_category_items.get({menu_id:args.menu_id , category_id:args.category_id},function(err,result){
                 if(err) return callback(err);
                 var item_id = result.length==0?1:result[result.length-1].item_id;
                 items.forEach(element => {
-                    var name = element.name.toUpperCase();
                     item_id++;
                     var values = {
                         menu_id:args.menu_id,
                         category_id: args.category_id,
                         item_id : item_id,
-                        name: name,
+                        name: element.name.toUpperCase(),
                         price : element.price,
                         description : element.description || "",
                         availability : element.availability || false,
@@ -51,10 +50,10 @@ MenuCategoryItems.prototype.addCategoryItems = function(args,callback){
                     scope.menu_category_items.create(values,function(err,result){
                         if(err) {
                             flag = true;
-                            error[name] = err.message;
+                            error[element.name] = err.message;
                         }
                         else {
-                            res[name] = result.MenuCategoryItems;
+                            res[element.name] = result.MenuCategoryItems;
                         }
                         if(items[items.length-1] == element)done();
                     })
@@ -94,19 +93,15 @@ MenuCategoryItems.prototype.findCategoryItems = function(args,callback){
 /**
  * 
  * @param {Object} args 
- * @param {String} args.menu_id
- * @param {String} args.category_id
- * @param {String} args.item_id
- * @param {Object} args.updates 
+ * @param {Object} args.args_old
+ * @param {String} args.args_old.menu_id
+ * @param {String} args.args_old.category_id
+ * @param {String} args.args_old.item_id
+ * @param {Object} args.args_updates 
  */
 MenuCategoryItems.prototype.updateCategoryItem = function(args,callback){
-    if(args && args.menu_id && args.category_id && args.item_id && !(_.isEmpty(args.updates))){
-        var args_where = {
-            menu_id : args.menu_id,
-            category_id : args.category_id,
-            item_id : args.item_id
-        };
-        this.menu_category_items.update(args.updates , args_where , function(err,result){
+    if(args && !(_.isEmpty(args.args_old)) && !(_.isEmpty(args.args_updates))){
+        this.menu_category_items.update(args.args_updates , args.args_old , function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });

@@ -1,4 +1,4 @@
-var modal = require("./../modal/menu");
+var modal = require("./../modal/food/menu");
 var Resource = require("./../Resource");
 var uniqid = require("uniqid");
 var error_messages = require('../../config/error_messages');
@@ -38,7 +38,7 @@ Menu.prototype.addMenu = function(args,callback){
  */
 Menu.prototype.deleteMenu = function(args,callback){
     if(args.menu_id){
-        this.resource.delete({menu_id : args.menu_id},function(err,result){
+        this.resource.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -54,7 +54,7 @@ Menu.prototype.deleteMenu = function(args,callback){
  */
 Menu.prototype.findByIdMenu = function(args,callback){
     if(args.menu_id){
-        this.resource.get({menu_id:args.menu_id},function(err,result){
+        this.resource.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });

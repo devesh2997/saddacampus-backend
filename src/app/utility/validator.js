@@ -39,3 +39,7 @@ exports.menuCategoryItemNameIsValid = function(item_name){
 exports.menuCustomisationItemNameIsValid = function(item_name){
 	return item_name && item_name.length >= 3;
 }
+
+exports.instituteCodeIsValid = function(institute_code){
+	return institute_code && institute_code.length == 6;
+}

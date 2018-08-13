@@ -1,6 +1,6 @@
 var error_messages = require('../../config/error_messages');
 var Resource = require("./../Resource");
-var menu_customisation_modal = require('./../modal/menu_customization');
+var menu_customisation_modal = require('./../modal/food/menu_customization');
 var _ = require("underscore");
 var menu_modal = require('./Menu');
 
@@ -26,33 +26,23 @@ MenuCustomisation.prototype.addCustomisation = function(args,callback){
     if(args && args.menu_id && args.menu_customisation && args.menu_customisation.length != 0){
         var customisation = [...args.menu_customisation];
         customisation.forEach(element => {
-            var min_selections , max_selections ;
-            var name = element.name.toUpperCase();
-            var customisation_id = name.substr(0,3);
-            min_selections = element.min_selections ? element.min_selections : 0;
-            max_selections = element.max_selections ? element.max_selections : 0;
-            if(min_selections > max_selections){
-                flag = true;
-                error[name] = error_messages.MIN_MAX_SELECTION;
-            } else {
-                var values = {
-                    menu_id:args.menu_id,
-                    customisation_id: customisation_id,
-                    name: name,
-                    min_selections : min_selections,
-                    max_selections : max_selections
-                }
-                this.menu_customisation.create(values,function(err,result){
-                    if(err) {
-                        flag = true;
-                        error[name] = err.message;
-                    }
-                    else {
-                        res[name] = result.MenuCustomisation;
-                    }
-                    if(customisation[customisation.length-1] == element)done();
-                });
+            var values = {
+                menu_id: args.menu_id,
+                customisation_id: element.customisation_id,
+                name: element.name,
+                min_selections : element.min_selections || 0,
+                max_selections : element.max_selections || 0
             }
+            this.menu_customisation.create(values,function(err,result){
+                if(err) {
+                    flag = true;
+                    error[element.name] = err.message;
+                }
+                else {
+                    res[element.name] = result.MenuCustomisation;
+                }
+                if(customisation[customisation.length-1] == element)done();
+            });
         });
     } else{
         return callback(new Error(error_messages.MISSING_PARAMETERS));
@@ -73,71 +63,32 @@ MenuCustomisation.prototype.addCustomisation = function(args,callback){
  * @param {String} args.customisation.id 
  */
 MenuCustomisation.prototype.findMenuCustomisation = function(args,callback){
-    var flag = true;
-    var value = {};
-    if(args.menu_id && args.customisation_id){
-        value = {
-            menu_id : args.menu_id,
-            customisation_id : args.customisation_id
-        };
-    } 
-    else if(args.menu_id){
-        value = {
-            menu_id : args.menu_id
-        }
-    }
-    else if(args.customisation_id){
-        value = {
-            customisation_id : args.customisation_id
-        }
-    }
-    else {
-        flag = false;
-    }
-    if(flag){
-        this.menu_customisation.get(value,function(err,result){
+    if(args && args.menu_id && args.customisation_id){
+        this.menu_customisation.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
     } else {
         return callback(new Error(error_messages.MISSING_PARAMETERS));
     }
-    
 }
 
 /**
  * 
  * @param {Object} args 
- * @param {String} args.menu_id
- * @param {String} args.customisation_id
- * @param {Object} args.update 
+ * @param {Object} args.args_old
+ * @param {Object} args.args_update 
  */
 MenuCustomisation.prototype.updateCustomisation = function(args,callback){
-    var args_where;
-    if(args && args.menu_id && args.customisation_id && args.update && !(_.isEmpty(args.update))){
-        args_where = {
-            menu_id : args.menu_id,
-            customisation_id : args.customisation_id
-        }
-    }
-    else if(args && args.customisation_id && args.update && !(_.isEmpty(args.update))){
-        args_where = {
-            customisation_id : args.customisation_id
-        }
-    }
-    else {
+    if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
+        this.menu_customisation.update(args.args_update , args.args_old , function(err,result){
+            if(err) return callback(err);
+            return callback(null , result);
+        });
+    } else {
         return callback(new Error(error_messages.MISSING_PARAMETERS));
-    }
-    if(args.update.name != null){
-        args.update.name  = args.update.name.toUpperCase();
-        args.update["customisation_id"] = args.update.name.substr(0,3);
-    }
-    this.menu_customisation.update(args.update , args_where , function(err,result){
-        if(err) return callback(err);
-        return callback(null , result);
-    });
-} 
-
+    }         
+}
 /**
  * delete from menu customisation
  * @param {Object} args 
@@ -145,30 +96,14 @@ MenuCustomisation.prototype.updateCustomisation = function(args,callback){
  * @param {String} args.customisation_id 
  */
 MenuCustomisation.prototype.deleteCustomisation = function(args,callback){
-    var value;
-    if(args && args.menu_id && args.customisation_id){
-        value = {
-            menu_id : args.menu_id,
-            customisation_id : args.customisation_id
-        }
+    if(args && (args.menu_id || args.customisation_id)){
+        this.menu_customisation.delete(args , function(err,result){
+            if(err) return callback(err);
+            return  callback(null,result);
+        });
+    } else {
+    return callback(new Error(error_messages.MISSING_PARAMETERS));
     }
-    else if(args && args.menu_id){
-        value = {
-            menu_id : args.menu_id
-        }
-    }
-    else if(args && args.customisation_id){
-        value = {
-            customisation_id : args.customisation_id
-        }
-    }
-    else {
-        return callback(new Error(error_messages.MISSING_PARAMETERS));
-    }
-    this.menu_customisation.delete(value , function(err,result){
-        if(err) return callback(err);
-        return  callback(null,result);
-    });
 }
 
-module.exports = new MenuCustomisation(new MenuCustomisation());
+module.exports = new MenuCustomisation(new MenuCustomisation())

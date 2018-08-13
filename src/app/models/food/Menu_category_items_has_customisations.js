@@ -1,4 +1,4 @@
-var modal = require("./../modal/menu_category_items_has_customisations");
+var modal = require("./../modal/food/menu_category_items_has_customisations");
 var Resource = require("./../Resource");
 var error_messages = require('../../config/error_messages');
 var menu_customisation_modal = require('./MenuCustomization');
@@ -29,13 +29,7 @@ ItemsCustomisation.prototype.constructor = ItemsCustomisation;
  */
 ItemsCustomisation.prototype.addItemCustomisation = function(args,callback){
     if(args && args.menu_id && args.category_id && args.item_id && args.customisation_id){
-        var value = {
-            'menu_id' : args.menu_id,
-            'category_id' : args.category_id,
-            'item_id' : args.item_id,
-            'customisation_id' : args.customisation_id
-        }
-        this.items_customisation.create(value,function(err,result){
+        this.items_customisation.create(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         })
@@ -53,7 +47,7 @@ ItemsCustomisation.prototype.addItemCustomisation = function(args,callback){
  */
 ItemsCustomisation.prototype.getItemCustomisation = function(args,callback){
     if(args.menu_id && args.category_id && args.item_id){
-        this.items_customisation.get({menu_id : args.menu_id , category_id : args.category_id , item_id : args.item_id},function(err,result){
+        this.items_customisation.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);       
         });
@@ -72,7 +66,7 @@ ItemsCustomisation.prototype.getItemCustomisation = function(args,callback){
  */
 ItemsCustomisation.prototype.deleteItemCustomisation = function(args,callback){
     if(args.menu_id && args.category_id && args.item_id && args.customisation_id){
-        this.items_customisation.delete({menu_id : args.menu_id , category_id : args.category_id , item_id : args.item_id , customisation_id : args.customisation_id},function(err,result){
+        this.items_customisation.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);       
         });

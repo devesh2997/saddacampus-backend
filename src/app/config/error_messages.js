@@ -43,3 +43,4 @@ exports.UNIQUE_FIELD_MISSING = 'Unique field value missing';
 exports.DUPLICATE_RESOURCE = 'Duplicate resource exists';
 exports.FOREIGN_KEY_UPDATE_NOT_ALLOWED = ' Cannot add or update a child row: a foreign key constraint fails';
 exports.MIN_MAX_SELECTION = 'Minimum selection more than maximum selection';
+exports.INVALID_INSTITUTE_CODE = "Institute code should be of length 6";

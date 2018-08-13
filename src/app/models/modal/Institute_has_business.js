@@ -1,28 +1,28 @@
-var category_customisation_def = {};
-category_customisation_def.indexes = {
+var institute_business = {};
+institute_business.indexes = {
 
 }
-category_customisation_def.fields = [
+institute_business.fields = [
     {
-        name: 'menu_id',
+        name: 'code',
+        type: 'Strinf',
+        isPrimary: true,
+        isForeign: true,
+        isCompulsory: true
+    },
+    {
+        name: 'merchant_id',
         type: 'string',
         isPrimary: true,
         isForeign: true,
         isCompulsory: true
     },
     {
-        name: 'category_id',
+        name: 'business_id',
         type: 'string',
         isPrimary: true,
-        isForeign: true,
-        isCompulsory: true
-    },
-    {
-        name: 'customisation_id',
-        type: 'string',
-        isPrimary: true,
-        isForeign: true,
+        isForeign: false,
         isCompulsory: true
     }
 ];
-module.exports = category_customisation_def;
+module.exports = institute_business;

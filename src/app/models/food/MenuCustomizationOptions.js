@@ -2,7 +2,7 @@ var error_messages = require('../../config/error_messages');
 var Resource = require("./../Resource");
 var menu_modal = require('./Menu');
 var menu_customisation_modal = require('./MenuCustomization');
-var menu_customisation_options_modal = require('./../modal/menu_customization_options');
+var menu_customisation_options_modal = require('./../modal/food/menu_customization_options');
 var _ = require("underscore");
 
 var MenuCustomisationOptions = function(menu_customisation_options){
@@ -28,29 +28,28 @@ MenuCustomisationOptions.prototype.addCustomisationOptions = function(args,callb
     var error = {};
     var res = {};
     var scope = this;
-    if(args.menu_id && args.customisation_id && args.customisation_options && args.customisation_options.length != 0){
+    if(args && args.menu_id && args.customisation_id && args.customisation_options && args.customisation_options.length != 0){
             var items = [...args.customisation_options];
             this.menu_customisation_options.get({menu_id:args.menu_id , customisation_id:args.customisation_id},function(err,result){
                 if(err) return callback(err);
                 var item_id = result.length==0?0:result[result.length-1].customisation_option_id;
                 items.forEach(element => {
-                    var name = element.name.toUpperCase();
                     item_id++;
                     var values = {
                         menu_id:args.menu_id,
                         customisation_id: args.customisation_id,
                         customisation_option_id : item_id,
-                        name: name,
+                        name: element.name.toUpperCase(),
                         price : element.price,
                         is_non_veg : element.is_non_veg || false
                     }
                     scope.menu_customisation_options.create(values,function(err,result){
                         if(err) {
                             flag = true;
-                            error[name] = err.message;
+                            error[element.name] = err.message;
                         }
                         else {
-                            res[name] = result.MenuCustomisationOptions;
+                            res[element.name] = result.MenuCustomisationOptions;
                         }
                         if(items[items.length-1] == element)done();
                     })
@@ -118,10 +117,11 @@ MenuCustomisationOptions.prototype.findCompleteOptions = function(args,callback)
 /**
  * 
  * @param {Object} args 
- * @param {String} args.menu_id
- * @param {String} args.customisation_id
- * @param {String} args.customisation_option_id
- * @param {Object} args.updates 
+ * @param {Object} args.args_old
+ * @param {String} args_old.menu_id
+ * @param {String} args_old.customisation_id
+ * @param {String} args_old.customisation_option_id
+ * @param {Object} args.args_update 
  */
 MenuCustomisationOptions.prototype.updateCustomisationOption = function(args,callback){
     if(args && args.menu_id && args.customisation_id && args.customisation_option_id && !(_.isEmpty(args.updates))){

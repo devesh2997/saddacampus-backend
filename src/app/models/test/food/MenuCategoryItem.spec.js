@@ -20,7 +20,10 @@ var MenuCategory = require('./../../food/MenuCategory');
             menu_id = res.Menus.menu_id;
             MenuCategory.addCategories({
                 menu_id: menu_id,
-                categories : ['Rice']
+                categories : [{
+                    category_name : "RICE",
+                    category_id : "RIC"
+                }]
             },function(err,result){
                 category_id = result.result.RICE.category_id;
                 done();
@@ -36,7 +39,7 @@ var MenuCategory = require('./../../food/MenuCategory');
                 category_id: category_id,
                 category_items : [
                     {
-                        name : 'Fried Rice',
+                        name : 'Fried',
                         price : 140 
                     }
                 ]
@@ -68,12 +71,12 @@ var MenuCategory = require('./../../food/MenuCategory');
                 category_id: category_id,
                 category_items : [
                     {
-                        name : 'Fried_Rice',
+                        name : 'Fried',
                         price : 140 
                     }
                 ]
             },function(err,result){
-                MenuCategoryItem.findCategoryItems({menu_id : menu_id , category_id : category_id , item_id : result.result.FRIED_RICE.item_id},function(err,result){
+                MenuCategoryItem.findCategoryItems({menu_id : menu_id , category_id : category_id , item_id:result.result.Fried.item_id},function(err,result){
                     error = err;
                     res = result;
                     done();
@@ -84,7 +87,7 @@ var MenuCategory = require('./../../food/MenuCategory');
             assert.ok(error === null);
         });
         it("checking the name in result",function(){
-            assert.ok(res[0].name === 'FRIED_RICE');
+            assert.ok(res[0].name === 'FRIED');
         });
         it("checking category_id in result",function(){
             assert.ok(res[0].category_id === category_id);
@@ -99,19 +102,21 @@ var MenuCategory = require('./../../food/MenuCategory');
                 category_id: category_id,
                 category_items : [
                     {
-                        name : 'Fried_Rice',
+                        name : 'Fried',
                         price : 140 
                     }
                 ]
             },function(err,result){
-                MenuCategoryItem.updateCategoryItem({
+                var args_old = {
                     menu_id : menu_id,
                     category_id : category_id,
-                    item_id : result.result.FRIED_RICE.item_id,
-                    updates:{
-                        name: 'Steamed_Rice',
-                        price : 800
-                    }},function(err,result){
+                    item_id : result.result.Fried.item_id,
+                }
+                var args_update = {
+                    name: 'Steamed_Rice',
+                    price : 800
+                }
+                MenuCategoryItem.updateCategoryItem({args_old : args_old , args_updates : args_update},function(err,result){
                     error = err;
                     res = result;
                     done();
@@ -137,7 +142,7 @@ var MenuCategory = require('./../../food/MenuCategory');
                 category_id: category_id,
                 category_items : [
                     {
-                        name : 'Fried_Rice',
+                        name : 'Fried',
                         price : 140 
                     }
                 ]
@@ -145,7 +150,7 @@ var MenuCategory = require('./../../food/MenuCategory');
                 MenuCategoryItem.deleteCategoryItem({
                     menu_id : menu_id,
                     category_id : category_id,
-                    item_id : result.result.FRIED_RICE.item_id
+                    item_id : result.result.Fried.item_id
                     },function(err,result){
                     error = err;
                     res = result;

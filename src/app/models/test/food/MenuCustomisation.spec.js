@@ -27,7 +27,8 @@ var Menu = require("./../../food/Menu");
                 menu_id: menu_id,
                 menu_customisation : [
                     {
-                        name: 'butter',
+                        name: 'BUTTER',
+                        customisation_id : 'BUT',
                         min_selections : 0,
                         max_selections : 2
                     }
@@ -59,7 +60,8 @@ var Menu = require("./../../food/Menu");
                 menu_id: menu_id,
                 menu_customisation : [
                     {
-                        name: 'butter',
+                        name: 'BUTTER',
+                        customisation_id : 'BUT',
                         min_selections : 0,
                         max_selections : 2
                     }
@@ -90,22 +92,25 @@ var Menu = require("./../../food/Menu");
                 menu_id: menu_id,
                 menu_customisation : [
                     {
-                        name: 'butter',
+                        name: 'BUTTER',
+                        customisation_id : 'BUT',
                         min_selections : 0,
                         max_selections : 2
                     }
                 ]
             },function(err,result){
-                    MenuCustomisation.updateCustomisation({
-                        menu_id:menu_id,
-                        customisation_id : result.result.BUTTER.customisation_id, 
-                        update: {
-                            name : 'Crust'
-                        }
-                        },function(err,result){
-                    error = err;
-                    res = result;
-                    done();
+                var args_old = {
+                    menu_id:menu_id,
+                    customisation_id : result.result.BUTTER.customisation_id 
+                }
+                var args_update = {
+                    name : 'CRUST',
+                    customisation_id : 'CRU'
+                }
+                MenuCustomisation.updateCustomisation({args_old : args_old , args_update : args_update},function(err,result){
+                error = err;
+                res = result;
+                done();
                 });
             });
         });
@@ -124,7 +129,8 @@ var Menu = require("./../../food/Menu");
                 menu_id: menu_id,
                 menu_customisation : [
                     {
-                        name: 'butter',
+                        name: 'BUTTER',
+                        customisation_id : 'BUT',
                         min_selections : 0,
                         max_selections : 2
                     }

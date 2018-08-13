@@ -66,6 +66,7 @@ Resource.prototype.validateValues = function(values,callback){
 		var resc_field = this.getFieldByName(field_name);
 		if(typeof values[field_name] !== resc_field.type){
 			flag = false;
+			console.log(typeof values[field_name]+"  "+resc_field.type)
 			if(resc_field.validation_error)errors[field_name] = resc_field.validation_error;
 			else errors[field_name] = error_messages.INVALID_RESOURCE_FIELD_TYPE
 			continue;
@@ -227,9 +228,12 @@ Resource.prototype.validateUniqueConstraints = function(args,callback){
  */
 Resource.prototype.get = function(args, callback){
 	var scope = this;
+	console.log(args);
 	var query = QueryBuilder.selectAll().from([this.table_name]).whereAllEqual(args).build();
+	console.log(query);
 	db.get().query(query,function(err,result){
 		if(err){
+			console.log(err.message)
 			Log.e(err.toString());
 			return callback(new Error(error_messages.UNKNOWN_ERROR));
 		}
@@ -261,6 +265,7 @@ Resource.prototype.insert = function(args,callback){
 	var query = QueryBuilder.insertInto(this.table_name).columns(columns).numOfValues(values.length).build();
 	db.get().query(query,values,function(err){
 		if(err){
+			console.log(err.message)
 			Log.e(err.toString());
 			return callback(new Error(error_messages.UNKNOWN_ERROR));
 		}

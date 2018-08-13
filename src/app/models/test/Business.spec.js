@@ -28,7 +28,7 @@ var testSetup = function(callback){
 	});
 }
 
-describe('Business-model',function(){
+describe.only('Business-model',function(){
 	before(function(done){
 		db.connect(db.MODE_TEST, function(){
 			db.dropTable(db.tables.businesses.name, function(){

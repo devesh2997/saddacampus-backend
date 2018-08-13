@@ -1,4 +1,4 @@
-var modal = require("./../modal/menu_category_has_customisation");
+var modal = require("./../modal/food/menu_category_has_customisation");
 var Resource = require("./../Resource");
 var error_messages = require('../../config/error_messages');
 var menu_customisation_modal = require('./MenuCustomization');
@@ -27,12 +27,7 @@ CategoryCustomisation.prototype.constructor = CategoryCustomisation;
  */
 CategoryCustomisation.prototype.addCategoryCustomisation = function(args,callback){
     if(args && args.menu_id && args.category_id && args.customisation_id){
-        var value = {
-            'menu_id' : args.menu_id,
-            'category_id' : args.category_id,
-            'customisation_id' : args.customisation_id
-        }
-        this.category_customisation.create(value,function(err,result){
+        this.category_customisation.create(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         })
@@ -49,7 +44,7 @@ CategoryCustomisation.prototype.addCategoryCustomisation = function(args,callbac
  */
 CategoryCustomisation.prototype.getCategoryCustomisation = function(args,callback){
     if(args.menu_id && args.category_id){
-        this.category_customisation.get({menu_id : args.menu_id , category_id : args.category_id},function(err,result){
+        this.category_customisation.get(args,function(err,result){
             if(err) return callback(err);
             var count = 0;
             if(result.length == 0) return callback(null,[])
@@ -78,7 +73,7 @@ CategoryCustomisation.prototype.getCategoryCustomisation = function(args,callbac
  */
 CategoryCustomisation.prototype.deleteCategoryCustomisation = function(args,callback){
     if(args.menu_id && args.category_id && args.customisation_id){
-        this.category_customisation.delete({menu_id : args.menu_id , category_id : args.category_id , customisation_id : args.customisation_id},function(err,result){
+        this.category_customisation.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);       
         });

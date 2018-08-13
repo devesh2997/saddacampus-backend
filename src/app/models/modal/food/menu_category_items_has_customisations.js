@@ -1,3 +1,5 @@
+var validator = require('../../../utility/validator');
+var error_messages = require('../../../config/error_messages');
 var items_customisation_def = {};
 items_customisation_def.indexes = {
 
@@ -15,6 +17,8 @@ items_customisation_def.fields = [
         type: 'string',
         isPrimary: true,
         isForeign: true,
+        validator: validator.menuCategoryIdIsValid,
+        validation_error: error_messages.INVALID_MENU_CATEGORY_ID,
         isCompulsory: true
     },
     {
@@ -29,6 +33,8 @@ items_customisation_def.fields = [
         type: 'string',
         isPrimary: true,
         isForeign: true,
+        validator: validator.menuCustomisationIdIsValid,
+        validation_error: error_messages.INVALID_MENU_CUSTOMISATION_ID,
         isCompulsory: true
     }
 ];

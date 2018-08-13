@@ -25,7 +25,10 @@ var Menu = require("./../../food/Menu");
         before(function(done){
             MenuCategory.addCategories({
                 menu_id: menu_id,
-                categories : ['Rice']
+                categories : [{
+                    category_name : "RICE",
+                    category_id : "RIC"
+                }]
             },function(err,result){
                 error = err;
                 res = result;
@@ -51,7 +54,10 @@ var Menu = require("./../../food/Menu");
         before(function(done){
             MenuCategory.addCategories({
                 menu_id: menu_id,
-                categories : ['Rice']
+                categories : [{
+                    category_name : "RICE",
+                    category_id : "RIC"
+                }]
             },function(err,result){
                 MenuCategory.findMenuCategory({menu_id:menu_id,category_id:result.result.RICE.category_id},function(err,result){
                     error = err;
@@ -73,9 +79,20 @@ var Menu = require("./../../food/Menu");
         before(function(done){
             MenuCategory.addCategories({
                 menu_id: menu_id,
-                categories : ['Rice']
+                categories : [{
+                    category_name : "RICE",
+                    category_id : "RIC"
+                }]
             },function(err,result){
-                MenuCategory.updateCategory({menu_id:menu_id,category_id:result.result.RICE.category_id , updated_category_name:'pizza'},function(err,result){
+                var args_old = {
+                    menu_id : menu_id,
+                    category_id : result.result.RICE.category_id
+                }
+                var args_update = {
+                    category_name : "PIZZA",
+                    category_id : "PIZ"
+                }
+                MenuCategory.updateCategory({args_old : args_old , args_update : args_update},function(err,result){
                     error = err;
                     res = result;
                     done();
@@ -95,7 +112,10 @@ var Menu = require("./../../food/Menu");
         before(function(done){
             MenuCategory.addCategories({
                 menu_id: menu_id,
-                categories : ['Rice']
+                categories : [{
+                    category_name : "RICE",
+                    category_id : "RIC"
+                }]
             },function(err,result){
                 MenuCategory.deleteCategory({menu_id:menu_id,category_id:result.result.RICE.category_id},function(err,result){
                     error = err;

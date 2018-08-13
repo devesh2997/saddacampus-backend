@@ -1,10 +1,10 @@
-var validator = require('../../utility/validator');
-var error_messages = require('../../config/error_messages');
-var menu_custom_def = {};
-menu_custom_def.indexes = {
-
+var validator = require('../../../utility/validator');
+var error_messages = require('../../../config/error_messages');
+var menu_custom_options_def = {};
+menu_custom_options_def.indexes = {
+  
 }
-menu_custom_def.fields = [
+menu_custom_options_def.fields = [
     {
         name: 'id',
         type: 'number',
@@ -23,9 +23,16 @@ menu_custom_def.fields = [
         name: 'customisation_id',
         type: 'string',
         isPrimary: true,
-        isForeign: false,
+        isForeign: true,
         validator: validator.menuCustomisationIdIsValid,
         validation_error: error_messages.INVALID_MENU_CUSTOMISATION_ID,
+        isCompulsory: true
+    },
+    {
+        name: 'customisation_option_id',
+        type: 'number',
+        isPrimary: true,
+        isForeign: false,
         isCompulsory: true
     },
     {
@@ -33,24 +40,21 @@ menu_custom_def.fields = [
         type: 'string',
         isPrimary: false,
         isForeign: false,
-        validator: validator.menuCustomisationItemNameIsValid,
-        validation_error : error_messages.INVALID_MENU_CUSTOMISATION_ITEM_NAME,
         isCompulsory: true
     },
     {
-        name: 'min_selections',
+        name: 'price',
         type: 'number',
         isPrimary: false,
         isForeign: false,
-        isCompulsory: false
+        isCompulsory: true
     },
     {
-        name: 'max_selections',
-        type: 'number',
+        name: 'is_non_veg',
+        type: 'boolean',
         isPrimary: false,
         isForeign: false,
         isCompulsory: false
     }
-
 ];
-module.exports = menu_custom_def;
+module.exports = menu_custom_options_def;

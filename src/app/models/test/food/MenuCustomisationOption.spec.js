@@ -22,7 +22,8 @@ var MenuCustomisation = require('./../../food/MenuCustomization');
                 menu_id: menu_id,
                 menu_customisation : [
                     {
-                        name: 'butter',
+                        name: 'BUTTER',
+                        customisation_id : 'BUT',
                         min_selections : 0,
                         max_selections : 2
                     }
@@ -74,7 +75,7 @@ var MenuCustomisation = require('./../../food/MenuCustomization');
                 customisation_id: customisation_id,
                 customisation_options : [
                     {
-                        name : 'Cheese',
+                        name : 'CHEESE',
                         price : 140 
                     }
                 ]
@@ -109,7 +110,7 @@ var MenuCustomisation = require('./../../food/MenuCustomization');
                 customisation_id: customisation_id,
                 customisation_options : [
                     {
-                        name : 'Cheese',
+                        name : 'CHEESE',
                         price : 140 
                     }
                 ]
@@ -148,7 +149,7 @@ var MenuCustomisation = require('./../../food/MenuCustomization');
                 customisation_id: customisation_id,
                 customisation_options : [
                     {
-                        name : 'Cheese',
+                        name : 'CHEESE',
                         price : 140 
                     }
                 ]

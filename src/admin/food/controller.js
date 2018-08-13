@@ -127,7 +127,7 @@ exports.categoryItems = function(req,res){
 }
 
 exports.findMenuCategoryItem = function(req,res){
-    menuCategoryItems.findItemsCustomisation(req.body , function(err,result){
+    menuCategoryItems.findCategoryItems(req.body , function(err,result){
         if(err) res.send({success:false,error:err.message});
         else{
             res.send({success:true,result:result});
