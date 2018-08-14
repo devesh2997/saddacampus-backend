@@ -5,7 +5,7 @@ institute_business.indexes = {
 institute_business.fields = [
     {
         name: 'code',
-        type: 'Strinf',
+        type: 'string',
         isPrimary: true,
         isForeign: true,
         isCompulsory: true
@@ -14,7 +14,7 @@ institute_business.fields = [
         name: 'merchant_id',
         type: 'string',
         isPrimary: true,
-        isForeign: true,
+        isForeign: false,
         isCompulsory: true
     },
     {

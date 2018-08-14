@@ -39,7 +39,7 @@ Institute.prototype.addInstitute = function(args,callback){
  */
 Institute.prototype.updateInstitute = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.institute.update({args_set : args.args_update, args_where : args.args_old},function(err,result){
+        this.institute.update(args.args_update,args.args_old,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });

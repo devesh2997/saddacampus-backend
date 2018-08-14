@@ -1,16 +1,13 @@
 var error_messages = require('../../config/error_messages');
-var Resource = require("./Resource");
-var institute_has_business_modal = require('./modal/Institute_has_business');
+var Resource = require("./../Resource");
+var institute_has_business_modal = require('./../modal/Institute_has_business');
 var institue = require('./Institue');
 var _ = require('underscore');
 
-var InstituteBusiness= function(institute_has_businesses){
+var InstituteBusiness= function(){
     Resource.call(this,'InstituesBusiness','institutes_has_businesses',institute_has_business_modal);
-    this.institute_has_businesses = institute_has_businesses;
     institute_has_business_modal.fields[0].ref_model = institue.getRef();
     institute_has_business_modal.fields[0].ref_model_field_name = 'code';
-    institute_has_business_modal.fields[1].ref_model = institue.getRef();
-    institute_has_business_modal.fields[1].ref_model_field_name = 'merchant_id';
 }
 InstituteBusiness.prototype  = Object.create(Resource.prototype);
 InstituteBusiness.prototype.constructor = InstituteBusiness;
@@ -41,7 +38,7 @@ InstituteBusiness.prototype.addInstitute = function(args,callback){
  */
 InstituteBusiness.prototype.updateInstitute = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.institute.update({args_set : args.args_update, args_where : args.args_old},function(err,result){
+        this.update(args.args_update,args.args_old,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -57,7 +54,7 @@ InstituteBusiness.prototype.updateInstitute = function(args,callback){
  */
 InstituteBusiness.prototype.findInstitute = function(args,callback){
     if(args && args.code ){
-        this.institue.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -74,7 +71,7 @@ InstituteBusiness.prototype.findInstitute = function(args,callback){
  */
 InstituteBusiness.prototype.deleteInstitute = function(args,callback){
     if(args && args.code && args.merchant_id && args.business_id){
-        this.institute.delete(args,function(err,result){
+        this.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -83,4 +80,4 @@ InstituteBusiness.prototype.deleteInstitute = function(args,callback){
     }
 }
 
-module.exports = new InstituteBusiness(new InstituteBusiness());
+module.exports = new InstituteBusiness();

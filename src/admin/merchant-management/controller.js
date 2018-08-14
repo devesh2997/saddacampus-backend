@@ -1,5 +1,5 @@
 var Onboarding = require('./processes/onboarding');
-var Merchant = require('../../app/models/Merchant')
+var Merchant = require('../../app/models/_Merchants')
 
 // create new merchant
 exports.create = function(req, res){
@@ -19,66 +19,73 @@ exports.create = function(req, res){
 	});
 };
 
+exports.get = function(req,res){
+	Merchant.findMerchant({merchant_id: req.params.merchant_id},function(err,result){
+		if(err) res.send({success:false,error:err.message});
+        else res.send({success:true,result:result});
+	});
+}
+
 //enable merchant with given merchant_id
 exports.enable = function(req, res){
-	var merchantId = req.params.merchantId;
-	Merchant.enable({merchant_id: merchantId}, function(err, result){
-		var response = {};
-		response.success = true;
-		if(err){
-			response.success = false;
-			response.message = err.message;
-		}else{
-			delete result.Merchant['encrypted_password'];
-			response.Merchant = result.Merchant;
-		}
-		res.json(response);
-	});
+	var args_old = {
+		merchant_id : req.params.merchant_id
+	};
+	var args_update = {
+		status : "active"
+	}
+	Merchant.updateMerchant({args_old:args_old , args_update : args_update},function(err,result){
+		if(err) res.send({success:false,error:err.message});
+        else res.send({success:true,result:result});
+	})
 }
 
 //disable merchant with given merchant_id
 exports.disable = function(req, res){
-	var merchantId = req.params.merchantId;
-	Merchant.disable({merchant_id: merchantId}, function(err, result){
-		var response = {};
-		response.success = true;
-		if(err){
-			response.success = false;
-			response.message = err.message;
-		}else{
-			delete result.Merchant['encrypted_password'];
-			response.Merchant = result.Merchant;
-		}
-		res.json(response);
-	});
+	var args_old = {
+		merchant_id : req.params.merchant_id
+	};
+	var args_update = {
+		status : "disabled"
+	}
+	Merchant.updateMerchant({args_old:args_old , args_update : args_update},function(err,result){
+		if(err) res.send({success:false,error:err.message});
+        else res.send({success:true,result:result});
+	})
 }
 
-//get all the merchants
-exports.getAll = function(req, res){
-	Merchant.getAll(function(err, result){
-		var response = {};
-		response.success = true;
-		if(err){
-			response.success = false;
-			response.message = err.message;
-		}else{
-			response.Merchants = result.Merchants;
-		}
-		res.json(response);
-	});
+exports.delete = function(req,res){
+	Merchant.deleteMerchant(req.body,function(err,result){
+		if(err) res.send({success:false,error:err.message});
+        else res.send({success:true,result:result});
+	})
 }
+// //get all the merchants
+// exports.getAll = function(req, res){
+// 	Merchant.getAll(function(err, result){
+// 		var response = {};
+// 		response.success = true;
+// 		if(err){
+// 			response.success = false;
+// 			response.message = err.message;
+// 		}else{
+// 			response.Merchants = result.Merchants;
+// 		}
+// 		res.json(response);
+// 	});
+// }
 
-//get merchant details
-exports.get = function(req, res){
-	Merchant.findByMerchantId({merchant_id: req.params.merchantId},function(err,result){
-		var response = {};
-		response.success = true;
-		if(err){
-			response.success = false;
-			response.message = err.message;
-		}else{
-			response.Merchant = result.Merchants;
-		}
-		res.json(response);
-	});
-}
+// //get merchant details
+// exports.get = function(req, res){
+// 	Merchant.findByMerchantId({merchant_id: req.params.merchantId},function(err,result){
+// 		var response = {};
+// 		response.success = true;
+// 		if(err){
+// 			response.success = false;
+// 			response.message = err.message;
+// 		}else{
+// 			response.Merchant = result.Merchants;
+// 		}
+// 		res.json(response);
+// 	});
+// }

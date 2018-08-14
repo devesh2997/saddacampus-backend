@@ -1,14 +1,17 @@
 var error_messages = require('../config/error_messages');
 var Resource = require("./Resource");
-var restaurant_modal = require('./modal/Institue');
+var restaurant_modal = require('./modal/Restaurant');
 var _ = require('underscore');
 var menu = require("./food/Menu");
+var Merchant = require('./_Merchants');
 
 var Restaurant = function(restaurant){
     Resource.call(this,'Restaurant','restaurant_info',restaurant_modal);
     this.restaurant = restaurant;
-    restaurant_modal.fields[2].ref_model = menu.getRef();
-    restaurant_modal.fields[2].ref_model_field_name = 'menu_id';
+    restaurant_modal.fields[1].ref_model = Merchant.getRef();
+    restaurant_modal.fields[1].ref_model_field_name = 'merchant_id';
+    restaurant_modal.fields[3].ref_model = menu.getRef();
+    restaurant_modal.fields[3].ref_model_field_name = 'menu_id';
 }
 Restaurant.prototype  = Object.create(Resource.prototype);
 Restaurant.prototype.constructor = Restaurant;
@@ -43,7 +46,7 @@ Restaurant.prototype.addRestaurant = function(args,callback){
         return callback(new Error(error_messages.MISSING_PARAMETERS));
     }
 }
-
+3
 /**
  * Update Restaurant 
  * @param {Object} args
@@ -52,7 +55,7 @@ Restaurant.prototype.addRestaurant = function(args,callback){
  */
 Restaurant.prototype.updateRestaurant = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.Restaurant.update({args_set : args.args_update, args_where : args.args_old},function(err,result){
+        this.restaurant.update( args.args_update, args.args_old,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -66,10 +69,11 @@ Restaurant.prototype.updateRestaurant = function(args,callback){
  * @param {Object} args 
  * @param {String} args.merchant_id
  * @param {String} args.business_id
+ * @param {String} args.menu_id
  */
 Restaurant.prototype.findRestaurant = function(args,callback){
     if(args && args.merchant_id && args.business_id ){
-        this.institue.get(args,function(err,result){
+        this.restaurant.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -82,10 +86,11 @@ Restaurant.prototype.findRestaurant = function(args,callback){
  * @param {Object} args
  * @param {String} args.merchant_id
  * @param {String} args.business_id
+ * @param {String} args.menu_id
  */
 Restaurant.prototype.deleteRestaurant = function(args,callback){
-    if(args && args.merchant_id && args.business_id){
-        this.Restaurant.delete(args,function(err,result){
+    if(args && args.merchant_id && args.business_id && args.menu_id){
+        this.restaurant.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });

@@ -3,15 +3,15 @@ var router = express.Router();
 var controller = require('./controller');
 var VerifyToken = require('../VerifyToken');
 
-router.post('/create',VerifyToken.allowCore,controller.create);
+router.post('/',controller.create);
 
-router.get('/',VerifyToken.allowCore,controller.getAll);
+router.get('/:merchant_id',controller.get);
 
-router.get('/:merchantId',VerifyToken.allowCore,controller.get);
+router.get('/:merchant_id/enable',controller.enable);
 
-router.get('/:merchantId/enable',VerifyToken.allowCore,controller.enable);
+router.get('/:merchant_id/disable',controller.disable);
 
-router.get('/:merchantId/disable',VerifyToken.allowCore,controller.disable);
+router.delete('/',controller.delete);
 
 module.exports = router;
 

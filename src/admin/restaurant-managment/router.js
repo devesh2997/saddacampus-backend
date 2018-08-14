@@ -2,9 +2,8 @@ var controller = require('./controller');
 var express = require('express');
 var router = express.Router();
 
+router.get('/:merchant_id/:business_id/:menu_id',controller.get);
 router.post('/',controller.create);
 router.put('/',controller.update);
-router.get('/:code',controller.get);
 router.delete('/',controller.delete);
-router.post('/createInstitute',controller.createInstituteBusiness);
 module.exports = router;

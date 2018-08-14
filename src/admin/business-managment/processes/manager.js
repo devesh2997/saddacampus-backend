@@ -1,19 +1,18 @@
-var Merchant = require('../../../app/models/_Merchants');
+var Business = require('../../../app/models/Business');
 
 /**
- * creating a new merchant
+ * Create a new business
  * @param {Object} args
+ * @param {String} args.merchant_id
+ * @param {String} args.business_id
  * @param {String} args.name
- * @param {String} args.email
- * @param {String} args.password
- * @param {String} args.country_code
- * @param {String} args.number
- * @param {String} args.alternate_country_code
- * @param {String} args.alternate_number
+ * @param {String} args.address
+ * @param {String} args.type
+ * @param {String} args.gstin
  */
 var Onboarding = function(args){
-	this.createMerchant = function(callback){
-		Merchant.addMerchant(args, function(err, result){
+	this.startBusiness = function(callback){
+		Business.create(args, function(err, result){
 			var response = {};
             if(err){
                 response.success = false;

@@ -4,6 +4,13 @@ restaurant.indexes = {
 }
 restaurant.fields = [
     {
+        name: 'id',
+        type: 'number',
+        isPrimary: true,
+        isForeign: false,
+        isCompulsory: false
+    },
+    {
         name: 'merchant_id',
         type: 'string',
         isPrimary: true,
@@ -14,7 +21,7 @@ restaurant.fields = [
         name: 'business_id',
         type: 'string',
         isPrimary: true,
-        isForeign: true,
+        isForeign: false,
         isCompulsory: true
     },
     {

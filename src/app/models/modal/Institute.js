@@ -7,7 +7,7 @@ institute.indexes = {
 institute.fields = [
     {
         name: 'id',
-        type: 'Number',
+        type: 'number',
         isPrimary: false,
         isForeign: false,
         isCompulsory: true
