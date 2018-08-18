@@ -5,9 +5,8 @@ var menu_customisation_modal = require('./MenuCustomization');
 var menu_customisation_option_modal = require('./MenuCustomizationOptions')
 var items_modal = require('./MenuCategory');
 
-var CategoryCustomisation = function(category_customisation){
+var CategoryCustomisation = function(){
     Resource.call(this,"MenuCategoryCustomisation","menu_categories_has_customisations",modal);
-    this.category_customisation = category_customisation;
     modal.fields[0].ref_model = items_modal.getRef();
     modal.fields[0].ref_model_field_name = 'menu_id';
     modal.fields[1].ref_model = items_modal.getRef();
@@ -27,7 +26,7 @@ CategoryCustomisation.prototype.constructor = CategoryCustomisation;
  */
 CategoryCustomisation.prototype.addCategoryCustomisation = function(args,callback){
     if(args && args.menu_id && args.category_id && args.customisation_id){
-        this.category_customisation.create(args,function(err,result){
+        this.create(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         })
@@ -44,7 +43,7 @@ CategoryCustomisation.prototype.addCategoryCustomisation = function(args,callbac
  */
 CategoryCustomisation.prototype.getCategoryCustomisation = function(args,callback){
     if(args.menu_id && args.category_id){
-        this.category_customisation.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             var count = 0;
             if(result.length == 0) return callback(null,[])
@@ -73,7 +72,7 @@ CategoryCustomisation.prototype.getCategoryCustomisation = function(args,callbac
  */
 CategoryCustomisation.prototype.deleteCategoryCustomisation = function(args,callback){
     if(args.menu_id && args.category_id && args.customisation_id){
-        this.category_customisation.delete(args,function(err,result){
+        this.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);       
         });

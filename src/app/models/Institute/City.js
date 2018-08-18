@@ -4,9 +4,8 @@ var city_modal = require('./../modal/City');
 var state = require('./State');
 var _ = require('underscore');
 
-var City= function(city){
+var City= function(){
     Resource.call(this,'City','cities',city_modal);
-    this.city = city;
     city_modal.fields[2].ref_model = state.getRef();
     city_modal.fields[2].ref_model_field_name = 'state_code';
 }
@@ -22,7 +21,7 @@ City.prototype.constructor = City;
  */
 City.prototype.addCity = function(args,callback){
     if(args && args.name && args.state_code){
-        this.city.create(args,function(err,result){
+        this.create(args,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -39,7 +38,7 @@ City.prototype.addCity = function(args,callback){
  */
 City.prototype.updateCity = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.city.update({args_set : args.args_update, args_where : args.args_old},function(err,result){
+        this.update({args_set : args.args_update, args_where : args.args_old},function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -55,7 +54,7 @@ City.prototype.updateCity = function(args,callback){
  */
 City.prototype.findCity = function(args,callback){
     if(args && args.city_code ){
-        this.city.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -72,7 +71,7 @@ City.prototype.findCity = function(args,callback){
  */
  City.prototype.deleteCity = function(args,callback){
     if(args && args.city_code){
-        this.city.delete(args,function(err,result){
+        this.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -81,4 +80,4 @@ City.prototype.findCity = function(args,callback){
     }
 }
 
-module.exports = new City(new City());
+module.exports = new City();

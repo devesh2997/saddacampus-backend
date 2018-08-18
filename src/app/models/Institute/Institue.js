@@ -4,9 +4,8 @@ var institute_modal = require('./../modal/Institute')
 var city = require('./City');
 var _ = require('underscore');
 
-var Institute= function(institute){
+var Institute= function(){
     Resource.call(this,'Institues','institutes',institute_modal);
-    this.institute = institute;
     institute_modal.fields[3].ref_model = city.getRef();
     institute_modal.fields[3].ref_model_field_name = 'cities_id';
 }
@@ -22,7 +21,7 @@ Institute.prototype.constructor = Institute;
  */
 Institute.prototype.addInstitute = function(args,callback){
     if(args && args.code && args.name && args.city_code){
-        this.institute.create(args,function(err,result){
+        this.create(args,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -39,7 +38,7 @@ Institute.prototype.addInstitute = function(args,callback){
  */
 Institute.prototype.updateInstitute = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.institute.update(args.args_update,args.args_old,function(err,result){
+        this.update(args.args_update,args.args_old,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -55,7 +54,7 @@ Institute.prototype.updateInstitute = function(args,callback){
  */
 Institute.prototype.findInstitute = function(args,callback){
     if(args && args.code ){
-        this.institute.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -72,7 +71,7 @@ Institute.prototype.findInstitute = function(args,callback){
  */
 Institute.prototype.deleteInstitute = function(args,callback){
     if(args && args.code){
-        this.institute.delete(args,function(err,result){
+        this.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -81,4 +80,4 @@ Institute.prototype.deleteInstitute = function(args,callback){
     }
 }
 
-module.exports = new Institute(new Institute());
+module.exports = new Institute();

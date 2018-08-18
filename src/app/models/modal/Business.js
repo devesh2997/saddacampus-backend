@@ -1,8 +1,10 @@
-var restaurant = {};
-restaurant.indexes = {
+var validator = require('../../utility/validator');
+var error_messages = require('../../config/error_messages');
+var business = {};
+business.indexes = {
 
 }
-restaurant.fields = [
+business.fields = [
     {
         name: 'id',
         type: 'number',
@@ -21,25 +23,36 @@ restaurant.fields = [
         name: 'business_id',
         type: 'string',
         isPrimary: true,
-        isForeign: true,
+        isForeign: false,
+        validator: validator.businessIdIsValid,
+        validation_error: error_messages.BUSINESS_DOES_NOT_EXIST,
         isCompulsory: true
     },
     {
-        name: 'menu_id',
+        name: 'name',
         type: 'string',
-        isPrimary: true,
-        isForeign: true,
+        isPrimary: false,
+        isForeign: false,
+        validator: validator.nameIsValid,
+        validation_error: error_messages.INVALID_NAME,
         isCompulsory: true
     },
     {
-        name: 'timing',
+        name: 'address',
+        type: 'string',
+        isPrimary: false,
+        isForeign: false,
+        isCompulsory: true
+    },
+    {
+        name: 'type',
         type: 'string',
         isPrimary: false,
         isForeign: false,
         isCompulsory: false
     },
     {
-        name: 'speciality',
+        name: 'gstin',
         type: 'string',
         isPrimary: false,
         isForeign: false,
@@ -50,15 +63,9 @@ restaurant.fields = [
         type: 'string',
         isPrimary: false,
         isForeign: false,
-        isCompulsory: false
-    },
-    {
-        name: 'super_status',
-        type: 'string',
-        isPrimary: false,
-        isForeign: false,
+        validator: validator.businessStatusIsValid,
+        validation_error: error_messages.BUSINESS_STATUS_NOT_VALID,
         isCompulsory: false
     }
-
 ];
-module.exports = restaurant;
+module.exports =business;

@@ -4,9 +4,8 @@ var error_messages = require('../../config/error_messages');
 var menu_customisation_modal = require('./MenuCustomization');
 var items_modal = require('./MenuCategoryItems');
 
-var ItemsCustomisation = function(items_customisation){
+var ItemsCustomisation = function(){
     Resource.call(this,"MenuCategoryItemsCustomisation","menu_category_items_has_customisations",modal);
-    this.items_customisation = items_customisation;
     modal.fields[0].ref_model = items_modal.getRef();
     modal.fields[0].ref_model_field_name = 'menu_id';
     modal.fields[1].ref_model = items_modal.getRef();
@@ -29,7 +28,7 @@ ItemsCustomisation.prototype.constructor = ItemsCustomisation;
  */
 ItemsCustomisation.prototype.addItemCustomisation = function(args,callback){
     if(args && args.menu_id && args.category_id && args.item_id && args.customisation_id){
-        this.items_customisation.create(args,function(err,result){
+        this.create(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         })
@@ -47,7 +46,7 @@ ItemsCustomisation.prototype.addItemCustomisation = function(args,callback){
  */
 ItemsCustomisation.prototype.getItemCustomisation = function(args,callback){
     if(args.menu_id && args.category_id && args.item_id){
-        this.items_customisation.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);       
         });
@@ -66,7 +65,7 @@ ItemsCustomisation.prototype.getItemCustomisation = function(args,callback){
  */
 ItemsCustomisation.prototype.deleteItemCustomisation = function(args,callback){
     if(args.menu_id && args.category_id && args.item_id && args.customisation_id){
-        this.items_customisation.delete(args,function(err,result){
+        this.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);       
         });
@@ -75,4 +74,4 @@ ItemsCustomisation.prototype.deleteItemCustomisation = function(args,callback){
     }
 }
 
-module.exports = new ItemsCustomisation(new ItemsCustomisation());
+module.exports = new ItemsCustomisation();

@@ -4,12 +4,14 @@ var restaurant_modal = require('./modal/Restaurant');
 var _ = require('underscore');
 var menu = require("./food/Menu");
 var Merchant = require('./_Merchants');
+var Business = require('./_Business');
 
-var Restaurant = function(restaurant){
+var Restaurant = function(){
     Resource.call(this,'Restaurant','restaurant_info',restaurant_modal);
-    this.restaurant = restaurant;
     restaurant_modal.fields[1].ref_model = Merchant.getRef();
     restaurant_modal.fields[1].ref_model_field_name = 'merchant_id';
+    restaurant_modal.fields[2].ref_model = Business.getRef();
+    restaurant_modal.fields[2].ref_model_field_name = 'business_id';
     restaurant_modal.fields[3].ref_model = menu.getRef();
     restaurant_modal.fields[3].ref_model_field_name = 'menu_id';
 }
@@ -38,7 +40,7 @@ Restaurant.prototype.addRestaurant = function(args,callback){
             status : args.status || 'closed',
             super_status : args.super_status || 'closed'
         }
-        this.restaurant.create(value,function(err,result){
+        this.create(value,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -55,7 +57,7 @@ Restaurant.prototype.addRestaurant = function(args,callback){
  */
 Restaurant.prototype.updateRestaurant = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.restaurant.update( args.args_update, args.args_old,function(err,result){
+        this.update( args.args_update, args.args_old,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -73,7 +75,7 @@ Restaurant.prototype.updateRestaurant = function(args,callback){
  */
 Restaurant.prototype.findRestaurant = function(args,callback){
     if(args && args.merchant_id && args.business_id ){
-        this.restaurant.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -90,7 +92,7 @@ Restaurant.prototype.findRestaurant = function(args,callback){
  */
 Restaurant.prototype.deleteRestaurant = function(args,callback){
     if(args && args.merchant_id && args.business_id && args.menu_id){
-        this.restaurant.delete(args,function(err,result){
+        this.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -99,4 +101,4 @@ Restaurant.prototype.deleteRestaurant = function(args,callback){
     }
 }
 
-module.exports = new Restaurant(new Restaurant());
+module.exports = new Restaurant();

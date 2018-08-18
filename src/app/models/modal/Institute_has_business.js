@@ -14,14 +14,14 @@ institute_business.fields = [
         name: 'merchant_id',
         type: 'string',
         isPrimary: true,
-        isForeign: false,
+        isForeign: true,
         isCompulsory: true
     },
     {
         name: 'business_id',
         type: 'string',
         isPrimary: true,
-        isForeign: false,
+        isForeign: true,
         isCompulsory: true
     }
 ];

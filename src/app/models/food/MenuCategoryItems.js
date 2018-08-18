@@ -5,9 +5,8 @@ var menu_category_modal = require('./MenuCategory');
 var menu_category_items_modal = require('./../modal/food/menu_category_items');
 var _ = require("underscore");
 
-var MenuCategoryItems = function(menu_category_items){
+var MenuCategoryItems = function(){
     Resource.call(this,'MenuCategoryItems','menu_category_items',menu_category_items_modal);
-    this.menu_category_items = menu_category_items;
     menu_category_items_modal.fields[1].ref_model = menu_modal.getRef();
     menu_category_items_modal.fields[1].ref_model_field_name = 'menu_id';
     menu_category_items_modal.fields[2].ref_model = menu_category_modal.getRef();
@@ -30,7 +29,7 @@ MenuCategoryItems.prototype.addCategoryItems = function(args,callback){
     var scope = this;
     if(args && args.menu_id && args.category_id && args.category_items.length != 0){
             var items = [...args.category_items];
-            this.menu_category_items.get({menu_id:args.menu_id , category_id:args.category_id},function(err,result){
+            this.get({menu_id:args.menu_id , category_id:args.category_id},function(err,result){
                 if(err) return callback(err);
                 var item_id = result.length==0?1:result[result.length-1].item_id;
                 items.forEach(element => {
@@ -47,7 +46,7 @@ MenuCategoryItems.prototype.addCategoryItems = function(args,callback){
                         cuisine : "",
                         is_non_veg : element.is_non_veg || false
                     }
-                    scope.menu_category_items.create(values,function(err,result){
+                    scope.create(values,function(err,result){
                         if(err) {
                             flag = true;
                             error[element.name] = err.message;
@@ -81,7 +80,7 @@ MenuCategoryItems.prototype.addCategoryItems = function(args,callback){
  */
 MenuCategoryItems.prototype.findCategoryItems = function(args,callback){
     if(!_.isEmpty(args)){
-        this.menu_category_items.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -101,7 +100,7 @@ MenuCategoryItems.prototype.findCategoryItems = function(args,callback){
  */
 MenuCategoryItems.prototype.updateCategoryItem = function(args,callback){
     if(args && !(_.isEmpty(args.args_old)) && !(_.isEmpty(args.args_updates))){
-        this.menu_category_items.update(args.args_updates , args.args_old , function(err,result){
+        this.update(args.args_updates , args.args_old , function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -119,7 +118,7 @@ MenuCategoryItems.prototype.updateCategoryItem = function(args,callback){
  */
 MenuCategoryItems.prototype.deleteCategoryItem = function(args,callback){
     if(args && args.menu_id && args.category_id && args.item_id){
-        this.menu_category_items.delete({menu_id:args.menu_id,category_id:args.category_id,item_id:args.item_id},function(err,result){
+        this.delete({menu_id:args.menu_id,category_id:args.category_id,item_id:args.item_id},function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         })
@@ -129,4 +128,4 @@ MenuCategoryItems.prototype.deleteCategoryItem = function(args,callback){
 }
 
 
-module.exports = new MenuCategoryItems(new MenuCategoryItems());
+module.exports = new MenuCategoryItems();

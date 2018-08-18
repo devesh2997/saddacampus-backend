@@ -4,9 +4,8 @@ var menu_modal = require('./Menu');
 var menu_category_modal = require('./../modal/food/menu_category');
 var _ = require('underscore');
 
-var MenuCategory = function(menu_category){
+var MenuCategory = function(){
     Resource.call(this,'MenuCategory','menu_categories',menu_category_modal);
-    this.menu_category = menu_category;
     menu_category_modal.fields[1].ref_model = menu_modal.getRef();
     menu_category_modal.fields[1].ref_model_field_name = 'menu_id';
 }
@@ -31,7 +30,7 @@ MenuCategory.prototype.addCategories = function(args,callback){
             categories.forEach(element => {
                 var value = element;
                 value.menu_id = args.menu_id;
-                this.menu_category.create(value,function(err,result){
+                this.create(value,function(err,result){
                     if(err) {
                         flag = true;
                         error[element.category_name] = err.message;
@@ -63,7 +62,7 @@ MenuCategory.prototype.addCategories = function(args,callback){
  */
 MenuCategory.prototype.updateCategory = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.menu_category.update(args.args_update,args.args_old,function(err,result){
+        this.update(args.args_update,args.args_old,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -81,7 +80,7 @@ MenuCategory.prototype.updateCategory = function(args,callback){
  */
 MenuCategory.prototype.findMenuCategory = function(args,callback){
     if(args && (args.menu_id || args.category_id)){
-        this.menu_category.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -99,7 +98,7 @@ MenuCategory.prototype.findMenuCategory = function(args,callback){
  */
 MenuCategory.prototype.deleteCategory = function(args,callback){
     if(args && args.menu_id && args.category_id){
-        this.menu_category.delete(args,function(err,result){
+        this.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -108,4 +107,4 @@ MenuCategory.prototype.deleteCategory = function(args,callback){
     }
 }
 
-module.exports = new MenuCategory(new MenuCategory());
+module.exports = new MenuCategory();

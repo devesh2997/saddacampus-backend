@@ -5,9 +5,8 @@ var menu_customisation_modal = require('./MenuCustomization');
 var menu_customisation_options_modal = require('./../modal/food/menu_customization_options');
 var _ = require("underscore");
 
-var MenuCustomisationOptions = function(menu_customisation_options){
+var MenuCustomisationOptions = function(){
     Resource.call(this,'MenuCustomisationOptions','menu_customisation_options',menu_customisation_options_modal);
-    this.menu_customisation_options = menu_customisation_options;
     menu_customisation_options_modal.fields[1].ref_model = menu_modal.getRef();
     menu_customisation_options_modal.fields[1].ref_model_field_name = 'menu_id';
     menu_customisation_options_modal.fields[2].ref_model = menu_customisation_modal.getRef();
@@ -30,7 +29,7 @@ MenuCustomisationOptions.prototype.addCustomisationOptions = function(args,callb
     var scope = this;
     if(args && args.menu_id && args.customisation_id && args.customisation_options && args.customisation_options.length != 0){
             var items = [...args.customisation_options];
-            this.menu_customisation_options.get({menu_id:args.menu_id , customisation_id:args.customisation_id},function(err,result){
+            this.get({menu_id:args.menu_id , customisation_id:args.customisation_id},function(err,result){
                 if(err) return callback(err);
                 var item_id = result.length==0?0:result[result.length-1].customisation_option_id;
                 items.forEach(element => {
@@ -43,7 +42,7 @@ MenuCustomisationOptions.prototype.addCustomisationOptions = function(args,callb
                         price : element.price,
                         is_non_veg : element.is_non_veg || false
                     }
-                    scope.menu_customisation_options.create(values,function(err,result){
+                    scope.create(values,function(err,result){
                         if(err) {
                             flag = true;
                             error[element.name] = err.message;
@@ -77,7 +76,7 @@ MenuCustomisationOptions.prototype.addCustomisationOptions = function(args,callb
  */
 MenuCustomisationOptions.prototype.findCustomisationOptions = function(args,callback){
     if(!_.isEmpty(args)){
-        this.menu_customisation_options.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -100,7 +99,7 @@ MenuCustomisationOptions.prototype.findCompleteOptions = function(args,callback)
             var count = 0;
             if(result.length!=0){
                 result.forEach(function(){
-                    scope.menu_customisation_options.get({menu_id:args.menu_id,customisation_id:args.customisation_id},function(err,res){
+                    scope.get({menu_id:args.menu_id,customisation_id:args.customisation_id},function(err,res){
                         if(err) return callback(err);
                         result[count++]["custumisationOption"] = res;
                         if(count == result.length) return callback(null,result);
@@ -130,7 +129,7 @@ MenuCustomisationOptions.prototype.updateCustomisationOption = function(args,cal
             customisation_id : args.customisation_id,
             customisation_option_id : args.customisation_option_id
         };
-        this.menu_customisation_options.update(args.updates , args_where , function(err,result){
+        this.update(args.updates , args_where , function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -148,7 +147,7 @@ MenuCustomisationOptions.prototype.updateCustomisationOption = function(args,cal
  */
 MenuCustomisationOptions.prototype.deleteCustomisationOption = function(args,callback){
     if(args && args.menu_id && args.customisation_id && args.customisation_option_id){
-        this.menu_customisation_options.delete({menu_id:args.menu_id,customisation_id:args.customisation_id,customisation_option_id:args.customisation_option_id},function(err,result){
+        this.delete({menu_id:args.menu_id,customisation_id:args.customisation_id,customisation_option_id:args.customisation_option_id},function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         })
@@ -157,4 +156,4 @@ MenuCustomisationOptions.prototype.deleteCustomisationOption = function(args,cal
     }
 }
 
-module.exports = new MenuCustomisationOptions(new MenuCustomisationOptions());
+module.exports = new MenuCustomisationOptions();

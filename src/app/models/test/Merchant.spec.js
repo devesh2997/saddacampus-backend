@@ -1,553 +1,182 @@
 var assert = require('assert');
-var Merchant = require('../Merchant');
-var error_messages = require('../../config/error_messages');
-var db = require('../../lib/sadda-db');
+var db = require('./../../lib/sadda-db');
+var Merchant = require('./../_Merchants');
+var error_message  = require('./../../config/error_messages');
 
-describe('Merchant - model', function(){
-	before(function(done){
-		db.connect(db.MODE_TEST, function(){
-			db.dropTable(db.tables.merchants.name, function(){
-				done();
-			});
-		});
-	});
-
-	describe('Create Merchant', function(){
-		describe('When correct credentials is provided', function(){
-			var error, result;
-			before(function(done){
-				Merchant.create({
-					name: 'devesh',
-					email: 'ananddevesh22@gmail.com',
-					password:'devdas23',
-					country_code: '+91',
-					number: '7541833368',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
-				}, function(err, res){
-					error = err;
-					result = res;
-					done();
-				});
-			});
-
-			it('returns with no error', function(){
-				assert.ok(!error);
-			});
-			it('returns Merchant object', function(){
-				assert.ok(result.Merchant !== null);
-			});
-			it('Merchant object has merchant_id', function(){
-				assert.ok(result.Merchant.merchant_id !== null);
-			});
-			it('Merchant object has name', function(){
-				assert.ok(result.Merchant.name !== null);
-			});
-			it('Merchant object has email', function(){
-				assert.ok(result.Merchant.email !== null);
-			});
-			it('Merchant object has country_code', function(){
-				assert.ok(result.Merchant.country_code !== null);
-			});
-			it('Merchant object has number', function(){
-				assert.ok(result.Merchant.number !== null);
-			});
-			it('Merchant object has alternate_country_code', function(){
-				assert.ok(result.Merchant.alternate_country_code !== null);
-			});
-			it('Merchant object has alternate_number', function(){
-				assert.ok(result.Merchant.alternate_number !== null);
-			});
-			it('Merchant object has status', function(){
-				assert.ok(result.Merchant.status !== null);
-			});
-		});
-		describe('Returns callback with error and sets the correct error messages when...', function(){
-			it('length of name is less than 6', function(done){
-				Merchant.create({name: 'moha'}, function(err){
-					assert.ok(err && err.message == error_messages.INVALID_NAME, err.message);
-					done();
-				});
-			});
-			it('name is missing', function(done){
-				Merchant.create({}, function(err){
-					assert.ok(err && err.message == error_messages.INVALID_NAME, err.message);
-					done();
-				});
-			});
-			it('invalid email is provided', function(done){
-				Merchant.create({name: 'mohan', email: 'a@a'}, function(err){
-					assert.ok(err && err.message == error_messages.INVALID_EMAIL, err.message);
-					done();
-				});
-			});
-			it('length of password is less than 6', function(done){
-				Merchant.create({name: 'mohan', email: 'aasdf@fas.com', password:'12345'}, function(err){
-					assert.ok(err && err.message == error_messages.INVALID_PASSWORD, err.message);
-					done();
-				});
-			});
-			it('merchant with email exists', function(done){
-				Merchant.create({
-					name: 'devesh',
-					email: 'ananddevesh22@gmail.com',
-					password:'123456',
-					country_code: '+91',
-					number: '7541833368',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
-				}, function(){
-					Merchant.create({
-						name: 'mohan',
-						email: 'ananddevesh22@gmail.com',
-						password:'123456',
-						country_code: '+91',
-						number: '1234567890',
-						alternate_country_code: '+91',
-						alternate_number: '1478523698'
-					}, function(err){
-						assert.ok(err, err.message == error_messages.DUPLICATE_MERCHANT, err.message);
-						done();
-					});
-				});
-			});
-			it('merchant with number exists', function(done){
-				Merchant.create({
-					name: 'devesh',
-					email: 'ananddeve2@gmail.com',
-					password:'123456',
-					country_code: '+91',
-					number: '7541833368',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
-				}, function(){
-					Merchant.create({
-						name: 'mohan',
-						email: 'ananddevesh22@gmail.com',
-						password:'123456',
-						country_code: '+91',
-						number: '7541833368',
-						alternate_country_code: '+91',
-						alternate_number: '1478523698'
-					}, function(err){
-						assert.ok(err, err.message == error_messages.DUPLICATE_MERCHANT, err.message);
-						done();
-					});
-				});
-			});
-			it('invalid country_code is provided', function(done){
-				Merchant.create({
-					name: 'mohan',
-					email: 'aasdf@fas.com',
-					password:'123456',
-					country_code: 'asdf'
-				}, function(err){
-					assert.ok(err && err.message == error_messages.INVALID_COUNTRY_CODE, err.message);
-					done();
-				});
-			});
-			it('invalid number is provided', function(done){
-				Merchant.create({
-					name: 'mohan',
-					email: 'aasdf@fas.com',
-					password:'123456',
-					country_code: '+91',
-					number: '4324'
-				}, function(err){
-					assert.ok(err && err.message == error_messages.INVALID_MOBILE_NUMBER, err.message);
-					done();
-				});
-			});
-			it('invalid alternate_country_code is provided', function(done){
-				Merchant.create({
-					name: 'mohan',
-					email: 'aasdf@fas.com',
-					password:'123456',
-					country_code: '+91',
-					number: '1234567890',
-					alternate_country_code: 'asdf'
-				}, function(err){
-					assert.ok(err && err.message == error_messages.INVALID_COUNTRY_CODE, err.message);
-					done();
-				});
-			});
-			it('invalid alternate_number is provided', function(done){
-				Merchant.create({
-					name: 'mohan',
-					email: 'aasdf@fas.com',
-					password:'123456',
-					country_code: '+91',
-					number: '1234567890',
-					alternate_country_code: '+91',
-					alternate_number: '1564'
-				}, function(err){
-					assert.ok(err && err.message == error_messages.INVALID_MOBILE_NUMBER, err.message);
-					done();
-				});
-			});
-			it('when mobile number and alternate mobile number are same');
-
-		});
-	});
-
-	describe('Find Merchant by email', function(){
-        describe('Valid email is provided and merchant exists', function(){
-            var args ;
-            var result;
-            var error;
-            before(function(done){
-                args = {
-					name: 'devesh',
-					email: 'ananddevesh22@gmail.com',
-					password:'123456',
-					country_code: '+91',
-					number: '7541833368',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
+describe("Restaurant Info modal",function(){
+    before(function(done){
+        db.connect(db.MODE_TEST, function(){
+            db.dropTable("merchants", function(){
+                done();
+            });
+        });
+    });
+    describe('Adding merchant',function(){
+        var error;
+        var res;
+        before(function(done){
+            var value = {
+                name: 'devesh',
+                email: 'ananddevesh22@gmail.com',
+                password:'devdas23',
+                country_code: '+91',
+                number: '7541833368',
+                alternate_country_code: '+91',
+                alternate_number: '1478523698'
+            }
+            Merchant.addMerchant(value,function(err,result){
+                error = err;
+                res = result;
+                done();
+            })
+        })
+        it("no error should be returned",function(){
+            assert.ok(error == null);
+        })
+        it("Merchant id in result",function(){
+            assert.ok(res.Merchant.merchant_id);
+        })
+        it("name in result",function(){
+            assert.ok(res.Merchant.name == "devesh");
+        })        
+        it("email in result",function(){
+            assert.ok(res.Merchant.email == "ananddevesh22@gmail.com");
+        })        
+        it("number in result",function(){
+            assert.ok(res.Merchant.number == "7541833368");
+        })
+    });
+    describe('Adding merchant without details',function(){
+        var error;
+        var res;
+        before(function(done){
+            var value = {}
+            Merchant.addMerchant(value,function(err,result){
+                error = err;
+                res = result;
+                done();
+            })
+        })
+        it("error should be returned",function(){
+            assert.ok(error.message == error_message.MISSING_PARAMETERS);
+        })
+        it("Result should be undefined",function(){
+            assert.ok(res == undefined)
+        })
+    });
+    describe('Finding the merchant',function(){
+        var error;
+        var res;
+        var merchant_id;
+        before(function(done){
+            var value = {
+                name: 'devesh',
+                email: 'ananddevesh22@gmail.com',
+                password:'devdas23',
+                country_code: '+91',
+                number: '7541833368',
+                alternate_country_code: '+91',
+                alternate_number: '1478523698'
+            }
+            Merchant.addMerchant(value,function(err,result){
+                merchant_id = result.Merchant.merchant_id;
+                Merchant.findMerchant({merchant_id : result.Merchant.merchant_id} , function(){
+                    error = err;
+                    res = result;
+                    done();
+                })
+            })
+        })
+        it("error should be null",function(){
+            assert.ok(error == null);
+        })
+        it("cheking the result for merchant_id",function(){
+            assert.ok(res.Merchant.merchant_id == merchant_id)
+        })
+        it("cheking the result for name",function(){
+            assert.ok(res.Merchant.name == 'devesh')
+        })
+        it("cheking the result for email",function(){
+            assert.ok(res.Merchant.email == 'ananddevesh22@gmail.com')
+        })
+    });
+    describe('Update the merchant',function(){
+        var error;
+        var res;
+        var merchant_id;
+        before(function(done){
+            var value = {
+                name: 'devesh',
+                email: 'ananddevesh22@gmail.com',
+                password:'devdas23',
+                country_code: '+91',
+                number: '7541833368',
+                alternate_country_code: '+91',
+                alternate_number: '1478523698'
+            }
+            Merchant.addMerchant(value,function(err,result){
+                merchant_id = result.Merchant.merchant_id;
+                var args_old = {
+                    merchant_id : result.Merchant.merchant_id
+                };
+                var args_update = {
+                    name : "Akash",
+                    email : "akashagarwal0403@gmail.com"
                 }
-                Merchant.create(args, function(err){
-                    if(err)
-                        throw err;
-                    Merchant.findByEmail({
-                        email: 'ananddevesh22@gmail.com',
-                    }, function(err, res){
-                        error = err;
-                        result = res;
-                        done();
-                    });
-                });
-            });
-            it('returns with no error', function(){
-				assert.ok(!error);
-			});
-			it('returns Merchant object', function(){
-				assert.ok(result.Merchant !== null);
-			});
-			it('Merchant object has merchant_id', function(){
-				assert.ok(result.Merchant.merchant_id !== null);
-			});
-			it('Merchant object has name', function(){
-				assert.ok(result.Merchant.name !== null);
-			});
-			it('Merchant object has email', function(){
-				assert.ok(result.Merchant.email !== null);
-			});
-			it('Merchant object has country_code', function(){
-				assert.ok(result.Merchant.country_code !== null);
-			});
-			it('Merchant object has number', function(){
-				assert.ok(result.Merchant.number !== null);
-			});
-			it('Merchant object has alternate_country_code', function(){
-				assert.ok(result.Merchant.alternate_country_code !== null);
-			});
-			it('Merchant object has alternate_number', function(){
-				assert.ok(result.Merchant.alternate_number !== null);
-			});
-			it('Merchant object has status', function(){
-				assert.ok(result.Merchant.status !== null);
-			});
-        });
-
-        describe('callback returns with error when ...', function(){
-            it('email is missing', function(done){
-                Merchant.findByEmail({
-                }, function(err){
-                    assert.ok(err && err.message == error_messages.INVALID_EMAIL);
+                Merchant.updateMerchant({args_update:args_update,args_old:args_old},function(err,result){
+                    error = err;
+                    res = result;
                     done();
-                });
-            });
-            it('invalid email is provided',function(done){
-                Merchant.findByEmail({
-                    email: 'a@a',
-                }, function(err){
-                    assert.ok(err && err.message == error_messages.INVALID_EMAIL);
-                    done();
-                });
+                })
             });
         });
-
-        describe('When merchant does not exist', function(){
-            before(function(done){
-                db.drop([db.tables.merchants.name], function(){done()});
-            });
-            it('empty Merchant object is returned', function(done){
-                Merchant.findByEmail({
-                    email: 'ananddevesh22@gmail.com',
-                }, function(err, result){
-                    assert.ok(!result.Merchant);``
-                    done();
-                });
-            });
-        });
-	});
-
-	describe('Find Merchant by merchant_id', function(){
-        describe('Valid merchant_id is provided and merchant exists', function(){
-            var args, result, error, merchant_id_test;
-            before(function(done){
-                args = {
-					name: 'devesh',
-					email: 'ananddevesh22@gmail.com',
-					password:'123456',
-					country_code: '+91',
-					number: '7541833368',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
+        it("error should be null",function(){
+            assert.ok(error == null);
+        })
+        it("cheking the result for merchant_id",function(){
+            assert.ok(res[0].merchant_id == merchant_id)
+        })
+        it("cheking the result for name",function(){
+            assert.ok(res[0].name == "Akash")
+        })
+        it("cheking the result for email",function(){
+            assert.ok(res[0].email == "akashagarwal0403@gmail.com")
+        })
+    });
+    describe('Delete the restaurant',function(){
+        var error;
+        var res;
+        before(function(done){
+            var value = {
+                name: 'devesh',
+                email: 'ananddevesh22@gmail.com',
+                password:'devdas23',
+                country_code: '+91',
+                number: '7541833368',
+                alternate_country_code: '+91',
+                alternate_number: '1478523698'
+            }
+            Merchant.addMerchant(value,function(err,result){
+                var value = {
+                    merchant_id : result.Merchant.merchant_id
                 }
-                Merchant.create(args, function(err,res){
-                    if(err)
-						throw err;
-					merchant_id_test = res.Merchant.merchant_id;
-                    Merchant.findByMerchantId({
-                        merchant_id: merchant_id_test,
-                    }, function(err, res){
-                        error = err;
-						result = res;
-						done();
-                    });
-                });
-            });
-            it('returns with no error', function(){
-				assert.ok(!error);
-			});
-			it('returns Merchant object', function(){
-				assert.ok(result.Merchant !== null);
-			});
-			it('Merchant object has merchant_id', function(){
-				assert.ok(result.Merchant.merchant_id == merchant_id_test);
-			});
-			it('Merchant object has name', function(){
-				assert.ok(result.Merchant.name == 'devesh');
-			});
-			it('Merchant object has email', function(){
-				assert.ok(result.Merchant.email == 'ananddevesh22@gmail.com');
-			});
-			it('Merchant object has country_code', function(){
-				assert.ok(result.Merchant.country_code !== null);
-			});
-			it('Merchant object has number', function(){
-				assert.ok(result.Merchant.number !== null);
-			});
-			it('Merchant object has alternate_country_code', function(){
-				assert.ok(result.Merchant.alternate_country_code !== null);
-			});
-			it('Merchant object has alternate_number', function(){
-				assert.ok(result.Merchant.alternate_number !== null);
-			});
-			it('Merchant object has status and set to active', function(){
-				assert.ok(result.Merchant.status === Merchant.status.active);
-			});
-        });
-
-        describe('callback returns with error when ...', function(){
-            it('email is missing', function(done){
-                Merchant.findByEmail({
-                }, function(err){
-                    assert.ok(err && err.message == error_messages.INVALID_EMAIL);
+                Merchant.deleteMerchant(value,function(err,result){
+                    error = err;
+                    res = result;
                     done();
-                });
-            });
-            it('invalid email is provided',function(done){
-                Merchant.findByEmail({
-                    email: 'a@a',
-                }, function(err){
-                    assert.ok(err && err.message == error_messages.INVALID_EMAIL);
-                    done();
-                });
+                })
             });
         });
-
-        describe('When merchant does not exist', function(){
-            before(function(done){
-                db.drop([db.tables.merchants.name], function(){done()});
-            });
-            it('empty Merchant object is returned', function(done){
-                Merchant.findByEmail({
-                    email: 'ananddevesh22@gmail.com',
-                }, function(err, result){
-                    assert.ok(!result.Merchant);``
-                    done();
-                });
-            });
-        });
-	});
-
-	describe('Disable merchant', function(){
-		describe('When valid merchant_id is provided', function(){
-			var merchant_id_test;
-			var err,res;
-			before(function(done){
-				Merchant.create({
-					name: 'devesh',
-					email: 'ananddevesh@gmail.com',
-					password:'devdas23',
-					country_code: '+91',
-					number: '7541833369',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
-				}, function(errorr, result){
-					merchant_id_test = result.Merchant.merchant_id;
-					Merchant.disable({merchant_id: merchant_id_test}, function(error, response){
-						err = error;
-						res = response;
-						done();
-					});
-				});
-			});
-			it('error should be null',function(){
-				assert.ok(err === null);
-			});
-			it('Merchant object should be returned', function(){
-				assert.ok(res.Merchant !== null);
-			});
-			it('status of merchant should be disabled', function(){
-				assert.ok(res.Merchant.status === Merchant.status.disabled);
-			});
-		});
-		describe('When no merchant_id provided',function(){
-			var err;
-			before(function(done){
-				Merchant.disable({}, function(error){
-					err = error;
-					done();
-				});
-			});
-			it('error is returned',function(){
-				assert.ok(err!==null);
-			});
-			it('correct error message is set',function(){
-				assert.ok(err.message === error_messages.MISSING_PARAMETERS);
-			});
-		});
-		describe('When merchant with merchant_id does not exist',function(){
-			var err;
-			before(function(done){
-				Merchant.disable({merchant_id: 'dafasdfasdfasd'}, function(error){
-					err = error;
-					done();
-				});
-			});
-			it('error is returned',function(){
-				assert.ok(err!==null);
-			});
-			it('correct error message is set',function(){
-				assert.ok(err.message === error_messages.MERCHANT_DOES_NOT_EXIST, err.message);
-			});
-		});
-	});
-
-	describe('Enable merchant', function(){
-		describe('When valid merchant_id is provided', function(){
-			var merchant_id_test;
-			var err,res;
-			before(function(done){
-				Merchant.create({
-					name: 'devesh',
-					email: 'ananddevesh@gmail.com',
-					password:'devdas23',
-					country_code: '+91',
-					number: '7541833369',
-					alternate_country_code: '+91',
-					alternate_number: '1478523698'
-				}, function(errorr, result){
-					merchant_id_test = result.Merchant.merchant_id;
-					Merchant.enable({merchant_id: merchant_id_test}, function(error, response){
-						err = error;
-						res = response;
-						done();
-					});
-				});
-			});
-			it('error should be null',function(){
-				assert.ok(err === null);
-			});
-			it('Merchant object should be returned', function(){
-				assert.ok(res.Merchant !== null);
-			});
-			it('status of merchant should be disabled', function(){
-				assert.ok(res.Merchant.status === Merchant.status.active);
-			});
-		});
-		describe('When no merchant_id provided',function(){
-			var err;
-			before(function(done){
-				Merchant.enable({}, function(error){
-					err = error;
-					done();
-				});
-			});
-			it('error is returned',function(){
-				assert.ok(err!==null);
-			});
-			it('correct error message is set',function(){
-				assert.ok(err.message === error_messages.MISSING_PARAMETERS);
-			});
-		});
-		describe('When merchant with merchant_id does not exist',function(){
-			var err;
-			before(function(done){
-				Merchant.enable({merchant_id: 'dafasdfasdfasd'}, function(error){
-					err = error;
-					done();
-				});
-			});
-			it('error is returned',function(){
-				assert.ok(err!==null);
-			});
-			it('correct error message is set',function(){
-				assert.ok(err.message === error_messages.MERCHANT_DOES_NOT_EXIST, err.message);
-			});
-		});
-	});
-
-	describe('Get all merchants', function(){
-		var args = {
-			name: 'devesh',
-			email: 'ananddevesh22@gmail.com',
-			password:'123456',
-			country_code: '+91',
-			number: '7541833369',
-			alternate_country_code: '+91',
-			alternate_number: '1478523698'
-		};
-		var res;
-		var err;
-		before(function(done){
-			Merchant.create(args, function(err){
-				if(err)
-					throw err;
-				Merchant.getAll(function(error, result){
-					err = error;
-					res = result;
-					done();
-				});
-			});
-		});
-		it('error should be null', function(){
-			assert.ok(!err);
-		});
-		it('result should have Merchants object', function(){
-			assert.ok(res.Merchants);
-		});
-		it('length of Merchants object should be 1',function(){
-			assert.ok(res.Merchants.length === 1);
-		});
-		it('Merchant object in Merchants array should not have encrypted password',function(){
-			assert.ok(!res.Merchants[0].encrypted_password);
-		});
-	});
-
-
-	afterEach(function(done){
-		db.dropTable(db.tables.merchants.name, function(){
+        it("error should be null",function(){
+            assert.ok(error == null);
+        })
+        it("checking affected Rows",function(){
+            assert.ok(res.affectedRows == 1);
+        })
+    });
+    afterEach(function(done){
+		db.dropTable('merchants', function(){
 			done();
 		});
-	});
-
-	after(function(done){
-		db.end();
-		done();
-	});
-
+    });
 });

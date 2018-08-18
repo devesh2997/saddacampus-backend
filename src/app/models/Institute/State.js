@@ -3,9 +3,8 @@ var Resource = require("./../Resource");
 var State_modal = require('./../modal/State')
 var _ = require('underscore');
 
-var State= function(state){
+var State= function(){
     Resource.call(this,'States','states',State_modal);
-    this.state = state;
 }
 State.prototype  = Object.create(Resource.prototype);
 State.prototype.constructor = State;
@@ -17,7 +16,7 @@ State.prototype.constructor = State;
  */
 State.prototype.addState = function(args,callback){
     if(args && args.name){
-        this.state.create(args,function(err,result){
+        this.create(args,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -34,7 +33,7 @@ State.prototype.addState = function(args,callback){
  */
 State.prototype.updateState = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.state.update({args_set : args.args_update, args_where : args.args_old},function(err,result){
+        this.update({args_set : args.args_update, args_where : args.args_old},function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -51,7 +50,7 @@ State.prototype.updateState = function(args,callback){
  */
 State.prototype.findState = function(args,callback){
     if(args && (args.state_code||args.name) ){
-        this.state.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -69,7 +68,7 @@ State.prototype.findState = function(args,callback){
  */
 State.prototype.deleteState = function(args,callback){
     if(args && (args.state_code||args.name)){
-        this.State.delete(args,function(err,result){
+        this.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -78,4 +77,4 @@ State.prototype.deleteState = function(args,callback){
     }
 }
 
-module.exports = new State(new State());
+module.exports = new State();

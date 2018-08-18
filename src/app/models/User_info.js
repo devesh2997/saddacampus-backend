@@ -4,9 +4,8 @@ var User_modal = require('./modal/UserInfo');
 var institute = require('./Institute/Institue');
 var _ = require('underscore');
 
-var User = function(user){
+var User = function(){
     Resource.call(this,'User','user_info',User_modal);
-    this.user = user;
     User_modal.fields[6].ref_model = institute.getRef();
     User_modal.fields[6].ref_model_field_name = 'code';
 }
@@ -33,7 +32,7 @@ User.prototype.addUser = function(args,callback){
             user_dob : args.user_dob || '',
             code : args.code || '' 
         }
-        this.user.create(value,function(err,result){
+        this.create(value,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -50,7 +49,7 @@ User.prototype.addUser = function(args,callback){
  */
 User.prototype.updateUser = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.user.update({args_set : args.args_update, args_where : args.args_old},function(err,result){
+        this.update({args_set : args.args_update, args_where : args.args_old},function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });
@@ -66,7 +65,7 @@ User.prototype.updateUser = function(args,callback){
  */
 User.prototype.findUser = function(args,callback){
     if(args && args.user_id){
-        this.user.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -81,7 +80,7 @@ User.prototype.findUser = function(args,callback){
  */
 User.prototype.deleteUser = function(args,callback){
     if(args && args.user_id){
-        this.user.delete(args,function(err,result){
+        this.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -90,4 +89,4 @@ User.prototype.deleteUser = function(args,callback){
     }
 }
 
-module.exports = new User(new User());
+module.exports = new User();

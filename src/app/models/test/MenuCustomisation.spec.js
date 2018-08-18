@@ -296,7 +296,6 @@ describe('MenuCustomisation model',function(){
 				MenuCustomisation.delete({menu_id: menu_id_test,customisation_id:'CS1'},function(error,result){
 					err = error;
 					res = result;
-					console.log(err);
 					done();
 				});
 			});

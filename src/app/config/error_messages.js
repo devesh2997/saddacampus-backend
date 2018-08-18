@@ -45,3 +45,4 @@ exports.FOREIGN_KEY_UPDATE_NOT_ALLOWED = ' Cannot add or update a child row: a f
 exports.MIN_MAX_SELECTION = 'Minimum selection more than maximum selection';
 exports.INVALID_INSTITUTE_CODE = "Institute code should be of length 6";
 exports.USER_DATA_DONT_EXIST = "User data dont exist";
+exports.BUSINESS_STATUS_NOT_VALID = "Business status is not valid";

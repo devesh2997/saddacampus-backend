@@ -4,9 +4,8 @@ var menu_customisation_modal = require('./../modal/food/menu_customization');
 var _ = require("underscore");
 var menu_modal = require('./Menu');
 
-var MenuCustomisation = function(menu_customisation){
+var MenuCustomisation = function(){
     Resource.call(this,'MenuCustomisation','menu_customisations',menu_customisation_modal);
-    this.menu_customisation = menu_customisation;
     menu_customisation_modal.fields[1].ref_model = menu_modal.getRef();
     menu_customisation_modal.fields[1].ref_model_field_name = 'menu_id';
 }
@@ -33,7 +32,7 @@ MenuCustomisation.prototype.addCustomisation = function(args,callback){
                 min_selections : element.min_selections || 0,
                 max_selections : element.max_selections || 0
             }
-            this.menu_customisation.create(values,function(err,result){
+            this.create(values,function(err,result){
                 if(err) {
                     flag = true;
                     error[element.name] = err.message;
@@ -64,7 +63,7 @@ MenuCustomisation.prototype.addCustomisation = function(args,callback){
  */
 MenuCustomisation.prototype.findMenuCustomisation = function(args,callback){
     if(args && args.menu_id && args.customisation_id){
-        this.menu_customisation.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -81,7 +80,7 @@ MenuCustomisation.prototype.findMenuCustomisation = function(args,callback){
  */
 MenuCustomisation.prototype.updateCustomisation = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.menu_customisation.update(args.args_update , args.args_old , function(err,result){
+        this.update(args.args_update , args.args_old , function(err,result){
             if(err) return callback(err);
             return callback(null , result);
         });
@@ -97,7 +96,7 @@ MenuCustomisation.prototype.updateCustomisation = function(args,callback){
  */
 MenuCustomisation.prototype.deleteCustomisation = function(args,callback){
     if(args && (args.menu_id || args.customisation_id)){
-        this.menu_customisation.delete(args , function(err,result){
+        this.delete(args , function(err,result){
             if(err) return callback(err);
             return  callback(null,result);
         });
@@ -106,4 +105,4 @@ MenuCustomisation.prototype.deleteCustomisation = function(args,callback){
     }
 }
 
-module.exports = new MenuCustomisation(new MenuCustomisation())
+module.exports = new MenuCustomisation()

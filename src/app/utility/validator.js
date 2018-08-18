@@ -43,3 +43,7 @@ exports.menuCustomisationItemNameIsValid = function(item_name){
 exports.instituteCodeIsValid = function(institute_code){
 	return institute_code && institute_code.length == 6;
 }
+
+exports.businessStatusIsValid = function(status){
+	return status && (status == 'active' || status == 'disabled');
+}

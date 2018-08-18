@@ -2,12 +2,18 @@ var error_messages = require('../../config/error_messages');
 var Resource = require("./../Resource");
 var institute_has_business_modal = require('./../modal/Institute_has_business');
 var institue = require('./Institue');
+var Merchant  = require('./../_Merchants');
+var Business = require('./../_Business');
 var _ = require('underscore');
 
 var InstituteBusiness= function(){
     Resource.call(this,'InstituesBusiness','institutes_has_businesses',institute_has_business_modal);
     institute_has_business_modal.fields[0].ref_model = institue.getRef();
     institute_has_business_modal.fields[0].ref_model_field_name = 'code';
+    institute_has_business_modal.fields[1].ref_model = Merchant.getRef();
+    institute_has_business_modal.fields[1].ref_model_field_name = 'merchant_id';
+    institute_has_business_modal.fields[2].ref_model = Business.getRef();
+    institute_has_business_modal.fields[2].ref_model_field_name = 'business_id';
 }
 InstituteBusiness.prototype  = Object.create(Resource.prototype);
 InstituteBusiness.prototype.constructor = InstituteBusiness;

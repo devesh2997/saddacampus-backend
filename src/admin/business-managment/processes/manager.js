@@ -1,4 +1,4 @@
-var Business = require('../../../app/models/Business');
+var Business = require('./../../../app/models/_Business');
 
 /**
  * Create a new business
@@ -20,7 +20,7 @@ var Onboarding = function(args){
             }
             else{
                 response.success = true;
-                response.Merchant = result.Merchant;
+                response.Business = result.Business;
             }
             callback(null, response);
 		});

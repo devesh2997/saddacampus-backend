@@ -3,9 +3,8 @@ var Resource = require("./../Resource");
 var uniqid = require("uniqid");
 var error_messages = require('../../config/error_messages');
 
-var Menu = function(resource){
+var Menu = function(){
     Resource.call(this,"Menus","menus",modal);
-    this.resource = resource;
 }
 Menu.prototype  = Object.create(Resource.prototype);
 Menu.prototype.constructor = Menu;
@@ -25,7 +24,7 @@ Menu.prototype.addMenu = function(args,callback){
         created_on : currentTime,
         updated_on : currentTime
     };
-    this.resource.create(values , function(err,result){
+    this.create(values , function(err,result){
             if(err) return callback(err);
             return callback(null,result);
     });
@@ -38,7 +37,7 @@ Menu.prototype.addMenu = function(args,callback){
  */
 Menu.prototype.deleteMenu = function(args,callback){
     if(args.menu_id){
-        this.resource.delete(args,function(err,result){
+        this.delete(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -54,7 +53,7 @@ Menu.prototype.deleteMenu = function(args,callback){
  */
 Menu.prototype.findByIdMenu = function(args,callback){
     if(args.menu_id){
-        this.resource.get(args,function(err,result){
+        this.get(args,function(err,result){
             if(err) return callback(err);
             return callback(null,result);
         });
@@ -64,4 +63,4 @@ Menu.prototype.findByIdMenu = function(args,callback){
 }
 
 
-module.exports = new Menu(new Menu());
+module.exports = new Menu();

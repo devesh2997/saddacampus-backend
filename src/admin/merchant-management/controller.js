@@ -60,32 +60,3 @@ exports.delete = function(req,res){
         else res.send({success:true,result:result});
 	})
 }
-// //get all the merchants
-// exports.getAll = function(req, res){
-// 	Merchant.getAll(function(err, result){
-// 		var response = {};
-// 		response.success = true;
-// 		if(err){
-// 			response.success = false;
-// 			response.message = err.message;
-// 		}else{
-// 			response.Merchants = result.Merchants;
-// 		}
-// 		res.json(response);
-// 	});
-// }
-
-// //get merchant details
-// exports.get = function(req, res){
-// 	Merchant.findByMerchantId({merchant_id: req.params.merchantId},function(err,result){
-// 		var response = {};
-// 		response.success = true;
-// 		if(err){
-// 			response.success = false;
-// 			response.message = err.message;
-// 		}else{
-// 			response.Merchant = result.Merchants;
-// 		}
-// 		res.json(response);
-// 	});
-// }

@@ -63,6 +63,7 @@ Merchant.prototype.addMerchant = function(args,callback){
             });
         });
     } else {
+        console.log(args);
         return callback(new Error(error_messages.MISSING_PARAMETERS));
     }
 }
