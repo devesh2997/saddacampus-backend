@@ -1,5 +1,5 @@
 var moment = require('moment');
-
+// example  = 10:30-15:30 18:30-23,12:30-15:30 18:30-23,10:30-15:30 18:30-23,10:30-15:30 18:30-23,10:30-15:30 18:30-23,10:30-15:30 18:30-23,10:30-15:30 18:30-23 
 var CheckTiming  = function (timing) {
     var timeArray = timing.split(",");
     var currentTime = moment().format('HH:mm').toString();
@@ -14,7 +14,7 @@ var CheckTiming  = function (timing) {
         {
             open = true;
         } 
-        else if(currentTime < particularTime[0] && currentTime < particularTime[1] && nextOpen == "" && !open){
+        else if(currentTime < particularTime[0] && currentTime < particularTime[1] && nextOpen == ""){
             nextOpen = particularTime[0]
         }
     });

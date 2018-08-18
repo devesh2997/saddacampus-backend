@@ -5,7 +5,7 @@ var _ = require('underscore');
 var menu = require("./food/Menu");
 var Merchant = require('./_Merchants');
 var Business = require('./_Business');
-
+var Timing = require("./../utility/timingParse");
 var Restaurant = function(){
     Resource.call(this,'Restaurant','restaurant_info',restaurant_modal);
     restaurant_modal.fields[1].ref_model = Merchant.getRef();
@@ -77,7 +77,14 @@ Restaurant.prototype.findRestaurant = function(args,callback){
     if(args && args.merchant_id && args.business_id ){
         this.get(args,function(err,result){
             if(err) return callback(err);
-            return callback(null,result);
+            var count = 0;
+            result.forEach(function(element){
+                var timeStatus = new Timing(element.timing);
+                element.open = timeStatus.open;
+                element.nextOpen = timeStatus.nextOpen;
+                count++;
+                if(count == result.length)  return callback(null,result);
+            })
         });
     } else {
         return callback(new Error(error_messages.MISSING_PARAMETERS));

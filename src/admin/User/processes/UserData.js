@@ -53,8 +53,7 @@ var UserData = function(args){
                 result[0]['name'] = element.name;
                 result[0]['address'] = element.address;
                 result[0]['gstin'] = element.gstin;
-                result[0]['open'] = true;
-                if(result[0].super_status == 'closed') result[0].open = false;
+                if(result[0].super_status == 'closed' || result[0].status == 'closed') result[0].open = false;
                 res.push(result[0]);
                 count++;
                 if(count == data.length){
