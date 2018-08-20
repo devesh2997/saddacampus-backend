@@ -35,7 +35,7 @@ Restaurant.prototype.addRestaurant = function(args,callback){
             merchant_id : args.merchant_id,
             business_id : args.business_id,
             menu_id : args.menu_id,
-            timing : args.timing || '',
+            timing : args.timing || ' , , , , , , ',
             speciality : args.speciality || '',
             status : args.status || 'closed',
             super_status : args.super_status || 'closed'

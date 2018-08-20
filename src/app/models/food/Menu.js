@@ -52,9 +52,10 @@ Menu.prototype.deleteMenu = function(args,callback){
  * @param {String} args.menu_id 
  */
 Menu.prototype.findByIdMenu = function(args,callback){
-    if(args.menu_id){
+    if( args && args.menu_id){
         this.get(args,function(err,result){
             if(err) return callback(err);
+            console.log(result);
             return callback(null,result);
         });
     } else {

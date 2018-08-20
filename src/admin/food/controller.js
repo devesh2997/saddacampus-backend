@@ -27,7 +27,11 @@ exports.menu = function(req,res){
 }
 
 exports.getMenu = function(req,res){
-    menu.findByIdMenu(req.body , function(err,result){
+    var args = {
+        menu_id : req.params.menu_id
+    }
+    console.log(args);
+    menu.findByIdMenu(args , function(err,result){
         if(err) res.send({success:false , error:err.message});
         else{
             res.send({success: true , result: result});

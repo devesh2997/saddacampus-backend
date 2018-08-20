@@ -1,3 +1,5 @@
+var validator = require('../../utility/validator');
+var error_messages = require('../../config/error_messages');
 var restaurant = {};
 restaurant.indexes = {
 
@@ -36,6 +38,8 @@ restaurant.fields = [
         type: 'string',
         isPrimary: false,
         isForeign: false,
+        validator: validator.restaurantTimingIsValid,
+        validation_error: error_messages.RESTAURANT_TIMING_NOT_VALID,
         isCompulsory: false
     },
     {

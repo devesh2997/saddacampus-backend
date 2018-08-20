@@ -5,7 +5,7 @@ var institute = require('./Institute/Institue');
 var _ = require('underscore');
 
 var User = function(){
-    Resource.call(this,'User','user_info',User_modal);
+    Resource.call(this,'User_Info','user_info',User_modal);
     User_modal.fields[6].ref_model = institute.getRef();
     User_modal.fields[6].ref_model_field_name = 'code';
 }
@@ -23,7 +23,7 @@ User.prototype.constructor = User;
  * @param {String} args.user_institute
  */
 User.prototype.addUser = function(args,callback){
-    if(args && args.user_id && args.user_name){
+    if(args && args.user_id && args.user_name && args.code){
         var value = {
             user_id : args.user_id,
             user_name : args.user_name,
@@ -49,7 +49,7 @@ User.prototype.addUser = function(args,callback){
  */
 User.prototype.updateUser = function(args,callback){
     if(args && !_.isEmpty(args.args_old) && !_.isEmpty(args.args_update)){
-        this.update({args_set : args.args_update, args_where : args.args_old},function(err,result){
+        this.update(args.args_update,args.args_old,function(err,result){
             if(err) return callback(err)
             return callback(null,result)
         });

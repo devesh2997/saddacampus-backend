@@ -47,3 +47,6 @@ exports.instituteCodeIsValid = function(institute_code){
 exports.businessStatusIsValid = function(status){
 	return status && (status == 'active' || status == 'disabled');
 }
+exports.restaurantTimingIsValid = function(timing){
+	return timing && (timing.split(",").length == 7);
+}

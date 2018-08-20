@@ -5,7 +5,7 @@ var city = require('./City');
 var _ = require('underscore');
 
 var Institute= function(){
-    Resource.call(this,'Institues','institutes',institute_modal);
+    Resource.call(this,'Institutes','institutes',institute_modal);
     institute_modal.fields[3].ref_model = city.getRef();
     institute_modal.fields[3].ref_model_field_name = 'cities_id';
 }

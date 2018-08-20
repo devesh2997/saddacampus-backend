@@ -1,5 +1,4 @@
 var Institute = require('./../../app/models/Institute/Institue')
-var Institute_business = require('./../../app/models/Institute/Institute_has_business');
 
 exports.create = function(req,res){
     Institute.addInstitute(req.body,function(err,result){
@@ -27,13 +26,6 @@ exports.get = function(req,res){
 
 exports.delete = function(req,res){
     Institute.deleteInstitute(req.body,function(err,result){
-        if(err) res.send({success:false,error:err.message});
-        else res.send({success:true,result:result});
-    })
-}
-
-exports.createInstituteBusiness = function(req,res){
-    Institute_business.addInstitute(req.body,function(err,result){
         if(err) res.send({success:false,error:err.message});
         else res.send({success:true,result:result});
     })

@@ -325,7 +325,6 @@ Resource.prototype.processUpdate = function(args_set,args_where,callback){
 		if(result.length === 0)done();
 		result.forEach(row => {
 			var new_row = {};
-			
 			for(var field_name in row)
 				new_row[field_name] = row[field_name];
 			for(var field in args_set){
