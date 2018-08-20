@@ -26,6 +26,7 @@ var UserData = function(args){
     this.getRestaurant = function(data,user_data,next){
         var res = [];
         var count = 0;
+        if(data.length == 0) next(null,[],user_data);
         data.forEach(function(element){
             Business.findBusiness({merchant_id:element.merchant_id , business_id:element.business_id},function(err,result){
                 if(err) return next(err);
@@ -42,7 +43,7 @@ var UserData = function(args){
         };
         var res = [];
         var count = 0;
-        if(data.length == 0) next(null,[]);
+        if(data.length == 0) next(null,response);
         data.forEach(function(element){
             var value = {
                 merchant_id : element.merchant_id,
